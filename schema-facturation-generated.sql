@@ -3,6 +3,38 @@
 
 -- Organizations table assumed to exist; organization_id references it.
 
+
+
+
+CREATE TABLE portal_access_tokens (
+    token_id BIGSERIAL PRIMARY KEY,
+    token VARCHAR(255) NOT NULL UNIQUE,
+    resource_type VARCHAR(50) NOT NULL,
+    resource_id UUID NOT NULL,
+    client_email VARCHAR(255),
+    
+    -- Permissions
+    can_view BOOLEAN DEFAULT FALSE,
+    can_modify BOOLEAN DEFAULT FALSE,
+    can_accept BOOLEAN DEFAULT FALSE,
+    can_reject BOOLEAN DEFAULT FALSE,
+    
+    -- Status & Audit
+    used BOOLEAN DEFAULT FALSE,
+    expires_at TIMESTAMP NOT NULL,
+    used_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Index for fast lookup by token string
+CREATE INDEX idx_portal_token_value ON portal_access_tokens(token);
+
+-- Index for finding tokens by the resource they point to
+CREATE INDEX idx_portal_resource_id ON portal_access_tokens(resource_id);
+
+
+
+
 CREATE TABLE bons_achat (
     -- Primary Key
     id_bon_achat UUID PRIMARY KEY,

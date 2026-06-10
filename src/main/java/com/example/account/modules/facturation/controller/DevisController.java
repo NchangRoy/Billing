@@ -109,7 +109,7 @@ public Mono<ResponseEntity<Void>> sendQuotationEmail(@RequestBody EmailRequest r
 
     @PutMapping("/{devisId}/accepter")
     @Operation(summary = "Accepter un devis")
-    public Mono<ResponseEntity<DevisResponse>> accepterDevis(@PathVariable UUID devisId) {
+    public Mono<ResponseEntity<Void>> accepterDevis(@PathVariable UUID devisId) {
         log.info("Requête d'acceptation du devis: {}", devisId);
         return devisService.accepterDevis(devisId)
                 .map(ResponseEntity::ok);
@@ -117,11 +117,11 @@ public Mono<ResponseEntity<Void>> sendQuotationEmail(@RequestBody EmailRequest r
 
     @PutMapping("/{devisId}/refuser")
     @Operation(summary = "Refuser un devis")
-    public Mono<ResponseEntity<DevisResponse>> refuserDevis(
-            @PathVariable UUID devisId,
-            @RequestParam(required = false) String motifRefus) {
+    public Mono<ResponseEntity<Void>> refuserDevis(
+            @PathVariable UUID devisId
+            ) {
         log.info("Requête de refus du devis: {}", devisId);
-        return devisService.refuserDevis(devisId, motifRefus)
+        return devisService.refuserDevis(devisId)
                 .map(ResponseEntity::ok);
     }
 }

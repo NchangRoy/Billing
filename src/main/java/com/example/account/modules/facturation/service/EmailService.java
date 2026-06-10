@@ -1,5 +1,6 @@
 package com.example.account.modules.facturation.service;
 
+import com.example.account.modules.facturation.dto.request.ExternalRequest.EmailRequest;
 import com.example.account.modules.facturation.model.entity.Devis;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class EmailService {
     private final SpringTemplateEngine templateEngine; // Use the Spring-specific version
     private final PdfGeneratorService pdfGeneratorService;
 
-   public Mono<Void> sendQuotation(Devis devis, String htmlContent) {
+   public Mono<Void> sendQuotation(Devis devis, EmailRequest emailRequest,String token) {
 
     return Mono.fromCallable(() -> {
 
@@ -31,8 +32,9 @@ public class EmailService {
         Context context = new Context();
         context.setVariable("quotationRef", devis.getNumeroDevis());
         context.setVariable("clientName", devis.getNomClient());
-        context.setVariable("sellerName", "Your Business Name");
-        context.setVariable("baseUrl", "http://localhost:8080");
+        context.setVariable("sellerName",emailRequest.getOrganizationRaisonSociale());
+        context.setVariable("baseUrl", "http://localhost:3000");
+        context.setVariable("token", token);
 
         // Render Thymeleaf
         String emailContent = templateEngine.process("quotation-email", context);
@@ -46,7 +48,7 @@ public class EmailService {
 
         log.info("Generating PDF for Devis: {}", devis.getNumeroDevis());
 
-        byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml(htmlContent);
+        byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml(emailRequest.getHtmlContent());
 
         helper.addAttachment(
                 devis.getNumeroDevis() + ".pdf",

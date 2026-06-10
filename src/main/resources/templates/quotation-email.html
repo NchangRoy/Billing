@@ -4,60 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #334155; margin: 0; padding: 0; }
-        .container { max-width: 600px; margin: 20px auto; padding: 40px; border: 1px solid #e2e8f0; border-radius: 16px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #334155; margin: 0; padding: 0; background-color: #f8fafc; }
+        .container { max-width: 600px; margin: 20px auto; padding: 40px; border: 1px solid #e2e8f0; border-radius: 16px; background-color: #ffffff; }
         .header { border-bottom: 2px solid #f1f5f9; padding-bottom: 20px; margin-bottom: 30px; }
-        .logo { font-size: 24px; font-weight: 800; color: #0f172a; text-transform: uppercase; }
-        .content h1 { font-size: 20px; color: #0f172a; }
-        .footer { margin-top: 40px; font-size: 12px; color: #94a3b8; text-align: center; }
+        .logo { font-size: 24px; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: -0.025em; }
+        .content h1 { font-size: 22px; color: #0f172a; margin-bottom: 16px; }
+        .content p { margin-bottom: 20px; }
         
-        /* Button Styles */
-        .button-group { margin-top: 35px; display: flex; flex-direction: column; gap: 12px; }
+        /* Button Styles for Email Compatibility */
         .btn { 
-            display: block; 
-            padding: 14px 24px; 
+            display: inline-block; 
+            padding: 14px 28px; 
             text-decoration: none; 
             border-radius: 10px; 
             font-weight: 700; 
-            font-size: 14px; 
+            font-size: 15px; 
             text-align: center;
-            transition: opacity 0.2s;
+            margin-bottom: 10px;
+            width: 80%; /* Good for mobile responsiveness */
         }
-        .btn-accept { background-color: #059669; color: white; }
-        .btn-modify { background-color: #0f172a; color: white; }
-        .btn-reject { background-color: #ef4444; color: white; }
+        .btn-primary { background-color: #2563eb; color: #ffffff !important; }
+        .footer { margin-top: 40px; font-size: 12px; color: #94a3b8; text-align: center; }
+        .ref-badge { background: #f1f5f9; padding: 4px 8px; border-radius: 6px; font-family: monospace; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="logo" th:text="${sellerName}">MY BUSINESS</div>
+            <div class="logo" th:text="${sellerName}">COMPANY LOGO</div>
         </div>
         
         <div class="content">
-            <h1>New Quotation: <span th:text="${quotationRef}">QT-2024-001</span></h1>
-            <p>Dear <strong th:text="${clientName}">Customer</strong>,</p>
-            <p>Please find attached the formal quotation for your requested services/products. You can review the full details in the attached PDF file.</p>
-            <p>How would you like to proceed with this quotation?</p>
+            <h1>Quotation <span class="ref-badge" th:text="${quotationRef}">QT-0000</span></h1>
             
-            <div class="button-group">
-                <a th:href="@{${baseUrl} + '/approve/' + ${quotationRef}}" class="btn btn-accept">
-                    ✅ Accept Quotation
-                </a>
-                
-                <a th:href="@{${baseUrl} + '/modify/' + ${quotationRef}}" class="btn btn-modify">
-                    📝 Request Changes
-                </a>
-                
-                <a th:href="@{${baseUrl} + '/reject/' + ${quotationRef}}" class="btn btn-reject">
-                    ❌ Decline
+            <p>Dear <strong th:text="${clientName}">Customer</strong>,</p>
+            
+            <p>We are pleased to provide you with the formal quotation for your request. You can review the breakdown and terms in the attached PDF.</p>
+            
+            <p>To view the quotation details online, accept, or request modifications, please click the button below:</p>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <a th:href="${baseUrl} + '/portal/quotation/' + ${token}" 
+                   class="btn btn-primary">
+                    View & Manage Quotation
                 </a>
             </div>
         </div>
 
         <div class="footer">
-            <p>This is an automated message from <span th:text="${sellerName}">My Business</span>.</p>
-            <p>If you have any questions, please reply directly to this email.</p>
+            <p>This is an automated message from <span th:text="${sellerName}">your provider</span>.</p>
+            <p>Please do not reply directly to this automated email. Contact support for assistance.</p>
         </div>
     </div>
 </body>

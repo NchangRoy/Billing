@@ -8,6 +8,7 @@ import com.example.account.modules.facturation.dto.request.BonCommandeUpdateRequ
 import com.example.account.modules.facturation.dto.response.BonCommandeResponse;
 import com.example.account.modules.facturation.mapper.BonCommandeMapper;
 import com.example.account.modules.facturation.model.entity.BonCommande;
+import com.example.account.modules.facturation.model.entity.Devis;
 import com.example.account.modules.facturation.model.enums.StatusBonCommande;
 import com.example.account.modules.facturation.repository.BonCommandeRepository;
 import com.example.account.modules.facturation.service.producer.BonCommandeEventProducer;
@@ -137,4 +138,30 @@ public class BonCommandeService {
                 })
                 .then();
     }
+
+
+   public Mono<BonCommande> createFromQuotation(Devis devis) {
+    log.info("Création d'un nouveau bon de commande depuis le devis: {}", devis.getNumeroDevis());
+
+    // 1. Map the Devis to BonCommande entity
+    BonCommande bonCommande = bonCommandeMapper.mapDevisToBonCommande(devis);
+    
+    // Ensure ID is set if mapper didn't handle it
+    if (bonCommande.getIdBonCommande() == null) {
+        bonCommande.setIdBonCommande(UUID.randomUUID());
+    }
+
+    // 2. Insert into DB
+    return entityTemplate.insert(bonCommande)
+            .doOnNext(saved -> {
+                // 3. Side Effect: Publish event and log
+                // We map to Response only for the producer side effect
+                BonCommandeResponse response = bonCommandeMapper.toResponse(saved);
+                bonCommandeEventProducer.publishBonCommandeCreated(response);
+                log.info("Bon de commande créé avec succès: {}", saved.getIdBonCommande());
+            });
+            // Returns the saved BonCommande entity as requested in the method signature
 }
+}
+
+ 

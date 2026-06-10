@@ -9,6 +9,37 @@
 -- - Supporting tables (Taxes, Paiements, Journals, etc.)
 -- ============================================================================
 
+
+
+--customer platform access table 
+CREATE TABLE portal_access_tokens (
+    token_id BIGSERIAL PRIMARY KEY,
+
+    token TEXT NOT NULL UNIQUE,
+
+    resource_type TEXT NOT NULL, 
+    -- e.g. 'quotation', 'proforma', 'invoice'
+
+    resource_id BIGINT NOT NULL,
+
+    client_email TEXT NOT NULL,
+
+    permissions JSONB NOT NULL DEFAULT '{}'::jsonb,
+    -- Example: {"accept": true, "reject": true, "modify": true}
+
+    expires_at TIMESTAMP WITH TIME ZONE,
+
+    used BOOLEAN NOT NULL DEFAULT FALSE,
+
+    used_at TIMESTAMP WITH TIME ZONE,
+
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    canAccept BOOLEAN NOT NULL DEFAULT FALSE,
+    canReject BOOLEAN NOT NULL DEFAULT FALSE,
+    canModify BOOLEAN NOT NULL DEFAULT FALSE,
+    canView BOOLEAN NOT NULL DEFAULT FALSE
+);
+
 -- ============================================================================
 -- 1. TAX CONFIGURATION
 -- ============================================================================

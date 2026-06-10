@@ -32,12 +32,24 @@ services:
     image: gotenberg/gotenberg:8
     container_name: gotenberg
     hostname: gotenberg
-    # ADD THESE THREE LINES:
+    # Permissions to prevent Chromium startup crashes
     cap_add:
       - SYS_ADMIN
     security_opt:
       - seccomp:unconfined
     ports:
-      - "8081:3000"
+      - "8081:3000" # Map host 8081 to container 8080
     restart: always
-    shm_size: 1gb
+    # Chromium needs shared memory to render complex HTML/Images
+    shm_size: '2gb' 
+    environment:
+      - GOTENBERG_CHROMIUM_START_TIMEOUT=60s
+      - GOTENBERG_CHROMIUM_AUTO_START=true
+      # Optional: Helps if you have many concurrent requests
+      - GOTENBERG_LOG_LEVEL=info
+      - GOTENBERG_CHROMIUM_DISABLE_SANDBOX=true
+    command:
+      - "gotenberg"
+      - "--api-timeout=300s"
+      - "--api-start-timeout=600s"
+      - "--chromium-start-timeout=90s"

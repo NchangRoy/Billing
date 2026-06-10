@@ -17,4 +17,9 @@ public class EmailRequest {
        
         private String htmlContent;
         private UUID id;
+        private String organizationRaisonSociale;
+        private Boolean canView;
+        private Boolean canAccept;
+        private Boolean canReject;
+        private Boolean canModify;
 }

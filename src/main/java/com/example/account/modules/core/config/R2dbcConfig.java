@@ -1,5 +1,7 @@
 package com.example.account.modules.core.config;
 
+
+import com.example.account.modules.facturation.dto.response.ExternalResponses.AccessPortalPermissionsDTO;
 import com.example.account.modules.facturation.model.entity.BonAchat;
 import com.example.account.modules.facturation.model.entity.BonCommande;
 import com.example.account.modules.facturation.model.entity.Devis;
@@ -130,6 +132,8 @@ protected List<Object> getCustomConverters() {
     converters.add(new ObjectListToJsonConverter());
     converters.add(new JsonToClientSaleSizeConverter());
     converters.add(new JsonToPromotionConverter());
+       converters.add(new GenericListReadingConverter(AccessPortalPermissionsDTO.class));
+
 
 
     return converters;
