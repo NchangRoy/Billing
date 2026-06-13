@@ -4,7 +4,7 @@ import com.example.account.modules.core.mapper.BaseMapper;
 import com.example.account.modules.tiers.dto.ClientCreateRequest;
 import com.example.account.modules.tiers.dto.ClientUpdateRequest;
 import com.example.account.modules.tiers.dto.ClientResponse;
-import com.example.account.modules.tiers.model.entity.Client;
+import com.example.account.modules.tiers.domain.model.Client;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;

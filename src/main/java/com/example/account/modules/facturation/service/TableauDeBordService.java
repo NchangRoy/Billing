@@ -4,9 +4,9 @@ import reactor.core.publisher.Mono;
 
 import com.example.account.modules.facturation.dto.response.TableauDeBordResponse;
 import com.example.account.modules.facturation.model.enums.StatutFacture;
-import com.example.account.modules.facturation.repository.DevisRepository;
-import com.example.account.modules.facturation.repository.FactureRepository;
-import com.example.account.modules.tiers.repository.ClientRepository;
+import com.example.account.modules.facturation.domain.port.output.DevisRepositoryPort;
+import com.example.account.modules.facturation.domain.port.output.FactureRepositoryPort;
+import com.example.account.modules.tiers.domain.port.output.ClientRepositoryPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,9 +21,9 @@ import java.util.ArrayList;
 @Slf4j
 public class TableauDeBordService {
 
-    private final FactureRepository factureRepository;
-    private final DevisRepository devisRepository;
-    private final ClientRepository clientRepository;
+    private final FactureRepositoryPort factureRepository;
+    private final DevisRepositoryPort devisRepository;
+    private final ClientRepositoryPort clientRepository;
 
     @Transactional(readOnly = true)
     public Mono<TableauDeBordResponse> getTableauDeBord() {

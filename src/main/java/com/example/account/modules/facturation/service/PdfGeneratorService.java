@@ -1,5 +1,10 @@
 package com.example.account.modules.facturation.service;
 
+import com.example.account.modules.tiers.domain.model.Client;
+import com.example.account.modules.facturation.domain.model.Facture;
+import com.example.account.modules.facturation.domain.model.Paiement;
+import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;

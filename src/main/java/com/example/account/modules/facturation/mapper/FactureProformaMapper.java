@@ -2,7 +2,7 @@ package com.example.account.modules.facturation.mapper;
 
 import com.example.account.modules.facturation.dto.request.ProformaInvoiceRequest;
 import com.example.account.modules.facturation.dto.response.ProformaInvoiceResponse;
-import com.example.account.modules.facturation.model.entity.FactureProforma;
+import com.example.account.modules.facturation.domain.model.FactureProforma;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;

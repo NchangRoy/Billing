@@ -1,0 +1,845 @@
+================================================================================
+  INSTRUCTIONS DÉTAILLÉES POUR L'AGENT — CONNEXION MODULE BILLING ↔ KERNEL
+  Projet : ERP ComOps | Module : Billing (backend Spring Boot WebFlux)
+  Date de rédaction : Juin 2025
+================================================================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 0 — CONTEXTE GÉNÉRAL ET ARCHITECTURE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+L'ERP ComOps est composé de modules indépendants qui communiquent via un service
+central appelé "Kernel" (ou "Core"). Le Kernel est la source de vérité absolue
+pour toutes les données partagées entre modules (organisations, tiers/clients,
+fournisseurs, agents commerciaux, etc.).
+
+Le module "Billing"  est un
+service Spring Boot WebFlux (réactif) avec architecture hexagonale. Il gère :
+  - Les factures (module `facturation`)
+  - Les clients et fournisseurs locaux (module `tiers`)  [SIMULÉS LOCALEMENT]
+  - L'organisation courante (module `core`)              [SIMULÉ LOCALEMENT]
+
+PROBLÈME ACTUEL :
+  Pour les tests en local, les modules `tiers` (clients/fournisseurs) et `core`
+  (organisations) ont été DUPLIQUÉS dans le projet Billing avec leur propre base
+  de données PostgreSQL locale. Ces doublons doivent être supprimés et remplacés
+  par des appels HTTP vers le Kernel.
+
+OBJECTIF DE CE TICKET :
+  1. Connecter le module Billing au Kernel via variable d'environnement pour
+     l'adresse IP du serveur Kernel.
+  2. Remplacer les appels locaux aux modules `tiers` et `core` par des appels
+     HTTP au Kernel.
+  3. Supprimer les fichiers de simulation locale qui ne servent plus à rien.
+  4. Ne PAS casser ce qui fonctionne déjà (facturation, PDF, email, Kafka...).
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 1 — ÉTAT ACTUEL DU CODE (CE QUI EXISTE ET CE QUI MARCHE)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1.1 STRUCTURE DES MODULES (src/main/java/com/example/account/modules/)
+-----------------------------------------------------------------------
+
+  modules/
+  ├── core/           → SIMULÉ LOCALEMENT (organisations, users, permissions)
+  │                     SERA PARTIELLEMENT SUPPRIMÉ (voir Section 4)
+  ├── tiers/          → SIMULÉ LOCALEMENT (clients, fournisseurs)
+  │                     SERA ENTIÈREMENT REMPLACÉ par appels Kernel
+  └── facturation/    → LE CŒUR MÉTIER — NE PAS TOUCHER LA LOGIQUE INTERNE
+                        Seuls les adapters "output/external" seront modifiés
+
+1.2 VARIABLES D'ENVIRONNEMENT ACTUELLES (application.properties)
+-----------------------------------------------------------------
+
+  comops.core.backend_ip=localhost:8081
+    → Utilisé dans SellerServiceAdapter.java pour récupérer les vendeurs/agents
+    → Utilisé dans SellerService.java (doublon à supprimer)
+
+  comops.accounting_back.ip=10.205.243.11:8081
+    → Utilisé dans AccountingServiceAdapter.java pour envoyer les factures
+    → CET ADAPTATEUR POINTE DÉJÀ VERS LE KERNEL, il fonctionne
+
+  NOUVELLE VARIABLE À AJOUTER :
+    comops.kernel.ip=<IP_DU_SERVEUR_KERNEL>:<PORT>
+    (ex: comops.kernel.ip=192.168.1.100:8080)
+    Cette variable remplacera comops.core.backend_ip.
+
+1.3 CE QUI FONCTIONNE ET NE DOIT PAS ÊTRE CASSÉ
+------------------------------------------------
+
+  ✅ FactureUseCaseImpl.java — logique de création, modification, suppression
+  ✅ PdfGeneratorService — génération de PDF
+  ✅ EmailService — envoi d'emails
+  ✅ Kafka (KafkaProducerConfig, KafkaTopicConfig) — production d'events
+  ✅ AccountingServiceAdapter — envoie déjà les factures au Kernel
+     → Endpoint utilisé : POST http://{comops.accounting_back.ip}/api/accounting/invoices/sale
+     → Ce fichier ne doit être modifié QUE si on veut unifier les variables
+  ✅ WebClient.Builder — déjà configuré et injectable
+  ✅ OrganizationFilter — lit le header X-Organization-ID et le met en contexte réactif
+  ✅ Liquibase / R2DBC — pour la base de données des factures
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 2 — LES ENDPOINTS DU KERNEL À UTILISER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+L'URL de base du Kernel est : http://{comops.kernel.ip}
+
+2.1 RÉCUPÉRER LES CLIENTS
+--------------------------
+  Endpoint : GET /api/clients
+  Query params obligatoires :
+    - organizationId (UUID) : l'ID de l'organisation courante
+  Query params optionnels :
+    - prospect (boolean)
+  
+  Réponse : ApiResponseListThirdPartyResponse
+  {
+    "success": true,
+    "data": [ <liste de ThirdPartyResponse> ],
+    "message": "...",
+    "errorCode": null,
+    "timestamp": "..."
+  }
+
+  ThirdPartyResponse (les champs utiles pour le Billing) :
+  {
+    "id": UUID,                      → identifiant unique du tiers dans le Kernel
+    "organizationId": UUID,
+    "partyType": "ACTOR" | "ORGANIZATION",
+    "partyId": UUID,
+    "code": String,                  → code court
+    "referenceCode": String,
+    "displayName": String,           → NOM À AFFICHER (nomClient dans Facture)
+    "enabled": boolean,
+    "active": boolean,
+    "name": String,                  → raison sociale
+    "acronym": String,
+    "vatSubject": boolean,           → assujetti TVA
+    "accountingAccount": String,
+    "accountingAccountNumbers": [String],
+    "authorizedPaymentMethods": [String],
+    "authorizedCreditLimit": number,
+    "maxDiscountRate": number,
+    "payTermNumber": integer,
+    "payTermType": String,
+    "taxNumber": String,
+    "loyaltyPoints": integer,
+    "roles": [String],               → peut contenir "CLIENT", "SUPPLIER", etc.
+    "thirdPartyFamily": String,
+    "classification": String,
+    "segment": String,
+    "qualificationScore": integer,
+    ...
+  }
+
+  Récupérer un client par ID :
+  GET /api/clients/{thirdPartyId}
+  → Retourne un seul ThirdPartyResponse (probablement enveloppé dans ApiResponse)
+
+2.2 RÉCUPÉRER LES FOURNISSEURS
+-------------------------------
+  Endpoint : GET /api/suppliers
+  Query params : identiques à /api/clients (organizationId obligatoire)
+  Réponse : même structure ApiResponseListThirdPartyResponse avec ThirdPartyResponse
+
+  Récupérer un fournisseur par ID :
+  GET /api/suppliers/{thirdPartyId}
+
+2.3 RÉCUPÉRER LES AGENTS COMMERCIAUX / VENDEURS
+-------------------------------------------------
+  Endpoint : GET /api/sales-agents
+  Query params : organizationId (obligatoire), prospect (optionnel)
+  Réponse : ApiResponseListThirdPartyResponse (même ThirdPartyResponse)
+
+  NOTE IMPORTANTE : L'URL actuelle dans SellerServiceAdapter.java est INCORRECTE :
+    → ACTUEL (faux) : http://{comops.core.backend_ip}/sellers/organization/{orgId}/sellers
+    → CORRECT (Kernel) : http://{comops.kernel.ip}/api/sales-agents?organizationId={orgId}
+  
+  Récupérer un agent commercial par ID :
+  GET /api/sales-agents/{thirdPartyId}
+
+2.4 ENVOYER UNE FACTURE À LA COMPTABILITÉ (déjà implémenté, pour mémoire)
+--------------------------------------------------------------------------
+  Endpoint : POST /api/accounting/invoices/sale
+  Corps (CreateInvoiceAccountingRequest) :
+  {
+    "invoiceId": UUID,         → l'ID de la facture (idFacture)
+    "accountingStatus": String → statut comptable (ex: "PENDING", "POSTED")
+  }
+  
+  ATTENTION : L'AccountingServiceAdapter.java envoie actuellement l'objet Facture
+  complet. Il faut le corriger pour envoyer uniquement le corps attendu par le Kernel
+  (invoiceId + accountingStatus). Voir Section 3.3 pour les détails.
+
+  Header requis : X-Tenant-ID (UUID de l'organisation/tenant)
+  → Actuellement codé en dur comme "550e8400-e29b-41d4-a716-446655440000" (TODO à corriger)
+
+2.5 RÉCUPÉRER LES ORGANISATIONS
+---------------------------------
+  Endpoint : GET /api/organizations/my
+  → Retourne l'organisation de l'utilisateur courant
+  
+  Endpoint : GET /api/organizations/{organizationId}
+  → Retourne une organisation par ID
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 3 — MODIFICATIONS À APPORTER (DANS L'ORDRE)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+3.1 — AJOUTER LA VARIABLE D'ENVIRONNEMENT KERNEL
+--------------------------------------------------
+Fichier : src/main/resources/application.properties
+
+AJOUTER ces lignes :
+  # --- Adresse IP du Kernel (source de vérité partagée)
+  comops.kernel.ip=${KERNEL_IP:localhost:8080}
+
+SUPPRIMER (ou garder en commentaire) :
+  comops.core.backend_ip=localhost:8081
+  → Cette variable sera remplacée par comops.kernel.ip
+
+GARDER INCHANGÉ :
+  comops.accounting_back.ip=10.205.243.11:8081
+  → Cette variable peut rester telle quelle OU être migrée vers comops.kernel.ip
+  → Si on unifie, remplacer par comops.kernel.ip et corriger AccountingServiceAdapter
+
+OBJECTIF FINAL : une seule variable comops.kernel.ip qui pointe vers le serveur
+Kernel. L'opérateur n'aura qu'à faire :
+  export KERNEL_IP=192.168.x.x:8080
+  → Ou mettre KERNEL_IP dans le fichier .env avant de lancer l'application.
+
+
+3.2 — CRÉER LES NOUVEAUX ADAPTERS POUR APPELER LE KERNEL (module tiers)
+------------------------------------------------------------------------
+Ces adapters remplacent la persistance locale des clients/fournisseurs.
+
+FICHIER À CRÉER :
+  src/main/java/com/example/account/modules/tiers/adapter/output/external/KernelClientAdapter.java
+
+  Rôle : Implémenter ClientRepositoryPort en appelant le Kernel via WebClient.
+  
+  Pattern à suivre (inspiré de SellerServiceAdapter.java) :
+
+  ```java
+  @Service
+  @RequiredArgsConstructor
+  @Slf4j
+  public class KernelClientAdapter implements ClientRepositoryPort {
+
+      private final WebClient.Builder webClientBuilder;
+
+      @Value("${comops.kernel.ip}")
+      private String kernelIp;
+
+      // Récupère l'organizationId depuis le contexte réactif (mis par OrganizationFilter)
+      private Mono<UUID> getOrganizationId() {
+          return Mono.deferContextual(ctx -> {
+              UUID orgId = ctx.getOrDefault(ReactiveOrganizationContext.ORGANIZATION_ID_KEY, null);
+              if (orgId == null) {
+                  return Mono.error(new IllegalStateException("Organization ID absent du contexte réactif"));
+              }
+              return Mono.just(orgId);
+          });
+      }
+
+      @Override
+      public Flux<Client> findAllActiveClients() {
+          return getOrganizationId().flatMapMany(orgId -> {
+              String url = String.format("http://%s/api/clients?organizationId=%s", kernelIp, orgId);
+              return webClientBuilder.build()
+                      .get()
+                      .uri(url)
+                      .retrieve()
+                      .bodyToMono(ApiResponseListThirdPartyResponse.class)
+                      .flatMapMany(response -> Flux.fromIterable(response.getData()))
+                      .map(this::mapThirdPartyToClient);
+          });
+      }
+
+      @Override
+      public Mono<Client> findById(UUID clientId) {
+          String url = String.format("http://%s/api/clients/%s", kernelIp, clientId);
+          return webClientBuilder.build()
+                  .get()
+                  .uri(url)
+                  .retrieve()
+                  .bodyToMono(ThirdPartyResponse.class)
+                  .map(this::mapThirdPartyToClient);
+      }
+
+      // Méthode de mapping ThirdPartyResponse → Client (domaine local)
+      private Client mapThirdPartyToClient(ThirdPartyResponse tp) {
+          Client client = new Client();
+          client.setIdClient(tp.getId());
+          client.setUsername(tp.getDisplayName());
+          client.setRaisonSociale(tp.getName());
+          client.setEmail(null); // non fourni dans ThirdPartyResponse
+          client.setTelephone(null); // non fourni directement
+          client.setActif(tp.getActive() != null ? tp.getActive() : tp.getEnabled());
+          client.setLimiteCredit(tp.getAuthorizedCreditLimit() != null ? tp.getAuthorizedCreditLimit() : 0.0);
+          client.setNumeroTva(tp.getTaxNumber());
+          client.setCodeClient(tp.getCode() != null ? tp.getCode() : tp.getReferenceCode());
+          // soldeCourant : non présent dans ThirdPartyResponse, mettre 0.0 par défaut
+          client.setSoldeCourant(tp.getOperationsBalance() != null ? tp.getOperationsBalance() : 0.0);
+          return client;
+      }
+
+      // Implémenter les autres méthodes de ClientRepositoryPort qui ne sont pas
+      // couvertes par le Kernel (ex: save, existsByUsername, countActiveClients)
+      // avec Mono.error() ou des implémentations vides selon le besoin.
+      // IMPORTANT : createClient, updateClient, deleteClient NE DOIVENT PAS être
+      // implémentés dans cet adapter car la gestion des clients est déléguée
+      // entièrement au Kernel. Si ces méthodes sont appelées, lancer une exception.
+
+      @Override
+      public Mono<Client> save(Client client) {
+          return Mono.error(new UnsupportedOperationException(
+              "La création/modification de clients est gérée par le Kernel"));
+      }
+
+      @Override
+      public Mono<Boolean> existsByUsername(String username) {
+          // Pas de recherche par username dans le Kernel, retourner false par défaut
+          return Mono.just(false);
+      }
+
+      @Override
+      public Mono<Boolean> existsByEmail(String email) {
+          return Mono.just(false);
+      }
+
+      @Override
+      public Mono<Boolean> existsById(UUID id) {
+          return findById(id).map(c -> true).onErrorReturn(false);
+      }
+
+      @Override
+      public Mono<Void> deleteById(UUID id) {
+          return Mono.error(new UnsupportedOperationException(
+              "La suppression de clients est gérée par le Kernel"));
+      }
+
+      @Override
+      public Mono<Long> countActiveClients() {
+          return findAllActiveClients().count();
+      }
+
+      @Override
+      public Flux<Client> findByTypeClient(TypeClient typeClient) {
+          // Le Kernel n'a pas de filtre par type natif dans ThirdPartyResponse
+          // filtrer localement après récupération
+          return findAllActiveClients()
+                  .filter(c -> typeClient.name().equalsIgnoreCase(
+                      c.getTypeClient() != null ? c.getTypeClient().name() : ""));
+      }
+
+      @Override
+      public Mono<Client> findByUsername(String username) {
+          return findAllActiveClients()
+                  .filter(c -> username.equalsIgnoreCase(c.getUsername()))
+                  .next()
+                  .switchIfEmpty(Mono.error(new IllegalArgumentException(
+                      "Client non trouvé avec username: " + username)));
+      }
+  }
+  ```
+
+FICHIER À CRÉER :
+  src/main/java/com/example/account/modules/tiers/adapter/output/external/KernelFournisseurAdapter.java
+
+  Même logique que KernelClientAdapter mais implémente FournisseurRepositoryPort
+  et appelle GET /api/suppliers au lieu de /api/clients.
+
+
+3.3 — CORRIGER AccountingServiceAdapter.java
+--------------------------------------------
+Fichier :
+  src/main/java/com/example/account/modules/facturation/adapter/output/external/AccountingServiceAdapter.java
+
+PROBLÈME ACTUEL : Cet adapter envoie l'objet Facture complet au Kernel. Mais le
+Kernel attend uniquement un CreateInvoiceAccountingRequest :
+  { "invoiceId": UUID, "accountingStatus": String }
+
+CORRECTION À APPORTER :
+
+1. Créer ou réutiliser un DTO CreateInvoiceAccountingRequest :
+   src/main/java/com/example/account/modules/facturation/dto/request/CreateInvoiceAccountingRequest.java
+   ```java
+   @Data
+   @AllArgsConstructor
+   @NoArgsConstructor
+   public class CreateInvoiceAccountingRequest {
+       private UUID invoiceId;
+       private String accountingStatus;
+   }
+   ```
+
+2. Modifier la méthode sendFactureData dans AccountingServiceAdapter :
+   - Remplacer .bodyValue(facture) par .bodyValue(new CreateInvoiceAccountingRequest(facture.getIdFacture(), "PENDING"))
+   - Remplacer le retour bodyToMono(Facture.class) par bodyToMono(Void.class) ou bodyToMono(String.class)
+   - Remplacer le header X-Tenant-ID codé en dur par la vraie valeur de l'organisation :
+     Utiliser ReactiveOrganizationContext pour obtenir l'organizationId depuis le contexte.
+
+3. Si on unifie les variables, remplacer @Value("${comops.accounting_back.ip}") par
+   @Value("${comops.kernel.ip}") et mettre à jour l'URL :
+   String url = String.format("http://%s/api/accounting/invoices/sale", kernelIp);
+
+   L'URL /api/accounting/invoices/sale est confirmée comme valide dans le Kernel.
+
+
+3.4 — CORRIGER SellerServiceAdapter.java
+-----------------------------------------
+Fichier :
+  src/main/java/com/example/account/modules/facturation/adapter/output/external/SellerServiceAdapter.java
+
+PROBLÈME ACTUEL : L'URL utilisée est incorrecte :
+  http://{comops.core.backend_ip}/sellers/organization/{orgId}/sellers
+  → Ce chemin n'existe PAS dans le Kernel.
+
+CORRECTION :
+  - Remplacer @Value("${comops.core.backend_ip}") par @Value("${comops.kernel.ip}")
+  - Remplacer l'URL par : http://{kernelIp}/api/sales-agents?organizationId={organizationId}
+  
+  Code corrigé pour la méthode getSellersByOrganization :
+  ```java
+  @Override
+  public Flux<SellerAuthResponse> getSellersByOrganization(UUID organizationId) {
+      String url = String.format(
+              "http://%s/api/sales-agents?organizationId=%s",
+              kernelIp,
+              organizationId
+      );
+      log.info("Requesting sales agents from: {}", url);
+
+      return webClientBuilder.build()
+              .get()
+              .uri(url)
+              .retrieve()
+              .onStatus(HttpStatusCode::isError, response -> {
+                  log.error("Error calling Kernel sales-agents: {}", response.statusCode());
+                  return Mono.empty();
+              })
+              .bodyToMono(ApiResponseListThirdPartyResponse.class)
+              .flatMapMany(resp -> Flux.fromIterable(resp.getData()))
+              .map(this::mapThirdPartyToSellerAuthResponse)
+              .onErrorResume(e -> {
+                  log.error("Error calling Kernel sales-agents: {}", e.getMessage());
+                  return Flux.empty();
+              });
+  }
+
+  private SellerAuthResponse mapThirdPartyToSellerAuthResponse(ThirdPartyResponse tp) {
+      SellerAuthResponse r = new SellerAuthResponse();
+      r.setId(tp.getId());
+      r.setUsername(tp.getDisplayName());
+      r.setOrganizationId(tp.getOrganizationId());
+      // Les autres champs (agencyId, salesPointId...) ne sont pas dans ThirdPartyResponse
+      // Les laisser null ou à vide — c'est acceptable car ce sont des données enrichies
+      return r;
+  }
+  ```
+
+  NOTE : Il faut créer un DTO ApiResponseListThirdPartyResponse et ThirdPartyResponse
+  dans le module facturation (ou un sous-package shared/dto/kernel) pour désérialiser
+  la réponse du Kernel. Voir Section 3.5.
+
+
+3.5 — CRÉER LES DTOs KERNEL PARTAGÉS
+--------------------------------------
+Créer le package :
+  src/main/java/com/example/account/modules/shared/dto/kernel/
+
+Fichiers à créer :
+
+  ThirdPartyResponse.java — Correspond exactement au schéma ThirdPartyResponse du Kernel :
+  ```java
+  @Data
+  @NoArgsConstructor
+  public class ThirdPartyResponse {
+      private UUID id;
+      private UUID tenantId;
+      private UUID organizationId;
+      private String partyType;
+      private UUID partyId;
+      private String code;
+      private Boolean enabled;
+      private String referenceCode;
+      private String displayName;
+      private Set<String> roles;
+      private Boolean prospect;
+      private String accountingAccount;
+      private String segment;
+      private Integer qualificationScore;
+      private String followUpStatus;
+      private Boolean active;
+      private String type;
+      private String legalForm;
+      private String uniqueIdentificationNumber;
+      private String tradeRegistrationNumber;
+      private String name;
+      private String acronym;
+      private String longName;
+      private String logoUri;
+      private UUID logoId;
+      private List<String> accountingAccountNumbers;
+      private List<String> authorizedPaymentMethods;
+      private Double authorizedCreditLimit;
+      private Double maxDiscountRate;
+      private Boolean vatSubject;
+      private Double operationsBalance;
+      private Double openingBalance;
+      private Integer payTermNumber;
+      private String payTermType;
+      private String thirdPartyFamily;
+      private String classification;
+      private String taxNumber;
+      private Integer loyaltyPoints;
+      private Integer loyaltyPointsUsed;
+      private Integer loyaltyPointsExpired;
+  }
+  ```
+
+  ApiResponseListThirdPartyResponse.java :
+  ```java
+  @Data
+  @NoArgsConstructor
+  public class ApiResponseListThirdPartyResponse {
+      private Boolean success;
+      private List<ThirdPartyResponse> data;
+      private String message;
+      private String errorCode;
+      private String timestamp;
+  }
+  ```
+
+  ApiResponseThirdPartyResponse.java (pour les réponses unitaires) :
+  ```java
+  @Data
+  @NoArgsConstructor
+  public class ApiResponseThirdPartyResponse {
+      private Boolean success;
+      private ThirdPartyResponse data;
+      private String message;
+      private String errorCode;
+      private String timestamp;
+  }
+  ```
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 4 — FICHIERS ET CLASSES À SUPPRIMER (NETTOYAGE)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+RÈGLE D'OR : Ne supprimer un fichier QUE si :
+  a) Son interface/port ne sera plus utilisée dans le code restant, OU
+  b) Il a été remplacé intégralement par un adapter Kernel (Section 3).
+
+4.1 — MODULE TIERS : TOUT LE STACK DE PERSISTANCE LOCALE
+----------------------------------------------------------
+Ces fichiers maintiennent une copie locale des clients/fournisseurs en base de
+données PostgreSQL. Une fois que KernelClientAdapter et KernelFournisseurAdapter
+sont en place, ils peuvent être supprimés.
+
+  SUPPRIMER (persistance client locale) :
+    - modules/tiers/adapter/output/persistence/ClientPersistenceAdapter.java
+    - modules/tiers/adapter/output/persistence/ClientPersistenceEntity.java
+    - modules/tiers/adapter/output/persistence/ClientR2dbcRepository.java
+    - modules/tiers/adapter/output/persistence/mapper/ClientPersistenceMapper.java
+
+  SUPPRIMER (persistance fournisseur locale) :
+    - modules/tiers/adapter/output/persistence/FournisseurPersistenceAdapter.java
+    - modules/tiers/adapter/output/persistence/FournisseurPersistenceEntity.java
+    - modules/tiers/adapter/output/persistence/FournisseurR2dbcRepository.java
+    - modules/tiers/adapter/output/persistence/mapper/FournisseurPersistenceMapper.java
+
+  SUPPRIMER (controllers REST locaux — le Billing ne doit plus exposer ses propres
+             endpoints clients/fournisseurs, c'est le Kernel qui le fait) :
+    - modules/tiers/adapter/input/rest/ClientController.java
+    - modules/tiers/adapter/input/rest/FournisseurController.java
+
+  SUPPRIMER (Kafka producers locaux — si le Billing ne doit plus produire des
+             events clients séparément. Vérifier d'abord que personne ne consomme
+             ces events dans le projet avant de supprimer) :
+    - modules/tiers/adapter/output/messaging/ClientKafkaProducer.java
+    - modules/tiers/adapter/output/messaging/FournisseurKafkaProducer.java
+
+  SUPPRIMER (anciennes entités legacy dans modules/tiers/model/) :
+    - modules/tiers/model/entity/Client.java
+    - modules/tiers/model/entity/Fournisseur.java
+    - modules/tiers/model/enums/TypeClient.java (en modules/tiers/model/enums/)
+
+  SUPPRIMER (anciens repositories legacy dans modules/tiers/repository/) :
+    - modules/tiers/repository/ClientRepository.java
+    - modules/tiers/repository/FournisseurRepository.java
+
+  SUPPRIMER (services producer legacy) :
+    - modules/tiers/service/producer/ClientEventProducer.java
+    - modules/tiers/service/producer/FournisseurEventProducer.java
+
+  GARDER (interfaces domaine — elles sont toujours nécessaires) :
+    ✅ modules/tiers/domain/port/input/ClientUseCase.java
+    ✅ modules/tiers/domain/port/input/FournisseurUseCase.java
+    ✅ modules/tiers/domain/port/output/ClientRepositoryPort.java
+    ✅ modules/tiers/domain/port/output/FournisseurRepositoryPort.java
+    ✅ modules/tiers/domain/port/output/ClientEventPort.java
+    ✅ modules/tiers/domain/port/output/FournisseurEventPort.java
+    ✅ modules/tiers/domain/model/Client.java
+    ✅ modules/tiers/domain/model/Fournisseur.java
+    ✅ modules/tiers/domain/model/enums/TypeClient.java (en modules/tiers/domain/)
+    ✅ modules/tiers/application/usecase/impl/ClientUseCaseImpl.java
+    ✅ modules/tiers/application/usecase/impl/FournisseurUseCaseImpl.java
+    ✅ modules/tiers/dto/* (ClientCreateRequest, ClientResponse, FournisseurResponse, etc.)
+    ✅ modules/tiers/mapper/ClientMapper.java
+    ✅ modules/tiers/mapper/FournisseurMapper.java
+
+  NOTE SUR ClientUseCaseImpl : Elle appelle clientRepositoryPort.save() et deleteById()
+  qui retourneront désormais UnsupportedOperationException via KernelClientAdapter.
+  Les méthodes createClient, updateClient, deleteClient du use case deviendront
+  inutilisables (c'est correct, la gestion est dans le Kernel). Les méthodes
+  de lecture (getClientById, getAllClients, etc.) continueront de fonctionner.
+
+
+4.2 — MODULE FACTURATION : SERVICE DOUBLON
+-------------------------------------------
+  SUPPRIMER (doublon de SellerServiceAdapter — même logique, fichier dupliqué) :
+    - modules/facturation/service/ExternalServices/SellerService.java
+    
+    Ce fichier est une copie exacte de SellerServiceAdapter.java mais dans un
+    package "service" au lieu de "adapter/output/external". Une seule implémentation
+    doit exister (celle dans adapter/output/external/).
+    Vérifier avant de supprimer que SellerService.java n'est pas injecté ailleurs
+    dans le projet (rechercher @Autowired SellerService ou "new SellerService").
+
+
+4.3 — MODULE CORE : GARDER LA MAJORITÉ
+----------------------------------------
+  Le module core contient des fonctionnalités transverses essentielles :
+    ✅ OrganizationFilter.java — LIT le header X-Organization-ID → garder absolument
+    ✅ ReactiveOrganizationContext.java — Contexte réactif → garder absolument
+    ✅ KafkaConsumerConfig, KafkaProducerConfig, KafkaTopicConfig → garder
+    ✅ GlobalExceptionHandler → garder
+    ✅ CacheConfig, CorsConfig, EmailConfig, R2dbcConfig, SwaggerConfig → garder
+    ✅ Toutes les interfaces de port (OrganizationRepositoryPort, etc.) → garder
+
+  SUPPRIMER (seulement si le module Billing ne gère plus les orgs localement) :
+    ❓ modules/core/adapter/output/persistence/OrganizationPersistenceAdapter.java
+    ❓ modules/core/adapter/output/persistence/OrganizationPersistenceEntity.java
+    ❓ modules/core/adapter/output/persistence/OrganizationR2dbcRepository.java
+    ❓ modules/core/adapter/output/persistence/ (tous les fichiers de persistance org)
+    ❓ modules/core/adapter/input/rest/OrganizationRestController.java
+    ❓ modules/core/repository/OrganizationRepository.java
+    ❓ modules/core/service/OrganizationService.java
+
+    IMPORTANT : Ne supprimer ces fichiers QUE si vous créez un KernelOrganizationAdapter
+    qui les remplace. Si OrganizationUseCaseImpl ou OrganizationFilter font référence
+    à la persistance locale, il faut d'abord créer l'adapter Kernel.
+    → EN CAS DE DOUTE, NE PAS SUPPRIMER LE MODULE CORE POUR L'INSTANT.
+
+
+4.4 — BASE DE DONNÉES : TABLES À SUPPRIMER (OPTIONNEL)
+-------------------------------------------------------
+  Une fois les clients/fournisseurs supprimés du Billing, les tables PostgreSQL
+  locales "clients" et "fournisseurs" ne servent plus.
+  
+  Créer une migration Liquibase (dans db/changelog/) pour :
+    DROP TABLE IF EXISTS clients;
+    DROP TABLE IF EXISTS fournisseurs;
+  
+  GARDER toutes les tables de facturation (factures, lignes_facture, paiements, etc.)
+  NE PAS supprimer les tables organizations ou users si elles sont encore utilisées.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 5 — GESTION DES HEADERS D'AUTHENTIFICATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Le Kernel utilise probablement JWT Bearer token ou des headers d'organisation pour
+authentifier les requêtes inter-services. Voici ce qui est connu :
+
+5.1 HEADERS IDENTIFIÉS
+-----------------------
+  X-Organization-ID : UUID de l'organisation
+    → Déjà extrait par OrganizationFilter et placé dans ReactiveOrganizationContext
+    → À propager dans tous les appels WebClient vers le Kernel
+
+  X-Tenant-ID : UUID du tenant (utilisé par AccountingServiceAdapter)
+    → Actuellement codé en dur, doit être remplacé par l'organizationId du contexte
+
+  Authorization : Bearer <JWT>
+    → Si le Kernel exige un token JWT, il faut propager le token reçu dans la
+      requête entrante vers les appels sortants.
+    → Pour l'instant le code existant ne le fait pas. À vérifier avec l'équipe Kernel.
+
+5.2 PROPAGATION DU HEADER DANS LES APPELS WEBCLIENT
+-----------------------------------------------------
+Pour chaque appel WebClient vers le Kernel, ajouter le header X-Organization-ID :
+
+```java
+// Dans le contexte réactif, récupérer l'orgId et l'ajouter aux headers
+return getOrganizationId().flatMapMany(orgId ->
+    webClientBuilder.build()
+        .get()
+        .uri(url)
+        .header("X-Organization-ID", orgId.toString())
+        .retrieve()
+        ...
+);
+```
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 6 — RÉCAPITULATIF DES FICHIERS NOUVEAUX À CRÉER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  NOUVEAU → modules/shared/dto/kernel/ThirdPartyResponse.java
+  NOUVEAU → modules/shared/dto/kernel/ApiResponseListThirdPartyResponse.java
+  NOUVEAU → modules/shared/dto/kernel/ApiResponseThirdPartyResponse.java
+  NOUVEAU → modules/tiers/adapter/output/external/KernelClientAdapter.java
+  NOUVEAU → modules/tiers/adapter/output/external/KernelFournisseurAdapter.java
+  MODIFIÉ → modules/facturation/adapter/output/external/SellerServiceAdapter.java
+  MODIFIÉ → modules/facturation/adapter/output/external/AccountingServiceAdapter.java
+  MODIFIÉ → src/main/resources/application.properties
+  OPTIONNEL → modules/facturation/dto/request/CreateInvoiceAccountingRequest.java
+              (si pas déjà existant)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 7 — RÉCAPITULATIF DES FICHIERS À SUPPRIMER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  SUPPRIMER → modules/tiers/adapter/output/persistence/ClientPersistenceAdapter.java
+  SUPPRIMER → modules/tiers/adapter/output/persistence/ClientPersistenceEntity.java
+  SUPPRIMER → modules/tiers/adapter/output/persistence/ClientR2dbcRepository.java
+  SUPPRIMER → modules/tiers/adapter/output/persistence/mapper/ClientPersistenceMapper.java
+  SUPPRIMER → modules/tiers/adapter/output/persistence/FournisseurPersistenceAdapter.java
+  SUPPRIMER → modules/tiers/adapter/output/persistence/FournisseurPersistenceEntity.java
+  SUPPRIMER → modules/tiers/adapter/output/persistence/FournisseurR2dbcRepository.java
+  SUPPRIMER → modules/tiers/adapter/output/persistence/mapper/FournisseurPersistenceMapper.java
+  SUPPRIMER → modules/tiers/adapter/input/rest/ClientController.java
+  SUPPRIMER → modules/tiers/adapter/input/rest/FournisseurController.java
+  SUPPRIMER → modules/tiers/adapter/output/messaging/ClientKafkaProducer.java
+  SUPPRIMER → modules/tiers/adapter/output/messaging/FournisseurKafkaProducer.java
+  SUPPRIMER → modules/tiers/model/entity/Client.java
+  SUPPRIMER → modules/tiers/model/entity/Fournisseur.java
+  SUPPRIMER → modules/tiers/model/enums/TypeClient.java
+  SUPPRIMER → modules/tiers/repository/ClientRepository.java
+  SUPPRIMER → modules/tiers/repository/FournisseurRepository.java
+  SUPPRIMER → modules/tiers/service/producer/ClientEventProducer.java
+  SUPPRIMER → modules/tiers/service/producer/FournisseurEventProducer.java
+  SUPPRIMER → modules/facturation/service/ExternalServices/SellerService.java
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 8 — ORDRE D'EXÉCUTION RECOMMANDÉ POUR L'AGENT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Suivre cet ordre strict pour éviter de casser la compilation à chaque étape :
+
+  ÉTAPE 1 — Créer les DTOs Kernel partagés (Section 3.5)
+    → Aucune dépendance, peut être fait en premier sans risque
+
+  ÉTAPE 2 — Créer KernelClientAdapter et KernelFournisseurAdapter (Section 3.2)
+    → Ces nouvelles classes implémentent les ports existants
+    → Le compilateur sera satisfait dès leur création
+
+  ÉTAPE 3 — Supprimer ClientPersistenceAdapter et FournisseurPersistenceAdapter
+    → Spring injectera désormais les adapters Kernel dans les use cases
+    → VÉRIFIER QUE les beans Kafka (ClientEventPort, FournisseurEventPort) 
+      ont encore une implémentation avant de supprimer les producers
+
+  ÉTAPE 4 — Supprimer les entités legacy (modules/tiers/model/ et repository/)
+    → Uniquement si aucun import ne les référence encore
+
+  ÉTAPE 5 — Supprimer les controllers REST locaux (ClientController, FournisseurController)
+    → Le Billing n'expose plus ses propres CRUD de tiers
+
+  ÉTAPE 6 — Corriger SellerServiceAdapter (Section 3.4)
+    → Changer l'URL et la variable de configuration
+
+  ÉTAPE 7 — Supprimer le doublon SellerService.java (Section 4.2)
+    → Vérifier les imports avant de supprimer
+
+  ÉTAPE 8 — Corriger AccountingServiceAdapter (Section 3.3)
+    → Corriger le corps de la requête envoyée au Kernel
+
+  ÉTAPE 9 — Modifier application.properties (Section 3.1)
+    → Ajouter comops.kernel.ip, gérer l'environnement variable
+
+  ÉTAPE 10 — Compiler et tester
+    → mvn clean compile (ou ./mvnw clean compile)
+    → Corriger toute erreur de compilation
+    → Lancer l'application avec KERNEL_IP=<vraie IP> et vérifier les logs
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 9 — VÉRIFICATIONS ET TESTS À EFFECTUER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+9.1 TEST DE RÉCUPÉRATION DES CLIENTS
+--------------------------------------
+  - Lancer le Billing avec KERNEL_IP pointant vers le Kernel réel
+  - Appeler GET /api/factures avec le header X-Organization-ID : <orgId>
+  - Vérifier dans les logs que les appels vont vers http://{KERNEL_IP}/api/clients
+  - Vérifier que les noms de clients apparaissent correctement dans les réponses
+
+9.2 TEST D'ENVOI D'UNE FACTURE À LA COMPTABILITÉ
+--------------------------------------------------
+  - Créer une facture via POST /api/factures
+  - Appeler la route de comptabilisation (ex: POST /api/factures/{id}/comptabiliser)
+  - Vérifier que le Kernel reçoit POST /api/accounting/invoices/sale avec :
+    { "invoiceId": "<uuid>", "accountingStatus": "PENDING" }
+
+9.3 TEST DE LA VARIABLE D'ENVIRONNEMENT
+-----------------------------------------
+  - Démarrer avec KERNEL_IP=192.168.x.x:8080
+  - Vérifier que les logs montrent la bonne IP dans les requêtes HTTP
+
+9.4 VÉRIFICATION QUE RIEN N'EST CASSÉ
+----------------------------------------
+  - La génération de PDF doit toujours fonctionner
+  - L'envoi d'emails doit toujours fonctionner  
+  - Kafka doit toujours produire/consommer des messages
+  - Les endpoints de facturation doivent répondre
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 10 — POINTS D'ATTENTION ET PIÈGES À ÉVITER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚠ PIÈGE 1 — DEUX CLASSES Client DANS LE PROJET
+  Il existe deux classes Client dans deux packages différents :
+    - modules/tiers/domain/model/Client.java         → GARDER (modèle domaine hexagonal)
+    - modules/tiers/model/entity/Client.java          → SUPPRIMER (legacy)
+  Ne pas confondre les deux. Le mapper (ClientMapper.java) doit mapper vers
+  la classe domain/model/Client.java.
+
+⚠ PIÈGE 2 — FactureUseCaseImpl utilise ClientRepositoryPort DIRECTEMENT
+  À la ligne 276, FactureUseCaseImpl appelle clientRepository.findById(facture.getIdClient())
+  pour enrichir les données de facturation. Ce comportement doit CONTINUER à
+  fonctionner après la migration → c'est pour cela que KernelClientAdapter
+  doit bien implémenter findById().
+
+⚠ PIÈGE 3 — L'organizationId dans le contexte réactif
+  ReactiveOrganizationContext stocke l'UUID de l'organisation dans le contexte
+  Reactor (pas dans un ThreadLocal). Il faut utiliser Mono.deferContextual() pour
+  le lire de façon réactive. Ne jamais utiliser .contextWrite() après un opérateur
+  asynchrone qui aurait perdu le contexte.
+
+⚠ PIÈGE 4 — Réponse du Kernel enveloppée dans ApiResponse
+  Le Kernel retourne ses réponses dans une enveloppe :
+  { "success": true, "data": [...], "message": "..." }
+  Les WebClient calls doivent donc désérialiser ApiResponseListThirdPartyResponse
+  et accéder à .getData() pour obtenir la liste. Ne pas essayer de désérialiser
+  directement en List<ThirdPartyResponse>.
+
+⚠ PIÈGE 5 — SellerService.java doublon encore injecté quelque part
+  Avant de supprimer SellerService.java, faire une recherche globale de son nom
+  dans tous les fichiers. S'il est @Autowired quelque part, migrer cet import
+  vers SellerServiceAdapter avant la suppression.
+
+⚠ PIÈGE 6 — Liquibase et tables en base
+  Supprimer les entités Java ne supprime pas les tables en base. Les tables
+  "clients" et "fournisseurs" continueront d'exister jusqu'à ce qu'une migration
+  Liquibase les supprime. Ce n'est pas bloquant mais crée du désordre.
+  Planifier une migration de nettoyage séparée.
+
+⚠ PIÈGE 7 — La propriété UpdatedSellerResponse.java dans modules/tiers/dto/
+  Ce fichier semble lié à une logique de mise à jour des vendeurs. Vérifier
+  s'il est utilisé avant de décider de le garder ou supprimer.
+
+================================================================================
+FIN DES INSTRUCTIONS
+================================================================================

@@ -3,7 +3,7 @@ package com.example.account.modules.facturation.controller;
 import com.example.account.modules.facturation.dto.request.ProformaInvoiceRequest;
 import com.example.account.modules.facturation.dto.response.ProformaInvoiceResponse;
 import com.example.account.modules.facturation.model.enums.StatutProforma;
-import com.example.account.modules.facturation.service.FactureProformaService;
+import com.example.account.modules.facturation.domain.port.input.FactureProformaUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -22,7 +22,7 @@ import java.util.UUID;
 @Tag(name = "Factures Proforma", description = "API de gestion des Factures Proforma (WebFlux)")
 public class FactureProformaController {
 
-    private final FactureProformaService proformaService;
+    private final FactureProformaUseCase proformaService;
 
     @PostMapping
     @Operation(summary = "Créer une nouvelle facture proforma")

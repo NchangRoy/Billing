@@ -1,7 +1,7 @@
 package com.example.account.modules.facturation.controller;
 
-import com.example.account.modules.facturation.repository.FactureRepository;
-import com.example.account.modules.tiers.repository.ClientRepository;
+import com.example.account.modules.facturation.domain.port.output.FactureRepositoryPort;
+import com.example.account.modules.tiers.domain.port.output.ClientRepositoryPort;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +22,8 @@ import java.util.*;
 @Tag(name = "Analytics", description = "API d'analyses et rapports (WebFlux)")
 public class AnalyticsController {
 
-    private final FactureRepository factureRepository;
-    private final ClientRepository clientRepository;
+    private final FactureRepositoryPort factureRepository;
+    private final ClientRepositoryPort clientRepository;
 
     @GetMapping("/ventes/periode")
     @Operation(summary = "Rapport des ventes par période")

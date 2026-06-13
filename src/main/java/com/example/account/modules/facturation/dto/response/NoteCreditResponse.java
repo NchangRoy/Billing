@@ -1,6 +1,6 @@
 package com.example.account.modules.facturation.dto.response;
 
-import com.example.account.modules.facturation.model.entity.LigneNoteCredit;
+import com.example.account.modules.facturation.domain.model.LigneNoteCredit;
 import com.example.account.modules.facturation.model.enums.ModeReglementNoteCredit;
 import com.example.account.modules.facturation.model.enums.StatutNoteCredit;
 import lombok.AllArgsConstructor;

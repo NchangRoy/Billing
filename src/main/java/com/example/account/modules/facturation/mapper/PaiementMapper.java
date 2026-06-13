@@ -3,7 +3,7 @@ package com.example.account.modules.facturation.mapper;
 import com.example.account.modules.facturation.dto.request.PaiementCreateRequest;
 import com.example.account.modules.facturation.dto.request.PaiementUpdateRequest;
 import com.example.account.modules.facturation.dto.response.PaiementResponse;
-import com.example.account.modules.facturation.model.entity.Paiement;
+import com.example.account.modules.facturation.domain.model.Paiement;
 
 import com.example.account.modules.core.mapper.BaseMapper;
 import org.mapstruct.Mapper;

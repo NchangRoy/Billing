@@ -4,12 +4,10 @@ package com.example.account.modules.core.config;
 import com.example.account.modules.facturation.dto.response.ExternalResponses.AccessPortalPermissionsDTO;
 import com.example.account.modules.facturation.model.entity.BonAchat;
 import com.example.account.modules.facturation.model.entity.BonCommande;
-import com.example.account.modules.facturation.model.entity.Devis;
-import com.example.account.modules.facturation.model.entity.Facture;
 import com.example.account.modules.facturation.model.entity.LigneBonAchat;
 import com.example.account.modules.facturation.model.entity.LigneBonLivraison;
-import com.example.account.modules.facturation.model.entity.LigneDevis;
-import com.example.account.modules.facturation.model.entity.LigneFacture;
+import com.example.account.modules.facturation.domain.model.LigneDevis;
+import com.example.account.modules.facturation.domain.model.LigneFacture;
 import com.example.account.modules.facturation.model.entity.Lines.LineBonCommande;
 import com.example.account.modules.facturation.model.entity.Lines.LineBonReception;
 import com.example.account.modules.facturation.model.entity.Lines.LineFactureFournisseur;
@@ -117,8 +115,8 @@ protected List<Object> getCustomConverters() {
 
     // 2. Specific Reading Converters (Conditional - match by generic element type)
     converters.add(new GenericListReadingConverter(com.example.account.modules.facturation.model.entity.Lines.LineFactureFournisseur.class));
-    converters.add(new GenericListReadingConverter(com.example.account.modules.facturation.model.entity.LigneFactureProforma.class));
-    converters.add(new GenericListReadingConverter(com.example.account.modules.facturation.model.entity.LigneNoteCredit.class));
+    converters.add(new GenericListReadingConverter(com.example.account.modules.facturation.domain.model.LigneFactureProforma.class));
+    converters.add(new GenericListReadingConverter(com.example.account.modules.facturation.domain.model.LigneNoteCredit.class));
 
     converters.add(new GenericListReadingConverter(LigneDevis.class));
     converters.add(new GenericListReadingConverter(LigneFacture.class));

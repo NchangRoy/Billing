@@ -3,7 +3,7 @@ package com.example.account.modules.facturation.controller;
 import com.example.account.modules.facturation.dto.request.TaxeCreateRequest;
 import com.example.account.modules.facturation.dto.request.TaxeUpdateRequest;
 import com.example.account.modules.facturation.dto.response.TaxeResponse;
-import com.example.account.modules.facturation.service.TaxeService;
+import com.example.account.modules.facturation.domain.port.input.TaxeUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -25,7 +25,7 @@ import java.util.UUID;
 @Tag(name = "Taxe", description = "API de gestion des taxes (WebFlux)")
 public class TaxeController {
 
-    private final TaxeService taxeService;
+    private final TaxeUseCase taxeService;
 
     @PostMapping
     @Operation(summary = "Créer une nouvelle taxe")

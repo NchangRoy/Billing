@@ -5,7 +5,7 @@ import com.example.account.modules.facturation.dto.request.ExternalRequest.Email
 import com.example.account.modules.facturation.dto.response.DevisResponse;
 import com.example.account.modules.facturation.dto.response.ExternalResponses.EnrichedDevisResponse;
 import com.example.account.modules.facturation.model.enums.StatutDevis;
-import com.example.account.modules.facturation.service.DevisService;
+import com.example.account.modules.facturation.domain.port.input.DevisUseCase;
 import com.example.account.modules.facturation.service.Journals.DevisJournalService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,7 +30,7 @@ import java.util.UUID;
 @Tag(name = "Devis", description = "API de gestion des devis (WebFlux)")
 public class DevisController {
 
-    private final DevisService devisService;
+    private final DevisUseCase devisService;
     private final DevisJournalService devisJournalService;
 
     @PostMapping

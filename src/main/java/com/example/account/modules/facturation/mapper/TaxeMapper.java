@@ -3,7 +3,7 @@ package com.example.account.modules.facturation.mapper;
 import com.example.account.modules.facturation.dto.request.TaxeCreateRequest;
 import com.example.account.modules.facturation.dto.request.TaxeUpdateRequest;
 import com.example.account.modules.facturation.dto.response.TaxeResponse;
-import com.example.account.modules.facturation.model.entity.Taxes;
+import com.example.account.modules.facturation.domain.model.Taxes;
 import com.example.account.modules.core.mapper.BaseMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

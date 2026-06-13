@@ -3,7 +3,7 @@ package com.example.account.modules.tiers.mapper;
 import com.example.account.modules.tiers.dto.FournisseurCreateRequest;
 import com.example.account.modules.tiers.dto.FournisseurUpdateRequest;
 import com.example.account.modules.tiers.dto.FournisseurResponse;
-import com.example.account.modules.tiers.model.entity.Fournisseur;
+import com.example.account.modules.tiers.domain.model.Fournisseur;
 import com.example.account.modules.core.mapper.BaseMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

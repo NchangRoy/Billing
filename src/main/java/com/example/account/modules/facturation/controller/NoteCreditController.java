@@ -2,7 +2,7 @@ package com.example.account.modules.facturation.controller;
 
 import com.example.account.modules.facturation.dto.request.NoteCreditRequest;
 import com.example.account.modules.facturation.dto.response.NoteCreditResponse;
-import com.example.account.modules.facturation.service.NoteCreditService;
+import com.example.account.modules.facturation.domain.port.input.NoteCreditUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +16,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class NoteCreditController {
 
-    private final NoteCreditService noteCreditService;
+    private final NoteCreditUseCase noteCreditService;
 
     @PostMapping
     public Mono<ResponseEntity<NoteCreditResponse>> createNoteCredit(@RequestBody NoteCreditRequest request) {

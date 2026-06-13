@@ -60,3 +60,10 @@ databaseChangeLog:
             columns:
               - column:
                   name: permission
+  - changeSet:
+      id: 2-drop-legacy-tiers-tables
+      author: refactoring-agent
+      comments: Drop legacy clients and fournisseurs tables if they exist
+      changes:
+        - sql:
+            sql: "DROP TABLE IF EXISTS clients; DROP TABLE IF EXISTS fournisseurs;"

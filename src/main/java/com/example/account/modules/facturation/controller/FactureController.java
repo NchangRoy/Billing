@@ -3,7 +3,7 @@ package com.example.account.modules.facturation.controller;
 import com.example.account.modules.facturation.dto.request.FactureCreateRequest;
 import com.example.account.modules.facturation.dto.response.FactureResponse;
 import com.example.account.modules.facturation.model.enums.StatutFacture;
-import com.example.account.modules.facturation.service.FactureService;
+import com.example.account.modules.facturation.domain.port.input.FactureUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -27,7 +27,7 @@ import java.util.UUID;
 @Tag(name = "Facture", description = "API de gestion des factures (WebFlux)")
 public class FactureController {
 
-    private final FactureService factureService;
+    private final FactureUseCase factureService;
 
     @PostMapping
     @Operation(summary = "Créer une nouvelle facture")

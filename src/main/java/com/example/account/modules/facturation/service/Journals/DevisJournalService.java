@@ -11,10 +11,10 @@ import java.util.stream.Collectors;
 import com.example.account.modules.facturation.dto.response.LigneDevisResponse;
 import com.example.account.modules.facturation.dto.response.ExternalResponses.EnrichedDevisResponse;
 import com.example.account.modules.facturation.dto.response.ExternalResponses.SellerAuthResponse;
-import com.example.account.modules.facturation.model.entity.Devis;
-import com.example.account.modules.facturation.model.entity.LigneDevis;
-import com.example.account.modules.facturation.repository.DevisRepository;
-import com.example.account.modules.facturation.service.ExternalServices.SellerService;
+import com.example.account.modules.facturation.domain.model.Devis;
+import com.example.account.modules.facturation.domain.model.LigneDevis;
+import com.example.account.modules.facturation.domain.port.output.DevisRepositoryPort;
+import com.example.account.modules.facturation.domain.port.output.SellerServicePort;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -23,8 +23,8 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class DevisJournalService {
     
-    private final SellerService sellerService;
-    private final DevisRepository devisRepository;  
+    private final SellerServicePort sellerService;
+    private final DevisRepositoryPort devisRepository;  
     
     public Flux<EnrichedDevisResponse> enrichDevis(UUID orgId) {
         return sellerService.getSellersByOrganization(orgId)

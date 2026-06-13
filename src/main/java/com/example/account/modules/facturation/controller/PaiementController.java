@@ -3,7 +3,7 @@ package com.example.account.modules.facturation.controller;
 import com.example.account.modules.facturation.dto.request.PaiementCreateRequest;
 import com.example.account.modules.facturation.dto.request.PaiementUpdateRequest;
 import com.example.account.modules.facturation.dto.response.PaiementResponse;
-import com.example.account.modules.facturation.service.PaiementService;
+import com.example.account.modules.facturation.domain.port.input.PaiementUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -22,7 +22,7 @@ import java.util.UUID;
 @Tag(name = "Paiement", description = "API de gestion des paiements (WebFlux)")
 public class PaiementController {
 
-    private final PaiementService paiementService;
+    private final PaiementUseCase paiementService;
 
     @PostMapping
     @Operation(summary = "Créer un nouveau paiement")

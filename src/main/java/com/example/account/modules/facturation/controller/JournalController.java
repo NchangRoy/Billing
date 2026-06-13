@@ -3,7 +3,7 @@ package com.example.account.modules.facturation.controller;
 import com.example.account.modules.facturation.dto.request.JournalCreateRequest;
 import com.example.account.modules.facturation.dto.request.JournalUpdateRequest;
 import com.example.account.modules.facturation.dto.response.JournalResponse;
-import com.example.account.modules.facturation.service.JournalService;
+import com.example.account.modules.facturation.domain.port.input.JournalUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -24,7 +24,7 @@ import java.util.UUID;
 @Tag(name = "Journal", description = "API de gestion des journaux (WebFlux)")
 public class JournalController {
 
-    private final JournalService journalService;
+    private final JournalUseCase journalService;
 
     @PostMapping
     @Operation(summary = "Créer un nouveau journal")

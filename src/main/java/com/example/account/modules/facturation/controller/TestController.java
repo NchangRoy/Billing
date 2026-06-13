@@ -1,6 +1,6 @@
 package com.example.account.modules.facturation.controller;
 
-import com.example.account.modules.facturation.service.ExternalServices.SellerService;
+import com.example.account.modules.facturation.domain.port.output.SellerServicePort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,7 +13,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TestController {
 
-    private final SellerService sellerService;
+    private final SellerServicePort sellerService;
 
     @GetMapping("/test/{Id}")
     public Mono<String> getMethodName(@RequestParam UUID param) {

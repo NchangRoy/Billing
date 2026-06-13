@@ -2,7 +2,7 @@ package com.example.account.modules.facturation.mapper;
 
 import com.example.account.modules.facturation.dto.request.LigneFactureCreateRequest;
 import com.example.account.modules.facturation.dto.response.LigneFactureResponse;
-import com.example.account.modules.facturation.model.entity.LigneFacture;
+import com.example.account.modules.facturation.domain.model.LigneFacture;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.NullValuePropertyMappingStrategy;

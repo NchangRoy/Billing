@@ -4,7 +4,7 @@ import com.example.account.modules.core.mapper.BaseMapper;
 import com.example.account.modules.facturation.dto.request.JournalCreateRequest;
 import com.example.account.modules.facturation.dto.request.JournalUpdateRequest;
 import com.example.account.modules.facturation.dto.response.JournalResponse;
-import com.example.account.modules.facturation.model.entity.Journal;
+import com.example.account.modules.facturation.domain.model.Journal;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
