@@ -296,49 +296,67 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: sales_orders
+                  name: sales_proforma_invoices
                   type: boolean
                   defaultValueBoolean: false
                   constraints:
                     nullable: false
               - column:
-                  name: inventory_receipts
+                  name: sales_sales_orders
                   type: boolean
                   defaultValueBoolean: false
                   constraints:
                     nullable: false
               - column:
-                  name: inventory_delivery_orders
+                  name: sales_invoices
                   type: boolean
                   defaultValueBoolean: false
                   constraints:
                     nullable: false
               - column:
-                  name: inventory_transfers
+                  name: sales_delivery_notes
                   type: boolean
                   defaultValueBoolean: false
                   constraints:
                     nullable: false
               - column:
-                  name: inventory_adjustments
+                  name: sales_credit_notes
                   type: boolean
                   defaultValueBoolean: false
                   constraints:
                     nullable: false
               - column:
-                  name: accounting_customer_invoices
+                  name: sales_store_credit
                   type: boolean
                   defaultValueBoolean: false
                   constraints:
                     nullable: false
               - column:
-                  name: accounting_vendor_bills
+                  name: sales_back_orders
                   type: boolean
                   defaultValueBoolean: false
                   constraints:
                     nullable: false
               - column:
-                  name: accounting_credit_notes
+                  name: purchasing_purchase_orders
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: purchasing_goods_rns
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: purchasing_supplier_invoice
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: journals_quotations
                   type: boolean
                   defaultValueBoolean: false
                   constraints:

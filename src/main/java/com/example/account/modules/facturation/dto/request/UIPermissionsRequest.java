@@ -14,18 +14,21 @@ public class UIPermissionsRequest {
     private UUID agencyId;
     private UUID sellerId;
 
-    // Sales
+    // Sales Management
     private boolean salesQuotations;
-    private boolean salesOrders;
+    private boolean salesProformaInvoices;
+    private boolean salesSalesOrders;
+    private boolean salesInvoices;
+    private boolean salesDeliveryNotes;
+    private boolean salesCreditNotes;
+    private boolean salesStoreCredit;
+    private boolean salesBackOrders;
 
-    // Inventory
-    private boolean inventoryReceipts;
-    private boolean inventoryDeliveryOrders;
-    private boolean inventoryTransfers;
-    private boolean inventoryAdjustments;
+    // Purchasing & Logistics
+    private boolean purchasingPurchaseOrders;
+    private boolean purchasingGoodsRns;
+    private boolean purchasingSupplierInvoice;
 
-    // Accounting
-    private boolean accountingCustomerInvoices;
-    private boolean accountingVendorBills;
-    private boolean accountingCreditNotes;
+    // Journals
+    private boolean journalsQuotations;
 }

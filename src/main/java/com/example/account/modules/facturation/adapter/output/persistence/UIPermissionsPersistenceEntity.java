@@ -30,35 +30,44 @@ public class UIPermissionsPersistenceEntity {
     @Column("seller_id")
     private UUID sellerId;
 
-    // Sales
+    // Sales Management
     @Column("sales_quotations")
     private boolean salesQuotations;
 
-    @Column("sales_orders")
-    private boolean salesOrders;
+    @Column("sales_proforma_invoices")
+    private boolean salesProformaInvoices;
 
-    // Inventory
-    @Column("inventory_receipts")
-    private boolean inventoryReceipts;
+    @Column("sales_sales_orders")
+    private boolean salesSalesOrders;
 
-    @Column("inventory_delivery_orders")
-    private boolean inventoryDeliveryOrders;
+    @Column("sales_invoices")
+    private boolean salesInvoices;
 
-    @Column("inventory_transfers")
-    private boolean inventoryTransfers;
+    @Column("sales_delivery_notes")
+    private boolean salesDeliveryNotes;
 
-    @Column("inventory_adjustments")
-    private boolean inventoryAdjustments;
+    @Column("sales_credit_notes")
+    private boolean salesCreditNotes;
 
-    // Accounting
-    @Column("accounting_customer_invoices")
-    private boolean accountingCustomerInvoices;
+    @Column("sales_store_credit")
+    private boolean salesStoreCredit;
 
-    @Column("accounting_vendor_bills")
-    private boolean accountingVendorBills;
+    @Column("sales_back_orders")
+    private boolean salesBackOrders;
 
-    @Column("accounting_credit_notes")
-    private boolean accountingCreditNotes;
+    // Purchasing & Logistics
+    @Column("purchasing_purchase_orders")
+    private boolean purchasingPurchaseOrders;
+
+    @Column("purchasing_goods_rns")
+    private boolean purchasingGoodsRns;
+
+    @Column("purchasing_supplier_invoice")
+    private boolean purchasingSupplierInvoice;
+
+    // Journals
+    @Column("journals_quotations")
+    private boolean journalsQuotations;
 
     @CreatedDate
     @Column("created_at")
