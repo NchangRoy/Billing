@@ -29,6 +29,15 @@ public class BonLivraison  {
     @Column("numero_livraison")
     private String numeroLivraison;
 
+    @Column("id_sale_order")
+    private UUID idSaleOrder;
+
+    @Column("sale_order_number")
+    private String saleOrderNumber;
+
+    @Column("is_partial")
+    private boolean isPartial;
+
     @Column("id_client")
     private UUID idClient;
 

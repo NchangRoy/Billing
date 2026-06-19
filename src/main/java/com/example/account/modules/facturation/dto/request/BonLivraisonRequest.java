@@ -21,6 +21,10 @@ public class BonLivraisonRequest {
     // Simple identifier for client-facing usage
     private String numeroBonLivraison;
 
+    private UUID idSaleOrder;
+    private String saleOrderNumber;
+    private boolean isPartial;
+
     @NotNull(message = "L'ID client est obligatoire")
     private UUID idClient;
 

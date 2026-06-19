@@ -158,3 +158,214 @@ databaseChangeLog:
                   type: uuid
                   constraints:
                     nullable: true
+
+  - changeSet:
+      id: 10-create-back-orders-table
+      author: dev
+      changes:
+        - createTable:
+            tableName: back_orders
+            columns:
+              - column:
+                  name: id_back_order
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: numero_back_order
+                  type: varchar(100)
+              - column:
+                  name: id_bon_achat
+                  type: uuid
+              - column:
+                  name: numero_bon_achat
+                  type: varchar(100)
+              - column:
+                  name: id_fournisseur
+                  type: uuid
+              - column:
+                  name: nom_fournisseur
+                  type: varchar(255)
+              - column:
+                  name: lignes
+                  type: jsonb
+              - column:
+                  name: date_creation
+                  type: timestamp
+              - column:
+                  name: date_livraison_prevue
+                  type: timestamp
+              - column:
+                  name: date_systeme
+                  type: timestamp
+              - column:
+                  name: statut
+                  type: varchar(50)
+              - column:
+                  name: notes
+                  type: text
+              - column:
+                  name: organization_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: agency_id
+                  type: uuid
+              - column:
+                  name: created_by
+                  type: uuid
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+        - createIndex:
+            tableName: back_orders
+            indexName: idx_back_orders_org
+            columns:
+              - column:
+                  name: organization_id
+        - createIndex:
+            tableName: back_orders
+            indexName: idx_back_orders_agency
+            columns:
+              - column:
+                  name: agency_id
+        - createIndex:
+            tableName: back_orders
+            indexName: idx_back_orders_bon_achat
+            columns:
+              - column:
+                  name: id_bon_achat
+
+  - changeSet:
+      id: 12-add-partial-delivery-fields-to-bons-livraison
+      author: dev
+      changes:
+        - addColumn:
+            tableName: bons_livraison
+            columns:
+              - column:
+                  name: id_sale_order
+                  type: uuid
+              - column:
+                  name: sale_order_number
+                  type: varchar(100)
+              - column:
+                  name: is_partial
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 11-create-ui-permissions-table
+      author: dev
+      changes:
+        - createTable:
+            tableName: ui_permissions
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: organization_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: agency_id
+                  type: uuid
+              - column:
+                  name: seller_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sales_quotations
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sales_orders
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: inventory_receipts
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: inventory_delivery_orders
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: inventory_transfers
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: inventory_adjustments
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: accounting_customer_invoices
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: accounting_vendor_bills
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: accounting_credit_notes
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+        - createIndex:
+            tableName: ui_permissions
+            indexName: idx_ui_permissions_seller
+            columns:
+              - column:
+                  name: seller_id
+        - createIndex:
+            tableName: ui_permissions
+            indexName: idx_ui_permissions_org
+            columns:
+              - column:
+                  name: organization_id
+        - createIndex:
+            tableName: ui_permissions
+            indexName: idx_ui_permissions_agency
+            columns:
+              - column:
+                  name: agency_id

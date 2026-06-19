@@ -544,3 +544,27 @@ CREATE INDEX IF NOT EXISTS idx_paiements_org ON paiements(organization_id);
 CREATE INDEX IF NOT EXISTS idx_factures_customer ON factures(id_client);
 CREATE INDEX IF NOT EXISTS idx_paiements_customer ON paiements(id_client);
 CREATE INDEX IF NOT EXISTS idx_user_org_perm_user_org ON user_organization_permissions(user_organization_id);
+
+CREATE TABLE IF NOT EXISTS back_orders (
+    id_back_order UUID PRIMARY KEY,
+    numero_back_order VARCHAR(100),
+    id_bon_achat UUID,
+    numero_bon_achat VARCHAR(100),
+    id_fournisseur UUID,
+    nom_fournisseur VARCHAR(255),
+    lignes JSONB,
+    date_creation TIMESTAMP,
+    date_livraison_prevue TIMESTAMP,
+    date_systeme TIMESTAMP,
+    statut VARCHAR(50),
+    notes TEXT,
+    organization_id UUID NOT NULL,
+    agency_id UUID,
+    created_by UUID,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_back_orders_org ON back_orders(organization_id);
+CREATE INDEX IF NOT EXISTS idx_back_orders_agency ON back_orders(agency_id);
+CREATE INDEX IF NOT EXISTS idx_back_orders_bon_achat ON back_orders(id_bon_achat);

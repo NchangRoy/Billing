@@ -20,6 +20,10 @@ public class BonLivraisonResponse {
     private UUID idBonLivraison;
     private String numeroBonLivraison;
 
+    private UUID idSaleOrder;
+    private String saleOrderNumber;
+    private boolean isPartial;
+
     private UUID idClient;
     private String nomClient;
     private String adresseClient;

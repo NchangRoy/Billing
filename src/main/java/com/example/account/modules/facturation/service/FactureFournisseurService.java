@@ -70,11 +70,11 @@ public class FactureFournisseurService {
 
     @Transactional(readOnly = true)
     public Flux<FactureFournisseurResponse> getByOrganizationId(UUID organizationId) {
-        return factureFournisseurRepository.findByOrganizationId(organizationId).map(factureFournisseurMapper::toResponse);
+        return factureFournisseurRepository.findByOrganizationId(organizationId).map(factureFournisseurMapper::toDto);
     }
 
     @Transactional(readOnly = true)
     public Flux<FactureFournisseurResponse> getByAgencyId(UUID agencyId) {
-        return factureFournisseurRepository.findByAgencyId(agencyId).map(factureFournisseurMapper::toResponse);
+        return factureFournisseurRepository.findByAgencyId(agencyId).map(factureFournisseurMapper::toDto);
     }
 }

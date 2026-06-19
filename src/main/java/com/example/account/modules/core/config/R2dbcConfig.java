@@ -124,6 +124,7 @@ protected List<Object> getCustomConverters() {
     converters.add(new GenericListReadingConverter(LigneBonLivraison.class));
     converters.add(new GenericListReadingConverter(LineBonCommande.class));
     converters.add(new GenericListReadingConverter(LineBonReception.class));
+    converters.add(new GenericListReadingConverter(com.example.account.modules.facturation.domain.model.LigneBackOrder.class));
     
       converters.add(new GenericListReadingConverter(com.example.account.modules.facturation.dto.response.ExternalResponses.ProductResponse.ClientSaleSize.class));
     converters.add(new GenericListReadingConverter(com.example.account.modules.facturation.dto.response.ExternalResponses.ProductResponse.SaleSizePromotion.class));

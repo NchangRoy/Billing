@@ -8,6 +8,7 @@ public enum StatutBonLivraison {
     PRET_A_EXPEDIER("Prêt à expédier"),
     EXPEDIE("Expédié"),
     LIVRE("Livré"),
+    PARTIELLE("Partielle"),
     RETOURNE("Retourné"),
     ANNULE("Annulé");
 

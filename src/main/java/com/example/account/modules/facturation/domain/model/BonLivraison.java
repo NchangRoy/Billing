@@ -16,6 +16,9 @@ public class BonLivraison {
 
     private UUID idBonLivraison;
     private String numeroLivraison;
+    private UUID idSaleOrder;
+    private String saleOrderNumber;
+    private boolean isPartial;
     private UUID idClient;
     private String nomClient;
     private String adresseClient;
