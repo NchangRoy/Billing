@@ -17,4 +17,8 @@ public interface JournalR2dbcRepository extends R2dbcRepository<JournalPersisten
     
     @Query("SELECT COUNT(*) FROM journals WHERE type = :type")
     Mono<Long> countByType(String type);
+
+    Flux<JournalPersistenceEntity> findByOrganizationId(UUID organizationId);
+
+    Flux<JournalPersistenceEntity> findByAgencyId(UUID agencyId);
 }

@@ -10,16 +10,14 @@ import com.example.account.modules.facturation.dto.request.ExternalRequest.Email
 import com.example.account.modules.facturation.dto.response.DevisResponse;
 import com.example.account.modules.facturation.dto.response.ExternalResponses.SellerAuthResponse;
 import com.example.account.modules.facturation.mapper.DevisMapper;
-import com.example.account.modules.facturation.model.entity.Devis;
 import com.example.account.modules.facturation.model.entity.Others.PortalAccessToken;
 import com.example.account.modules.facturation.model.enums.StatutDevis;
-import com.example.account.modules.facturation.repository.DevisRepository;
 import com.example.account.modules.facturation.service.ExternalServices.PortalAccessService;
 import com.example.account.modules.facturation.service.ExternalServices.PortalTokenService;
-import com.example.account.modules.facturation.service.ExternalServices.SellerService;
 import com.example.account.modules.facturation.service.ExternalServices.entity.PortalPermissions;
 import com.example.account.modules.facturation.service.ExternalServices.entity.enums.ResourceType;
-import com.example.account.modules.facturation.service.producer.DevisEventProducer;
+import com.example.account.modules.facturation.service.EmailService;
+import com.example.account.modules.facturation.service.BonCommandeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -39,11 +37,10 @@ import java.util.UUID;
 @Slf4j
 public class DevisUseCaseImpl implements DevisUseCase {
 
-    private final DevisRepository devisRepository;
+    private final DevisRepositoryPort devisRepository;
     private final DevisMapper devisMapper;
-    private final DevisEventProducer devisEventProducer;
-    private final SellerService sellerService;
-    private final R2dbcEntityTemplate entityTemplate;
+    private final DevisEventPort devisEventProducer;
+    private final SellerServicePort sellerService;
     private final EmailService emailService;
     private final PortalTokenService portalTokenService;
     private final BonCommandeService bonCommandeService;
@@ -231,5 +228,19 @@ public Mono<Void> refuserDevis(UUID devisId) {
     @Override
     public Flux<SellerAuthResponse> enrichDevis(UUID orgId) {
         return sellerService.getSellersByOrganization(orgId);
+    }
+
+    @Override
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    public Flux<DevisResponse> getDevisByOrganizationId(UUID organizationId) {
+        log.info("Récupération des devis par organisation: {}", organizationId);
+        return devisRepository.findByOrganizationId(organizationId).map(devisMapper::toResponse);
+    }
+
+    @Override
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    public Flux<DevisResponse> getDevisByAgencyId(UUID agencyId) {
+        log.info("Récupération des devis par agence: {}", agencyId);
+        return devisRepository.findByAgencyId(agencyId).map(devisMapper::toResponse);
     }
 }

@@ -13,4 +13,6 @@ public interface NoteCreditUseCase {
     Mono<NoteCreditResponse> getNoteCreditById(UUID id);
     Flux<NoteCreditResponse> getAllNoteCredits();
     Mono<Void> deleteNoteCredit(UUID id);
+    Flux<NoteCreditResponse> getNotesCreditByOrganizationId(UUID organizationId);
+    Flux<NoteCreditResponse> getNotesCreditByAgencyId(UUID agencyId);
 }

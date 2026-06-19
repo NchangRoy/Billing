@@ -12,4 +12,8 @@ public interface FactureProformaR2dbcRepository extends R2dbcRepository<FactureP
     Mono<FactureProformaPersistenceEntity> findByNumeroProformaInvoice(String numeroProformaInvoice);
     Flux<FactureProformaPersistenceEntity> findByIdClient(UUID idClient);
     Mono<Boolean> existsByNumeroProformaInvoice(String numeroProformaInvoice);
+
+    Flux<FactureProformaPersistenceEntity> findByOrganizationId(UUID organizationId);
+
+    Flux<FactureProformaPersistenceEntity> findByAgencyId(UUID agencyId);
 }

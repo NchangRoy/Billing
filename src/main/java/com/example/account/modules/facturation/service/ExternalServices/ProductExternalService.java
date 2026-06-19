@@ -101,8 +101,8 @@ public class ProductExternalService {
                 // Ensure the IDs and initial values are set correctly
                 newProduct.setId(dto.getIdProduit()); // Setting the UUID from the source
                 newProduct.setOrganizationId(dto.getOrganizationId());
-                newProduct.setStockQuantity(Double.valueOf(dto.getStockQuantity()));
-                newProduct.setAvailableQuantity(Double.valueOf(dto.getStockQuantity()));
+                newProduct.setStockQuantity(dto.getStockQuantity() != null ? dto.getStockQuantity() : 0.0);
+                newProduct.setAvailableQuantity(dto.getStockQuantity() != null ? dto.getStockQuantity() : 0.0);
                 newProduct.setReservedQuantity(0.0);
                 newProduct.setCreatedAt(LocalDate.now());
                 

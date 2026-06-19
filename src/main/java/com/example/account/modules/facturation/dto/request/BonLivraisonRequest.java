@@ -61,4 +61,5 @@ public class BonLivraisonRequest {
      private UUID createdBy;
     private LocalDateTime dateSysteme;
     private UUID organizationId;
+    private UUID agencyId;
 }

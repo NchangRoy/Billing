@@ -58,6 +58,7 @@ public interface BonLivraisonMapper {
     @Mapping(target = "createdBy", source = "createdBy")
     @Mapping(target = "dateSysteme", source = "dateSysteme")
     @Mapping(target = "organizationId", source = "organizationId")
+    @Mapping(target = "agencyId", source = "agencyId")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     void updateEntityFromDTO(BonLivraisonRequest request, @MappingTarget BonLivraison object);

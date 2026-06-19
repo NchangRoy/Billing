@@ -151,6 +151,9 @@ public class FactureProformaPersistenceEntity {
     @Column("organization_id")
     private UUID organizationId;
 
+    @Column("agency_id")
+    private UUID agencyId;
+
     @Column("created_by")
     private UUID createdBy; 
 }

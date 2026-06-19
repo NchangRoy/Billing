@@ -63,9 +63,7 @@ public class BonAchatRequest {
     private UUID approvedBy;
     private String remarks;
     private UUID organizationId;
-
-
-    
+    private UUID agencyId;
     private UUID createdBy;
 
     // --- Lignes ---

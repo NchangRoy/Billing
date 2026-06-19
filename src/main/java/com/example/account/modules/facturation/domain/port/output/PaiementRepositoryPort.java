@@ -21,6 +21,8 @@ public interface PaiementRepositoryPort {
     Mono<BigDecimal> sumMontantByDateBetween(LocalDate start, LocalDate end);
     Mono<Long> countByIdClient(UUID idClient);
     Mono<Long> countByModePaiement(TypePaiement mode);
+    Flux<Paiement> findByOrganizationId(UUID organizationId);
+    Flux<Paiement> findByAgencyId(UUID agencyId);
     Mono<Paiement> save(Paiement paiement);
     Mono<Void> deleteById(UUID id);
     Mono<Boolean> existsById(UUID id);

@@ -141,4 +141,18 @@ public class JournalUseCaseImpl implements JournalUseCase {
     public Mono<Long> countByType(String type) {
         return journalRepositoryPort.countByType(type);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Flux<JournalResponse> getJournalsByOrganizationId(UUID organizationId) {
+        log.info("Récupération des journaux par organisation: {}", organizationId);
+        return journalRepositoryPort.findByOrganizationId(organizationId).map(journalMapper::toResponse);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Flux<JournalResponse> getJournalsByAgencyId(UUID agencyId) {
+        log.info("Récupération des journaux par agence: {}", agencyId);
+        return journalRepositoryPort.findByAgencyId(agencyId).map(journalMapper::toResponse);
+    }
 }

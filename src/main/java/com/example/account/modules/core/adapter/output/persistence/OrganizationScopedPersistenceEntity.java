@@ -14,4 +14,7 @@ public abstract class OrganizationScopedPersistenceEntity {
 
     @Column("organization_id")
     private UUID organizationId;
+
+    @Column("agency_id")
+    private UUID agencyId;
 }

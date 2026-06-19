@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import jakarta.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -24,4 +25,6 @@ public class TaxeUpdateRequest {
     private String porteTaxe;
     private BigDecimal montant;
     private String positionFiscale;
+    private UUID organizationId;
+    private UUID agencyId;
 }

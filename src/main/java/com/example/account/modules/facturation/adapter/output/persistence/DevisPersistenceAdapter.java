@@ -64,6 +64,11 @@ public class DevisPersistenceAdapter implements DevisRepositoryPort {
     }
 
     @Override
+    public Flux<Devis> findByAgencyId(UUID agencyId) {
+        return repository.findByAgencyId(agencyId).map(mapper::toDomain);
+    }
+
+    @Override
     public Mono<Devis> save(Devis devis) {
         // Special case to handle insert vs update using entityTemplate like old service did if needed,
         // but typically repo.save() works if id is present and it's new, wait, R2DBC can be tricky.

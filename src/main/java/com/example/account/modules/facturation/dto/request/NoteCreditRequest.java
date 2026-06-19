@@ -58,4 +58,5 @@ public class NoteCreditRequest {
     private LocalDateTime validatedAt;
 
     private UUID organizationId;
+    private UUID agencyId;
 }

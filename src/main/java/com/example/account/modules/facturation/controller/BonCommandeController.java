@@ -59,4 +59,16 @@ public class BonCommandeController {
         return bonCommandeService.updateStatut(id, statut)
                 .map(ResponseEntity::ok);
     }
+
+    @GetMapping("/organisation/{organizationId}")
+    @Operation(summary = "Récupérer les bons de commande par organisation")
+    public Flux<BonCommandeResponse> getByOrganizationId(@PathVariable UUID organizationId) {
+        return bonCommandeService.getByOrganizationId(organizationId);
+    }
+
+    @GetMapping("/agence/{agencyId}")
+    @Operation(summary = "Récupérer les bons de commande par agence")
+    public Flux<BonCommandeResponse> getByAgencyId(@PathVariable UUID agencyId) {
+        return bonCommandeService.getByAgencyId(agencyId);
+    }
 }

@@ -11,4 +11,5 @@ import java.util.UUID;
 @NoArgsConstructor
 public abstract class OrganizationScoped {
     private UUID organizationId;
+    private UUID agencyId;
 }

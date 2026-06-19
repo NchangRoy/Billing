@@ -56,4 +56,16 @@ public class BonAchatController {
         return bonAchatService.deleteBonAchat(id)
                 .thenReturn(ResponseEntity.noContent().build());
     }
+
+    @GetMapping("/organisation/{organizationId}")
+    @Operation(summary = "Récupérer les bons d'achat par organisation")
+    public Flux<BonAchatResponse> getByOrganizationId(@PathVariable UUID organizationId) {
+        return bonAchatService.getByOrganizationId(organizationId);
+    }
+
+    @GetMapping("/agence/{agencyId}")
+    @Operation(summary = "Récupérer les bons d'achat par agence")
+    public Flux<BonAchatResponse> getByAgencyId(@PathVariable UUID agencyId) {
+        return bonAchatService.getByAgencyId(agencyId);
+    }
 }

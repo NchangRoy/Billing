@@ -46,4 +46,14 @@ public class NoteCreditController {
         return noteCreditService.deleteNoteCredit(id)
                 .thenReturn(ResponseEntity.noContent().build());
     }
+
+    @GetMapping("/organisation/{organizationId}")
+    public Flux<NoteCreditResponse> getNotesCreditByOrganizationId(@PathVariable UUID organizationId) {
+        return noteCreditService.getNotesCreditByOrganizationId(organizationId);
+    }
+
+    @GetMapping("/agence/{agencyId}")
+    public Flux<NoteCreditResponse> getNotesCreditByAgencyId(@PathVariable UUID agencyId) {
+        return noteCreditService.getNotesCreditByAgencyId(agencyId);
+    }
 }

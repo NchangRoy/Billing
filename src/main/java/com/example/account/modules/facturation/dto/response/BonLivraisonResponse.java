@@ -43,4 +43,5 @@ public class BonLivraisonResponse {
    
 
     private UUID organizationId;
+    private UUID agencyId;
 }

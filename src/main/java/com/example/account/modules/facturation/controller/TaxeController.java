@@ -160,4 +160,18 @@ public class TaxeController {
         return taxeService.countByType(typeTaxe)
                 .map(ResponseEntity::ok);
     }
+
+    @GetMapping("/organisation/{organizationId}")
+    @Operation(summary = "Récupérer les taxes par organisation")
+    public Flux<TaxeResponse> getTaxesByOrganizationId(@PathVariable UUID organizationId) {
+        log.info("Requête de récupération des taxes par organisation: {}", organizationId);
+        return taxeService.getTaxesByOrganizationId(organizationId);
+    }
+
+    @GetMapping("/agence/{agencyId}")
+    @Operation(summary = "Récupérer les taxes par agence")
+    public Flux<TaxeResponse> getTaxesByAgencyId(@PathVariable UUID agencyId) {
+        log.info("Requête de récupération des taxes par agence: {}", agencyId);
+        return taxeService.getTaxesByAgencyId(agencyId);
+    }
 }

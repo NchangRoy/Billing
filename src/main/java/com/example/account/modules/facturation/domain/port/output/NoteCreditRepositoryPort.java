@@ -13,6 +13,8 @@ public interface NoteCreditRepositoryPort {
     Flux<NoteCredit> findByIdFactureOrigine(UUID idFactureOrigine);
     Mono<Boolean> existsByNumeroNoteCredit(String numeroNoteCredit);
     Mono<Boolean> existsById(UUID id);
+    Flux<NoteCredit> findByOrganizationId(UUID organizationId);
+    Flux<NoteCredit> findByAgencyId(UUID agencyId);
     Mono<Void> deleteById(UUID id);
     Mono<NoteCredit> save(NoteCredit noteCredit);
     Mono<NoteCredit> insert(NoteCredit noteCredit);

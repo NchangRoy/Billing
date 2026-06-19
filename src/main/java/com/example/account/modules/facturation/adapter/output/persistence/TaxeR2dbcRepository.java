@@ -32,4 +32,8 @@ public interface TaxeR2dbcRepository extends R2dbcRepository<TaxePersistenceEnti
     
     @Query("SELECT COUNT(*) FROM taxes WHERE type_taxe = :typeTaxe")
     Mono<Long> countByTypeTaxe(String typeTaxe);
+
+    Flux<TaxePersistenceEntity> findByOrganizationId(UUID organizationId);
+
+    Flux<TaxePersistenceEntity> findByAgencyId(UUID agencyId);
 }

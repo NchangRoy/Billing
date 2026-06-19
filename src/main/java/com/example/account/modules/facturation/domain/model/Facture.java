@@ -61,6 +61,7 @@ public class Facture {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private UUID organizationId;
+    private UUID agencyId;
     @Builder.Default
     private Long version = 0L;
 }

@@ -56,4 +56,5 @@ public class BonAchatResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private UUID organizationId;
+    private UUID agencyId;
 }

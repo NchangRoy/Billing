@@ -56,4 +56,5 @@ public class NoteCreditResponse {
     private LocalDateTime updatedAt;
 
     private UUID organizationId;
+    private UUID agencyId;
 }

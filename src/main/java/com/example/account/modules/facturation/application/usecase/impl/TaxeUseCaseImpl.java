@@ -224,4 +224,18 @@ public class TaxeUseCaseImpl implements TaxeUseCase {
     public Mono<Long> countByType(String typeTaxe) {
         return taxeRepositoryPort.countByTypeTaxe(typeTaxe);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Flux<TaxeResponse> getTaxesByOrganizationId(UUID organizationId) {
+        log.info("Récupération des taxes par organisation: {}", organizationId);
+        return taxeRepositoryPort.findByOrganizationId(organizationId).map(taxeMapper::toResponse);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Flux<TaxeResponse> getTaxesByAgencyId(UUID agencyId) {
+        log.info("Récupération des taxes par agence: {}", agencyId);
+        return taxeRepositoryPort.findByAgencyId(agencyId).map(taxeMapper::toResponse);
+    }
 }

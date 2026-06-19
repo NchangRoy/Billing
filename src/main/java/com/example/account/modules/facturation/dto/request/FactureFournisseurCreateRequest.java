@@ -41,4 +41,5 @@ public class FactureFournisseurCreateRequest {
     private String numeroBonReception;
     private LocalDateTime dateSysteme;
     private UUID organizationId;
+    private UUID agencyId;
 }

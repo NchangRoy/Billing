@@ -1,0 +1,91 @@
+databaseChangeLog:
+  - changeSet:
+      id: 3-add-agency-id-to-factures
+      author: dev
+      changes:
+        - addColumn:
+            tableName: factures
+            columns:
+              - column:
+                  name: agency_id
+                  type: uuid
+                  constraints:
+                    nullable: true
+
+  - changeSet:
+      id: 4-add-agency-id-to-devis
+      author: dev
+      changes:
+        - addColumn:
+            tableName: devis
+            columns:
+              - column:
+                  name: agency_id
+                  type: uuid
+                  constraints:
+                    nullable: true
+
+  - changeSet:
+      id: 5-add-agency-id-to-paiements
+      author: dev
+      changes:
+        - addColumn:
+            tableName: paiements
+            columns:
+              - column:
+                  name: agency_id
+                  type: uuid
+                  constraints:
+                    nullable: true
+
+  - changeSet:
+      id: 6-add-agency-id-to-notes-credit
+      author: dev
+      changes:
+        - addColumn:
+            tableName: notes_credit
+            columns:
+              - column:
+                  name: agency_id
+                  type: uuid
+                  constraints:
+                    nullable: true
+
+  - changeSet:
+      id: 7-add-agency-id-to-taxes
+      author: dev
+      changes:
+        - addColumn:
+            tableName: taxes
+            columns:
+              - column:
+                  name: agency_id
+                  type: uuid
+                  constraints:
+                    nullable: true
+
+  - changeSet:
+      id: 8-add-agency-id-to-journals
+      author: dev
+      changes:
+        - addColumn:
+            tableName: journals
+            columns:
+              - column:
+                  name: agency_id
+                  type: uuid
+                  constraints:
+                    nullable: true
+
+  - changeSet:
+      id: 9-add-agency-id-to-factures-proforma
+      author: dev
+      changes:
+        - addColumn:
+            tableName: factures_proforma
+            columns:
+              - column:
+                  name: agency_id
+                  type: uuid
+                  constraints:
+                    nullable: true

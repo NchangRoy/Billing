@@ -19,4 +19,6 @@ public class JournalResponse {
     private String type;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private UUID organizationId;
+    private UUID agencyId;
 }

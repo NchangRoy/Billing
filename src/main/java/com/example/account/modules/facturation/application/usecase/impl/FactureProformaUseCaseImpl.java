@@ -112,4 +112,18 @@ public class FactureProformaUseCaseImpl implements FactureProformaUseCase {
                 })
                 .map(proformaMapper::toResponse);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Flux<ProformaInvoiceResponse> getProformasByOrganizationId(UUID organizationId) {
+        log.info("Récupération des factures proforma par organisation: {}", organizationId);
+        return proformaRepository.findByOrganizationId(organizationId).map(proformaMapper::toResponse);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Flux<ProformaInvoiceResponse> getProformasByAgencyId(UUID agencyId) {
+        log.info("Récupération des factures proforma par agence: {}", agencyId);
+        return proformaRepository.findByAgencyId(agencyId).map(proformaMapper::toResponse);
+    }
 }

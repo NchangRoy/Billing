@@ -20,4 +20,6 @@ public interface JournalUseCase {
     Flux<JournalResponse> searchJournalsByNom(String nomJournal);
     Mono<Void> deleteJournal(UUID journalId);
     Mono<Long> countByType(String type);
+    Flux<JournalResponse> getJournalsByOrganizationId(UUID organizationId);
+    Flux<JournalResponse> getJournalsByAgencyId(UUID agencyId);
 }

@@ -13,4 +13,8 @@ public interface NoteCreditR2dbcRepository extends R2dbcRepository<NoteCreditPer
     Flux<NoteCreditPersistenceEntity> findByIdClient(UUID idClient);
     Flux<NoteCreditPersistenceEntity> findByIdFactureOrigine(UUID idFactureOrigine);
     Mono<Boolean> existsByNumeroNoteCredit(String numeroNoteCredit);
+
+    Flux<NoteCreditPersistenceEntity> findByOrganizationId(UUID organizationId);
+
+    Flux<NoteCreditPersistenceEntity> findByAgencyId(UUID agencyId);
 }

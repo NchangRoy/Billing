@@ -72,4 +72,16 @@ public class FactureProformaController {
         return proformaService.deleteProforma(id)
                 .thenReturn(ResponseEntity.noContent().build());
     }
+
+    @GetMapping("/organisation/{organizationId}")
+    @Operation(summary = "Récupérer les factures proforma par organisation")
+    public Flux<ProformaInvoiceResponse> getProformasByOrganizationId(@PathVariable UUID organizationId) {
+        return proformaService.getProformasByOrganizationId(organizationId);
+    }
+
+    @GetMapping("/agence/{agencyId}")
+    @Operation(summary = "Récupérer les factures proforma par agence")
+    public Flux<ProformaInvoiceResponse> getProformasByAgencyId(@PathVariable UUID agencyId) {
+        return proformaService.getProformasByAgencyId(agencyId);
+    }
 }

@@ -13,6 +13,8 @@ public interface JournalRepositoryPort {
     Mono<Boolean> existsByNomJournal(String nomJournal);
     Flux<Journal> findByNomJournalContaining(String query);
     Flux<Journal> findAll();
+    Flux<Journal> findByOrganizationId(UUID organizationId);
+    Flux<Journal> findByAgencyId(UUID agencyId);
     Mono<Long> countByType(String type);
     Mono<Journal> save(Journal journal);
     Mono<Void> deleteById(UUID id);

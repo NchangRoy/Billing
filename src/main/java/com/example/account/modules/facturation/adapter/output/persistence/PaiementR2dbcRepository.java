@@ -29,4 +29,8 @@ public interface PaiementR2dbcRepository extends R2dbcRepository<PaiementPersist
 
     Mono<Long> countByIdClient(UUID idClient);
     Mono<Long> countByModePaiement(TypePaiement mode);
+
+    Flux<PaiementPersistenceEntity> findByOrganizationId(UUID organizationId);
+
+    Flux<PaiementPersistenceEntity> findByAgencyId(UUID agencyId);
 }

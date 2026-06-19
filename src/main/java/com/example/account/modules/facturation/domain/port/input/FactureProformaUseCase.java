@@ -16,4 +16,6 @@ public interface FactureProformaUseCase {
     Mono<Void> deleteProforma(UUID id);
     Mono<ProformaInvoiceResponse> updateStatut(UUID id, StatutProforma nouveauStatut);
     Mono<ProformaInvoiceResponse> updateFactureProforma(UUID id, ProformaInvoiceRequest request);
+    Flux<ProformaInvoiceResponse> getProformasByOrganizationId(UUID organizationId);
+    Flux<ProformaInvoiceResponse> getProformasByAgencyId(UUID agencyId);
 }

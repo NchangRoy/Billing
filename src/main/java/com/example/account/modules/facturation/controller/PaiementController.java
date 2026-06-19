@@ -71,4 +71,16 @@ public class PaiementController {
         return paiementService.deletePaiement(id)
                 .thenReturn(ResponseEntity.noContent().build());
     }
+
+    @GetMapping("/organisation/{organizationId}")
+    @Operation(summary = "Récupérer les paiements par organisation")
+    public Flux<PaiementResponse> getPaiementsByOrganizationId(@PathVariable UUID organizationId) {
+        return paiementService.getPaiementsByOrganizationId(organizationId);
+    }
+
+    @GetMapping("/agence/{agencyId}")
+    @Operation(summary = "Récupérer les paiements par agence")
+    public Flux<PaiementResponse> getPaiementsByAgencyId(@PathVariable UUID agencyId) {
+        return paiementService.getPaiementsByAgencyId(agencyId);
+    }
 }

@@ -44,4 +44,14 @@ public class FactureFournisseurController {
                     return Mono.just(ResponseEntity.status(HttpStatus.BAD_REQUEST).build());
                 });
     }
+
+    @GetMapping("/organisation/{organizationId}")
+    public Flux<FactureFournisseurResponse> getByOrganizationId(@PathVariable UUID organizationId) {
+        return factureFournisseurService.getByOrganizationId(organizationId);
+    }
+
+    @GetMapping("/agence/{agencyId}")
+    public Flux<FactureFournisseurResponse> getByAgencyId(@PathVariable UUID agencyId) {
+        return factureFournisseurService.getByAgencyId(agencyId);
+    }
 }

@@ -28,4 +28,6 @@ public class PaiementResponse {
     private UUID idFacture;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private UUID organizationId;
+    private UUID agencyId;
 }

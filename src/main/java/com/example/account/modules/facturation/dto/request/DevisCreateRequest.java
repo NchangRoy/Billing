@@ -98,6 +98,7 @@ public class DevisCreateRequest {
     private String pdfPath;
    
     private UUID organizationId;
+    private UUID agencyId;
     private UUID createdBy;
     
 }

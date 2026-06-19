@@ -13,4 +13,6 @@ public interface BonCommandeRepository extends R2dbcRepository<BonCommande, UUID
     Mono<BonCommande> findByNumeroCommande(String numeroCommande);
     Flux<BonCommande> findByIdClient(UUID idClient);
     Mono<Boolean> existsByNumeroCommande(String numeroCommande);
+    Flux<BonCommande> findByOrganizationId(UUID organizationId);
+    Flux<BonCommande> findByIdAgency(UUID idAgency);
 }

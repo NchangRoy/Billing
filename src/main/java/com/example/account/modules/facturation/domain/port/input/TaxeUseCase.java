@@ -29,4 +29,6 @@ public interface TaxeUseCase {
     Mono<TaxeResponse> desactiverTaxe(UUID taxeId);
     Mono<Long> countActiveTaxes();
     Mono<Long> countByType(String typeTaxe);
+    Flux<TaxeResponse> getTaxesByOrganizationId(UUID organizationId);
+    Flux<TaxeResponse> getTaxesByAgencyId(UUID agencyId);
 }

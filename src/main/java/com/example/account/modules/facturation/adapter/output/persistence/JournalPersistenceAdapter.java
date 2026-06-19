@@ -16,6 +16,7 @@ public class JournalPersistenceAdapter implements JournalRepositoryPort {
 
     private final JournalR2dbcRepository repository;
     private final JournalPersistenceMapper mapper;
+    private final org.springframework.data.r2dbc.core.R2dbcEntityTemplate entityTemplate;
 
     @Override
     public Mono<Journal> findById(UUID id) {
@@ -48,13 +49,30 @@ public class JournalPersistenceAdapter implements JournalRepositoryPort {
     }
 
     @Override
+    public Flux<Journal> findByOrganizationId(UUID organizationId) {
+        return repository.findByOrganizationId(organizationId).map(mapper::toDomain);
+    }
+
+    @Override
+    public Flux<Journal> findByAgencyId(UUID agencyId) {
+        return repository.findByAgencyId(agencyId).map(mapper::toDomain);
+    }
+
+    @Override
     public Mono<Long> countByType(String type) {
         return repository.countByType(type);
     }
 
     @Override
     public Mono<Journal> save(Journal journal) {
-        return repository.save(mapper.toEntity(journal)).map(mapper::toDomain);
+        JournalPersistenceEntity entity = mapper.toEntity(journal);
+        if (entity.getIdJournal() == null) {
+            entity.setIdJournal(UUID.randomUUID());
+            return entityTemplate.insert(entity).map(mapper::toDomain);
+        }
+        return repository.existsById(entity.getIdJournal())
+                .flatMap(exists -> exists ? repository.save(entity) : entityTemplate.insert(entity))
+                .map(mapper::toDomain);
     }
 
     @Override

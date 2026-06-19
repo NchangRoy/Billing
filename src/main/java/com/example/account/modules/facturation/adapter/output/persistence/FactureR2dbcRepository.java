@@ -71,4 +71,8 @@ public interface FactureR2dbcRepository extends R2dbcRepository<FacturePersisten
     Mono<Long> countByDateBetween(LocalDate startDate, LocalDate endDate);
     
     Mono<Boolean> existsByNumeroFacture(String numeroFacture);
+
+    Flux<FacturePersistenceEntity> findByOrganizationId(UUID organizationId);
+
+    Flux<FacturePersistenceEntity> findByAgencyId(UUID agencyId);
 }

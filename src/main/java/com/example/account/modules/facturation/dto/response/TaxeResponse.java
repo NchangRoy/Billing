@@ -25,4 +25,6 @@ public class TaxeResponse {
     private String positionFiscale;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private UUID organizationId;
+    private UUID agencyId;
 }

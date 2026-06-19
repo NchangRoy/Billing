@@ -8,7 +8,7 @@ import com.example.account.modules.facturation.dto.request.BonCommandeUpdateRequ
 import com.example.account.modules.facturation.dto.response.BonCommandeResponse;
 import com.example.account.modules.facturation.mapper.BonCommandeMapper;
 import com.example.account.modules.facturation.model.entity.BonCommande;
-import com.example.account.modules.facturation.model.entity.Devis;
+import com.example.account.modules.facturation.domain.model.Devis;
 import com.example.account.modules.facturation.model.enums.StatusBonCommande;
 import com.example.account.modules.facturation.repository.BonCommandeRepository;
 import com.example.account.modules.facturation.service.producer.BonCommandeEventProducer;
@@ -139,6 +139,16 @@ public class BonCommandeService {
                 .then();
     }
 
+
+   @Transactional(readOnly = true)
+   public Flux<BonCommandeResponse> getByOrganizationId(UUID organizationId) {
+       return bonCommandeRepository.findByOrganizationId(organizationId).map(bonCommandeMapper::toResponse);
+   }
+
+   @Transactional(readOnly = true)
+   public Flux<BonCommandeResponse> getByAgencyId(UUID agencyId) {
+       return bonCommandeRepository.findByIdAgency(agencyId).map(bonCommandeMapper::toResponse);
+   }
 
    public Mono<BonCommande> createFromQuotation(Devis devis) {
     log.info("Création d'un nouveau bon de commande depuis le devis: {}", devis.getNumeroDevis());

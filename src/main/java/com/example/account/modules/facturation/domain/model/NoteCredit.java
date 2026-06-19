@@ -44,4 +44,5 @@ public class NoteCredit extends OrganizationScoped {
     private LocalDateTime validatedAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private UUID agencyId;
 }

@@ -112,7 +112,7 @@ public Mono<ResponseEntity<Void>> sendQuotationEmail(@RequestBody EmailRequest r
     public Mono<ResponseEntity<Void>> accepterDevis(@PathVariable UUID devisId) {
         log.info("Requête d'acceptation du devis: {}", devisId);
         return devisService.accepterDevis(devisId)
-                .map(ResponseEntity::ok);
+                .thenReturn(ResponseEntity.ok().build());
     }
 
     @PutMapping("/{devisId}/refuser")
@@ -122,6 +122,20 @@ public Mono<ResponseEntity<Void>> sendQuotationEmail(@RequestBody EmailRequest r
             ) {
         log.info("Requête de refus du devis: {}", devisId);
         return devisService.refuserDevis(devisId)
-                .map(ResponseEntity::ok);
+                .thenReturn(ResponseEntity.ok().build());
+    }
+
+    @GetMapping("/organisation/{organizationId}")
+    @Operation(summary = "Récupérer les devis par organisation")
+    public Flux<DevisResponse> getDevisByOrganizationId(@PathVariable UUID organizationId) {
+        log.info("Requête de récupération des devis par organisation: {}", organizationId);
+        return devisService.getDevisByOrganizationId(organizationId);
+    }
+
+    @GetMapping("/agence/{agencyId}")
+    @Operation(summary = "Récupérer les devis par agence")
+    public Flux<DevisResponse> getDevisByAgencyId(@PathVariable UUID agencyId) {
+        log.info("Requête de récupération des devis par agence: {}", agencyId);
+        return devisService.getDevisByAgencyId(agencyId);
     }
 }

@@ -13,4 +13,6 @@ public interface FactureFournisseurRepository extends R2dbcRepository<FactureFou
     Mono<FactureFournisseur> findByNumeroFacture(String numeroFacture);
     Flux<FactureFournisseur> findByIdFournisseur(UUID idFournisseur);
     Mono<Boolean> existsByNumeroFacture(String numeroFacture);
+    Flux<FactureFournisseur> findByOrganizationId(UUID organizationId);
+    Flux<FactureFournisseur> findByAgencyId(UUID agencyId);
 }

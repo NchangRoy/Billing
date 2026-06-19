@@ -11,6 +11,8 @@ import reactor.core.publisher.Mono;
 import java.time.LocalDate;
 import java.util.UUID;
 
+import com.example.account.modules.facturation.dto.request.ExternalRequest.EmailRequest;
+
 public interface DevisUseCase {
     Mono<DevisResponse> createDevis(DevisCreateRequest request);
     Mono<DevisResponse> updateDevis(UUID devisId, DevisCreateRequest request);
@@ -18,12 +20,11 @@ public interface DevisUseCase {
     Mono<DevisResponse> getDevisByNumero(String numeroDevis);
     Flux<DevisResponse> getAllDevis();
     Flux<DevisResponse> getAllDevis(Pageable pageable);
-    Flux<DevisResponse> getDevisByClient(UUID clientId);
-    Flux<DevisResponse> getDevisByStatut(StatutDevis statut);
-    Flux<DevisResponse> getDevisExpires();
-    Flux<DevisResponse> getDevisByPeriode(LocalDate dateDebut, LocalDate dateFin);
     Mono<Void> deleteDevis(UUID devisId);
-    Mono<DevisResponse> accepterDevis(UUID devisId);
-    Mono<DevisResponse> refuserDevis(UUID devisId, String motifRefus);
+    Mono<Void> accepterDevis(UUID devisId);
+    Mono<Void> refuserDevis(UUID devisId);
+    Mono<Void> sendDevisAsEmail(EmailRequest emailRequest);
     Flux<SellerAuthResponse> enrichDevis(UUID orgId);
+    Flux<DevisResponse> getDevisByOrganizationId(UUID organizationId);
+    Flux<DevisResponse> getDevisByAgencyId(UUID agencyId);
 }

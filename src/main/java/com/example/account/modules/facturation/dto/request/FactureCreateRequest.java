@@ -81,5 +81,6 @@ public class FactureCreateRequest {
     
     private UUID  referalClientId;
     private UUID organizationId;
+    private UUID agencyId;
     private UUID createdBy;
 }

@@ -59,9 +59,13 @@ public class BonReceptionService {
         return bonReceptionRepository.findById(id)
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("Bon de Réception non trouvé")))
                 .flatMap(bondeReception -> {
-
-                    System.out.println(bondeReception);
+                    UUID originalId = bondeReception.getIdBonReception();
+                    UUID originalOrgId = bondeReception.getOrganizationId();
                     bondeReceptionMapper.updateEntityFromDto(dto, bondeReception);
+                    bondeReception.setIdBonReception(originalId);
+                    if (bondeReception.getOrganizationId() == null) {
+                        bondeReception.setOrganizationId(originalOrgId);
+                    }
                     return bonReceptionRepository.save(bondeReception);
                 })
                 .map(bondeReceptionMapper::toDto);
@@ -73,5 +77,15 @@ public class BonReceptionService {
         return bonReceptionRepository.findById(id)
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("Bon de Réception non trouvé")))
                 .flatMap(bondeReception -> bonReceptionRepository.delete(bondeReception));
+    }
+
+    @Transactional(readOnly = true)
+    public Flux<BondeReceptionResponse> getByOrganizationId(UUID organizationId) {
+        return bonReceptionRepository.findByOrganizationId(organizationId).map(bondeReceptionMapper::toDto);
+    }
+
+    @Transactional(readOnly = true)
+    public Flux<BondeReceptionResponse> getByAgencyId(UUID agencyId) {
+        return bonReceptionRepository.findByAgencyId(agencyId).map(bondeReceptionMapper::toDto);
     }
 }

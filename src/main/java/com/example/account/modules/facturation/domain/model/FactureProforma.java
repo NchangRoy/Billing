@@ -59,5 +59,6 @@ public class FactureProforma {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private UUID organizationId;
+    private UUID agencyId;
     private UUID createdBy;
 }

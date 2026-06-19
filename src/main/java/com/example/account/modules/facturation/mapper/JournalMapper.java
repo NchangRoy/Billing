@@ -14,7 +14,8 @@ import java.util.List;
 
 @Mapper(
         componentModel = "spring",
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+        builder = @org.mapstruct.Builder(disableBuilder = true)
 )
 public interface JournalMapper extends BaseMapper<Journal, JournalCreateRequest, JournalUpdateRequest, JournalResponse> {
 

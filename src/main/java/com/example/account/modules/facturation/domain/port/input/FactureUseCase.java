@@ -29,9 +29,6 @@ public interface FactureUseCase {
     Mono<FactureResponse> marquerCommePaye(UUID factureId);
     Mono<FactureResponse> enregistrerPaiement(UUID factureId, BigDecimal montantPaye);
     Mono<Long> countByEtat(StatutFacture etat);
-    Mono<Void> envoyerRappelPaiement(UUID factureId);
-    Flux<SellerAuthResponse> enrichFactures(UUID orgId);
-    Mono<byte[]> genererPdfFacture(UUID factureId);
-    Mono<Void> envoyerFactureParEmail(UUID factureId);
-    Mono<String> genererEtSauvegarderPdfFacture(UUID factureId);
+    Flux<FactureResponse> getFacturesByOrganizationId(UUID organizationId);
+    Flux<FactureResponse> getFacturesByAgencyId(UUID agencyId);
 }

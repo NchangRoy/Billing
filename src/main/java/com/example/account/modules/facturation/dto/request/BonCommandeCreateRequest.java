@@ -82,4 +82,5 @@ public class BonCommandeCreateRequest {
     private String notes;
     private UUID createdBy;
     private UUID organizationId;
+    private UUID agencyId;
 }

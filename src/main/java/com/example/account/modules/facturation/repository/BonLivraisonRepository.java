@@ -12,4 +12,6 @@ import java.util.UUID;
 public interface BonLivraisonRepository extends R2dbcRepository<BonLivraison, UUID> {
     Mono<BonLivraison> findByNumeroLivraison(String numeroLivraison);
     Flux<BonLivraison> findByIdClient(UUID idClient);
+    Flux<BonLivraison> findByOrganizationId(UUID organizationId);
+    Flux<BonLivraison> findByAgencyId(UUID agencyId);
 }

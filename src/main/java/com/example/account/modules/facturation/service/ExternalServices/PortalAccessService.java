@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import com.example.account.modules.facturation.dto.response.DevisResponse;
 import com.example.account.modules.facturation.dto.response.ExternalResponses.PortalAcessResponse;
 import com.example.account.modules.facturation.model.entity.Others.PortalAccessToken;
-import com.example.account.modules.facturation.service.DevisService;
+import com.example.account.modules.facturation.domain.port.input.DevisUseCase;
 import com.example.account.modules.facturation.service.ExternalServices.entity.PortalPermissions;
 import com.example.account.modules.facturation.service.ExternalServices.entity.enums.ResourceType;
 
@@ -21,7 +21,7 @@ public class PortalAccessService {
     @Autowired
     private  PortalTokenService portalTokenService;
     @Autowired 
-    private DevisService devisService;
+    private DevisUseCase devisService;
 
   public Mono<PortalAcessResponse<DevisResponse>> getDevisInformation(String tokenValue) {
     return portalTokenService.getByTokenValue(tokenValue)

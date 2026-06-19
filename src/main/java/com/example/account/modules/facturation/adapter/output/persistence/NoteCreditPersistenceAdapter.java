@@ -52,6 +52,16 @@ public class NoteCreditPersistenceAdapter implements NoteCreditRepositoryPort {
     }
 
     @Override
+    public Flux<NoteCredit> findByOrganizationId(UUID organizationId) {
+        return repository.findByOrganizationId(organizationId).map(mapper::toDomain);
+    }
+
+    @Override
+    public Flux<NoteCredit> findByAgencyId(UUID agencyId) {
+        return repository.findByAgencyId(agencyId).map(mapper::toDomain);
+    }
+
+    @Override
     public Mono<Void> deleteById(UUID id) {
         return repository.deleteById(id);
     }

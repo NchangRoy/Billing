@@ -1,7 +1,7 @@
 package com.example.account.modules.facturation.service;
 
 import com.example.account.modules.facturation.dto.request.ExternalRequest.EmailRequest;
-import com.example.account.modules.facturation.model.entity.Devis;
+import com.example.account.modules.facturation.domain.model.Devis;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

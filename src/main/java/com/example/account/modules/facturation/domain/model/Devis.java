@@ -61,6 +61,7 @@ public class Devis {
     private UUID createdBy;
     private LocalDateTime updatedAt;
     private UUID organizationId;
+    private UUID agencyId;
     @Builder.Default
     private Long version = 0L;
 }

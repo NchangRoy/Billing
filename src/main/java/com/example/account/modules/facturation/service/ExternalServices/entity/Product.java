@@ -4,8 +4,6 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
-import com.example.account.modules.tiers.model.entity.Client;
-
 import org.springframework.data.relational.core.mapping.Column;
 import java.math.BigDecimal;
 import java.time.LocalDate;

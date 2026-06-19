@@ -73,5 +73,6 @@ public class BondeReception {
     @Column("organization_id")
     private UUID organizationId;
 
-
+    @Column("agency_id")
+    private UUID agencyId;
 }

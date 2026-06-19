@@ -1,6 +1,7 @@
 package com.example.account.modules.facturation.application.usecase.impl;
 
 import com.example.account.modules.facturation.domain.model.Facture;
+import com.example.account.modules.facturation.domain.model.LigneFacture;
 import com.example.account.modules.facturation.domain.port.input.FactureUseCase;
 import com.example.account.modules.facturation.domain.port.output.AccountingServicePort;
 import com.example.account.modules.facturation.domain.port.output.FactureEventPort;
@@ -11,14 +12,9 @@ import com.example.account.modules.facturation.dto.response.FactureResponse;
 import com.example.account.modules.facturation.dto.response.ExternalResponses.SellerAuthResponse;
 import com.example.account.modules.facturation.mapper.FactureMapper;
 import com.example.account.modules.facturation.model.enums.StatutFacture;
-import com.example.account.modules.facturation.repository.FactureRepository;
-import com.example.account.modules.facturation.repository.DevisRepository;
-import com.example.account.modules.tiers.model.entity.Client;
-import com.example.account.modules.tiers.repository.ClientRepository;
-import com.example.account.modules.facturation.service.ExternalServices.AccountingService;
 import com.example.account.modules.facturation.service.ExternalServices.ProductExternalService;
-import com.example.account.modules.facturation.service.ExternalServices.SellerService;
-import com.example.account.modules.facturation.service.producer.FactureEventProducer;
+import com.example.account.modules.facturation.service.PdfGeneratorService;
+import com.example.account.modules.facturation.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -42,31 +38,49 @@ public class FactureUseCaseImpl implements FactureUseCase {
     private final FactureEventPort factureEventPort;
     private final PdfGeneratorService pdfGeneratorService;
     private final EmailService emailService;
-    private final DevisRepository devisRepository;
-    private final AccountingService accountingService;
-    private final SellerService sellerService;
-
-    private final ClientRepository clientRepository;
-    private final R2dbcEntityTemplate entityTemplate;
+    private final AccountingServicePort accountingService;
+    private final SellerServicePort sellerService;
     private final ProductExternalService productExternalService;
 
     @Transactional
     public Mono<FactureResponse> createFacture(FactureCreateRequest request) {
         log.info("Création d'une nouvelle facture pour le client: {}", request.getIdClient());
 
-
-
-
-
         Facture facture = factureMapper.toEntity(request);
         if (facture.getIdFacture() == null) {
             facture.setIdFacture(UUID.randomUUID());
         }
 
+        // Compute totals from lines if null or zero
+        if (facture.getMontantTotal() == null || facture.getMontantTotal().compareTo(BigDecimal.ZERO) == 0) {
+            BigDecimal total = BigDecimal.ZERO;
+            if (facture.getLignesFacture() != null) {
+                for (LigneFacture line : facture.getLignesFacture()) {
+                    if (line.getMontantTotal() != null) {
+                        total = total.add(line.getMontantTotal());
+                    } else if (line.getPrixUnitaire() != null && line.getQuantite() != null) {
+                        total = total.add(line.getPrixUnitaire().multiply(BigDecimal.valueOf(line.getQuantite())));
+                    }
+                }
+            }
+            facture.setMontantTotal(total);
+            if (facture.getMontantHT() == null) {
+                facture.setMontantHT(total);
+            }
+            if (facture.getMontantTTC() == null) {
+                facture.setMontantTTC(total);
+            }
+        }
+
+        // Set default remaining amount if null or zero
+        if (facture.getMontantRestant() == null || facture.getMontantRestant().compareTo(BigDecimal.ZERO) == 0) {
+            facture.setMontantRestant(facture.getMontantTotal());
+        }
+
         //delete the reservations made by the creator;
         productExternalService.releaseProductsForSeller(facture.getCreatedBy());
         //save facture
-        return entityTemplate.insert(facture)
+        return factureRepository.insert(facture)
                 .map(savedFacture -> {
                     FactureResponse response = factureMapper.toResponse(savedFacture);
                     factureEventPort.publishFactureCreated(response);
@@ -227,7 +241,12 @@ public class FactureUseCaseImpl implements FactureUseCase {
         return factureRepository.findById(factureId)
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("Facture non trouvée: " + factureId)))
                 .flatMap(facture -> {
-                    BigDecimal nouveauMontantRestant = facture.getMontantRestant().subtract(montantPaye);
+                    BigDecimal restant = facture.getMontantRestant();
+                    if (restant == null) {
+                        restant = facture.getMontantTotal() != null ? facture.getMontantTotal() :
+                                  (facture.getMontantTTC() != null ? facture.getMontantTTC() : BigDecimal.ZERO);
+                    }
+                    BigDecimal nouveauMontantRestant = restant.subtract(montantPaye);
 
                     if (nouveauMontantRestant.compareTo(BigDecimal.ZERO) < 0) {
                         return Mono.error(new IllegalArgumentException("Le montant payé dépasse le montant restant"));
@@ -258,5 +277,17 @@ public class FactureUseCaseImpl implements FactureUseCase {
         return factureRepository.countByEtat(etat);
     }
 
-    
+    @Override
+    @Transactional(readOnly = true)
+    public Flux<FactureResponse> getFacturesByOrganizationId(UUID organizationId) {
+        log.info("Récupération des factures par organisation: {}", organizationId);
+        return factureRepository.findByOrganizationId(organizationId).map(factureMapper::toResponse);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Flux<FactureResponse> getFacturesByAgencyId(UUID agencyId) {
+        log.info("Récupération des factures par agence: {}", agencyId);
+        return factureRepository.findByAgencyId(agencyId).map(factureMapper::toResponse);
+    }
 }

@@ -96,4 +96,18 @@ public class JournalController {
         return journalService.countByType(type)
                 .map(ResponseEntity::ok);
     }
+
+    @GetMapping("/organisation/{organizationId}")
+    @Operation(summary = "Récupérer les journaux par organisation")
+    public Flux<JournalResponse> getJournalsByOrganizationId(@PathVariable UUID organizationId) {
+        log.info("Requête de récupération des journaux par organisation: {}", organizationId);
+        return journalService.getJournalsByOrganizationId(organizationId);
+    }
+
+    @GetMapping("/agence/{agencyId}")
+    @Operation(summary = "Récupérer les journaux par agence")
+    public Flux<JournalResponse> getJournalsByAgencyId(@PathVariable UUID agencyId) {
+        log.info("Requête de récupération des journaux par agence: {}", agencyId);
+        return journalService.getJournalsByAgencyId(agencyId);
+    }
 }

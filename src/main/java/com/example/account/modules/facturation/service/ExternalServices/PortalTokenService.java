@@ -32,14 +32,20 @@ public class PortalTokenService {
     PortalPermissions permissions
     
 ) {
+    PortalPermissions actualPermissions = permissions != null ? permissions : PortalPermissions.builder()
+            .canView(true)
+            .canAccept(true)
+            .canModify(false)
+            .canReject(true)
+            .build();
     PortalAccessToken newToken = PortalAccessToken.builder()
             .resourceId(resourceId)
             .resourceType(resourceType)
             .clientEmail(clientEmail)
-            .canAccept(permissions.getCanAccept())
-            .canView(permissions.getCanView())
-            .canModify(permissions.getCanModify())
-            .canReject(permissions.getCanReject())
+            .canAccept(actualPermissions.getCanAccept())
+            .canView(actualPermissions.getCanView())
+            .canModify(actualPermissions.getCanModify())
+            .canReject(actualPermissions.getCanReject())
             .token(UUID.randomUUID().toString().replace("-", "") + UUID.randomUUID().toString().replace("-", ""))
             .used(false)
             .createdAt(LocalDateTime.now())

@@ -28,4 +28,6 @@ public interface PaiementUseCase {
     Mono<BigDecimal> getTotalPaiementsByPeriode(LocalDate dateDebut, LocalDate dateFin);
     Mono<Long> countPaiementsByClient(UUID clientId);
     Mono<Long> countPaiementsByModePaiement(TypePaiement modePaiement);
+    Flux<PaiementResponse> getPaiementsByOrganizationId(UUID organizationId);
+    Flux<PaiementResponse> getPaiementsByAgencyId(UUID agencyId);
 }

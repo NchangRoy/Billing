@@ -20,6 +20,8 @@ public interface TaxeRepositoryPort {
     Flux<Taxes> findByMontantBetween(BigDecimal min, BigDecimal max);
     Mono<Boolean> existsByNomTaxe(String nomTaxe);
     Mono<Boolean> existsById(UUID id);
+    Flux<Taxes> findByOrganizationId(UUID organizationId);
+    Flux<Taxes> findByAgencyId(UUID agencyId);
     Mono<Taxes> save(Taxes taxe);
     Mono<Void> deleteById(UUID id);
     Mono<Long> countActiveTaxes();

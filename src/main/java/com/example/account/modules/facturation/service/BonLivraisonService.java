@@ -42,6 +42,9 @@ public class BonLivraisonService {
         if (bonLivraison.getIdBonLivraison() == null) {
             bonLivraison.setIdBonLivraison(UUID.randomUUID());
         }
+        if (bonLivraison.getStatut() == null) {
+            bonLivraison.setStatut(StatutBonLivraison.EN_PREPARATION);
+        }
 
         return entityTemplate.insert(bonLivraison)
                 .map(saved -> {
@@ -164,5 +167,15 @@ public class BonLivraisonService {
             }
         }
         bonLivraison.setLignesBonLivraison(deserializedLines);
+    }
+
+    @Transactional(readOnly = true)
+    public Flux<BonLivraisonResponse> getByOrganizationId(UUID organizationId) {
+        return bonLivraisonRepository.findByOrganizationId(organizationId).map(bonLivraisonMapper::toResponse);
+    }
+
+    @Transactional(readOnly = true)
+    public Flux<BonLivraisonResponse> getByAgencyId(UUID agencyId) {
+        return bonLivraisonRepository.findByAgencyId(agencyId).map(bonLivraisonMapper::toResponse);
     }
 }

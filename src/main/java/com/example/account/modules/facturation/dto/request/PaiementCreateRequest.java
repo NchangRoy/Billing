@@ -39,4 +39,6 @@ public class PaiementCreateRequest {
     private String memo;
 
     private UUID idFacture;
+    private UUID organizationId;
+    private UUID agencyId;
 }

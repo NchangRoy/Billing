@@ -17,6 +17,7 @@ public class TaxePersistenceAdapter implements TaxeRepositoryPort {
 
     private final TaxeR2dbcRepository repository;
     private final TaxePersistenceMapper mapper;
+    private final org.springframework.data.r2dbc.core.R2dbcEntityTemplate entityTemplate;
 
     @Override
     public Mono<Taxes> findById(UUID id) {
@@ -79,8 +80,25 @@ public class TaxePersistenceAdapter implements TaxeRepositoryPort {
     }
 
     @Override
+    public Flux<Taxes> findByOrganizationId(UUID organizationId) {
+        return repository.findByOrganizationId(organizationId).map(mapper::toDomain);
+    }
+
+    @Override
+    public Flux<Taxes> findByAgencyId(UUID agencyId) {
+        return repository.findByAgencyId(agencyId).map(mapper::toDomain);
+    }
+
+    @Override
     public Mono<Taxes> save(Taxes taxe) {
-        return repository.save(mapper.toEntity(taxe)).map(mapper::toDomain);
+        TaxePersistenceEntity entity = mapper.toEntity(taxe);
+        if (entity.getIdTaxe() == null) {
+            entity.setIdTaxe(UUID.randomUUID());
+            return entityTemplate.insert(entity).map(mapper::toDomain);
+        }
+        return repository.existsById(entity.getIdTaxe())
+                .flatMap(exists -> exists ? repository.save(entity) : entityTemplate.insert(entity))
+                .map(mapper::toDomain);
     }
 
     @Override

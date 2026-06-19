@@ -12,6 +12,8 @@ public interface FactureProformaRepositoryPort {
     Flux<FactureProforma> findByIdClient(UUID idClient);
     Mono<Boolean> existsByNumeroProformaInvoice(String numeroProformaInvoice);
     Mono<Boolean> existsById(UUID id);
+    Flux<FactureProforma> findByOrganizationId(UUID organizationId);
+    Flux<FactureProforma> findByAgencyId(UUID agencyId);
     Mono<Void> deleteById(UUID id);
     Mono<FactureProforma> save(FactureProforma proforma);
     Mono<FactureProforma> insert(FactureProforma proforma);

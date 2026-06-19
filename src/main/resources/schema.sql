@@ -140,7 +140,7 @@ CREATE TABLE IF NOT EXISTS clients (
 
 CREATE TABLE IF NOT EXISTS fournisseurs (
     id_fournisseur UUID PRIMARY KEY,
-    organization_id UUID \,
+    organization_id UUID,
     username VARCHAR(100),
     categorie VARCHAR(100),
     site_web VARCHAR(255),

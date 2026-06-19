@@ -74,5 +74,6 @@ public class ProformaInvoiceResponse {
     private LocalDateTime updatedAt;
 
     private UUID organizationId;
-    private UUID createdBy; 
+    private UUID agencyId;
+    private UUID createdBy;
 }

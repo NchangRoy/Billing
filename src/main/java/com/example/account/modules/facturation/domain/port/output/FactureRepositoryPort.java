@@ -32,6 +32,8 @@ public interface FactureRepositoryPort {
     Mono<BigDecimal> sumMontantByStatut(String statut);
     Mono<Long> countByDateBetween(LocalDate startDate, LocalDate endDate);
     Mono<Boolean> existsByNumeroFacture(String numeroFacture);
+    Flux<Facture> findByOrganizationId(UUID organizationId);
+    Flux<Facture> findByAgencyId(UUID agencyId);
     Mono<Facture> save(Facture facture);
     Mono<Facture> insert(Facture facture);
     Mono<Void> deleteById(UUID id);

@@ -44,4 +44,5 @@ public class FactureFournisseurResponse {
     private LocalDateTime updatedAt;
     private LocalDateTime dateSysteme;
     private UUID organizationId;
+    private UUID agencyId;
 }

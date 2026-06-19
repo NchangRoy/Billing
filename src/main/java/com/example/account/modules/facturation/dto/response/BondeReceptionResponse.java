@@ -33,4 +33,5 @@ public class BondeReceptionResponse {
     private UUID idBonAchat;
     private String agenceDeTransport;
     private UUID organizationId;
+    private UUID agencyId;
 }

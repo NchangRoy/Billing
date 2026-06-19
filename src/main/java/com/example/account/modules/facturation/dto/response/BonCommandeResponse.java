@@ -71,4 +71,5 @@ public class BonCommandeResponse {
     private LocalDateTime updatedAt;
     private LocalDateTime validatedAt;
     private UUID organizationId;
+    private UUID agencyId;
 }

@@ -190,4 +190,18 @@ public class PaiementUseCaseImpl implements PaiementUseCase {
     public Mono<Long> countPaiementsByModePaiement(TypePaiement modePaiement) {
         return paiementRepositoryPort.countByModePaiement(modePaiement);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Flux<PaiementResponse> getPaiementsByOrganizationId(UUID organizationId) {
+        log.info("Récupération des paiements par organisation: {}", organizationId);
+        return paiementRepositoryPort.findByOrganizationId(organizationId).map(paiementMapper::toResponse);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Flux<PaiementResponse> getPaiementsByAgencyId(UUID agencyId) {
+        log.info("Récupération des paiements par agence: {}", agencyId);
+        return paiementRepositoryPort.findByAgencyId(agencyId).map(paiementMapper::toResponse);
+    }
 }

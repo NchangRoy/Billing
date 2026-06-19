@@ -153,4 +153,18 @@ public class FactureController {
                 .map(ResponseEntity::ok);
     }
 
+    @GetMapping("/organisation/{organizationId}")
+    @Operation(summary = "Récupérer les factures par organisation")
+    public Flux<FactureResponse> getFacturesByOrganizationId(@PathVariable UUID organizationId) {
+        log.info("Requête de récupération des factures par organisation: {}", organizationId);
+        return factureService.getFacturesByOrganizationId(organizationId);
+    }
+
+    @GetMapping("/agence/{agencyId}")
+    @Operation(summary = "Récupérer les factures par agence")
+    public Flux<FactureResponse> getFacturesByAgencyId(@PathVariable UUID agencyId) {
+        log.info("Requête de récupération des factures par agence: {}", agencyId);
+        return factureService.getFacturesByAgencyId(agencyId);
+    }
+
 }

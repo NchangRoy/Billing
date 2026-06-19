@@ -67,4 +67,14 @@ public class FactureFournisseurService {
                     return factureFournisseurRepository.deleteById(id);
                 });
     }
+
+    @Transactional(readOnly = true)
+    public Flux<FactureFournisseurResponse> getByOrganizationId(UUID organizationId) {
+        return factureFournisseurRepository.findByOrganizationId(organizationId).map(factureFournisseurMapper::toResponse);
+    }
+
+    @Transactional(readOnly = true)
+    public Flux<FactureFournisseurResponse> getByAgencyId(UUID agencyId) {
+        return factureFournisseurRepository.findByAgencyId(agencyId).map(factureFournisseurMapper::toResponse);
+    }
 }

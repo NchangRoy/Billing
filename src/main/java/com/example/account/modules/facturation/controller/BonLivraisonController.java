@@ -80,4 +80,16 @@ public class BonLivraisonController {
         return bonLivraisonService.deleteBonLivraison(id)
                 .thenReturn(ResponseEntity.noContent().build());
     }
+
+    @GetMapping("/organisation/{organizationId}")
+    @Operation(summary = "Récupérer les bons de livraison par organisation")
+    public Flux<BonLivraisonResponse> getByOrganizationId(@PathVariable UUID organizationId) {
+        return bonLivraisonService.getByOrganizationId(organizationId);
+    }
+
+    @GetMapping("/agence/{agencyId}")
+    @Operation(summary = "Récupérer les bons de livraison par agence")
+    public Flux<BonLivraisonResponse> getByAgencyId(@PathVariable UUID agencyId) {
+        return bonLivraisonService.getByAgencyId(agencyId);
+    }
 }

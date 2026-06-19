@@ -19,6 +19,7 @@ public class PaiementPersistenceAdapter implements PaiementRepositoryPort {
 
     private final PaiementR2dbcRepository repository;
     private final PaiementPersistenceMapper mapper;
+    private final org.springframework.data.r2dbc.core.R2dbcEntityTemplate entityTemplate;
 
     @Override
     public Mono<Paiement> findById(UUID id) {
@@ -76,8 +77,25 @@ public class PaiementPersistenceAdapter implements PaiementRepositoryPort {
     }
 
     @Override
+    public Flux<Paiement> findByOrganizationId(UUID organizationId) {
+        return repository.findByOrganizationId(organizationId).map(mapper::toDomain);
+    }
+
+    @Override
+    public Flux<Paiement> findByAgencyId(UUID agencyId) {
+        return repository.findByAgencyId(agencyId).map(mapper::toDomain);
+    }
+
+    @Override
     public Mono<Paiement> save(Paiement paiement) {
-        return repository.save(mapper.toEntity(paiement)).map(mapper::toDomain);
+        PaiementPersistenceEntity entity = mapper.toEntity(paiement);
+        if (entity.getIdPaiement() == null) {
+            entity.setIdPaiement(UUID.randomUUID());
+            return entityTemplate.insert(entity).map(mapper::toDomain);
+        }
+        return repository.existsById(entity.getIdPaiement())
+                .flatMap(exists -> exists ? repository.save(entity) : entityTemplate.insert(entity))
+                .map(mapper::toDomain);
     }
 
     @Override

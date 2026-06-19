@@ -1,0 +1,4620 @@
+
+--- TESTING PRODUCTS ---
+
+==================================================
+POST /api/v1/products
+Status Code: 201
+Response Body:
+{
+  "idProduit": "2bd4972b-aef3-4eb3-83cd-38dcfcbd9a1f",
+  "nomProduit": "Laptop Pro",
+  "typeProduit": "ARTICLE",
+  "prixVente": 1200.0,
+  "cout": 800.0,
+  "categorie": "Electronics",
+  "reference": "PROD-LPT",
+  "codeBarre": null,
+  "photo": null,
+  "active": true,
+  "createdAt": "2026-06-13",
+  "updatedAt": null,
+  "uom": null,
+  "allowedSaleSizes": null,
+  "activePromotions": null,
+  "stockQuantity": 0.0,
+  "availableQuantity": 0.0,
+  "reservedQuantity": 0.0,
+  "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b"
+}
+==================================================
+
+==================================================
+GET /api/v1/products
+Status Code: 200
+Response Body:
+[
+  {
+    "idProduit": "a11844d1-2797-4921-bde9-7dc81705b618",
+    "nomProduit": "Huile v\u00e9g\u00e9tale 5L",
+    "typeProduit": "ALIMENTAIRE",
+    "prixVente": 7500.0,
+    "cout": 6200.0,
+    "categorie": "Huiles",
+    "reference": "HUILE-5L",
+    "codeBarre": "2234567890123",
+    "photo": "huile5l.png",
+    "active": true,
+    "createdAt": "2026-03-01",
+    "updatedAt": "2026-03-02",
+    "uom": null,
+    "allowedSaleSizes": [
+      {
+        "size": "DETAIL",
+        "unitPrice": 7500,
+        "unitPriceWithTax": 8943.75,
+        "minQuantity": null,
+        "active": null,
+        "isNegotiable": false,
+        "minNegotiationPercentage": 0.0
+      },
+      {
+        "size": "DEMIS_GROS",
+        "unitPrice": 7200,
+        "unitPriceWithTax": 8586,
+        "minQuantity": 6,
+        "active": null,
+        "isNegotiable": true,
+        "minNegotiationPercentage": 3.0
+      }
+    ],
+    "activePromotions": [
+      {
+        "saleSize": "DETAIL",
+        "startDate": "2026-01-01",
+        "endDate": "2026-02-15",
+        "promotionalPrice": 6900,
+        "discountPercentage": null,
+        "active": true
+      }
+    ],
+    "stockQuantity": 85.0,
+    "availableQuantity": 85.0,
+    "reservedQuantity": 0.0,
+    "organizationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  },
+  {
+    "idProduit": "34b75afa-3415-467d-b59e-2a70fc5bf475",
+    "nomProduit": "Huile v\u00e9g\u00e9tale 5L",
+    "typeProduit": "ALIMENTAIRE",
+    "prixVente": 7500.0,
+    "cout": 6200.0,
+    "categorie": "Huiles",
+    "reference": "HUILE-5L",
+    "codeBarre": "2234567890123",
+    "photo": "huile5l.png",
+    "active": true,
+    "createdAt": "2026-03-02",
+    "updatedAt": "2026-03-02",
+    "uom": null,
+    "allowedSaleSizes": [
+      {
+        "size": "DETAIL",
+        "unitPrice": 7500,
+        "unitPriceWithTax": 8943.75,
+        "minQuantity": null,
+        "active": null,
+        "isNegotiable": false,
+        "minNegotiationPercentage": 0.0
+      },
+      {
+        "size": "DEMIS_GROS",
+        "unitPrice": 7200,
+        "unitPriceWithTax": 8586,
+        "minQuantity": 6,
+        "active": null,
+        "isNegotiable": true,
+        "minNegotiationPercentage": 3.0
+      }
+    ],
+    "activePromotions": [
+      {
+        "saleSize": "DETAIL",
+        "startDate": "2026-01-01",
+        "endDate": "2026-02-15",
+        "promotionalPrice": 6900,
+        "discountPercentage": null,
+        "active": true
+      }
+    ],
+    "stockQuantity": 85.0,
+    "availableQuantity": 85.0,
+    "reservedQuantity": 0.0,
+    "organizationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  },
+  {
+    "idProduit": "8ea953e1-5d7c-4846-bcd4-5ccc48b2701f",
+    "nomProduit": "Riz 25kg",
+    "typeProduit": "ALIMENTAIRE",
+    "prixVente": 18000.0,
+    "cout": 15000.0,
+    "categorie": "C\u00e9r\u00e9ales",
+    "reference": "RIZ-25KG",
+    "codeBarre": "1234567890123",
+    "photo": "riz25kg.jpg",
+    "active": true,
+    "createdAt": "2026-03-01",
+    "updatedAt": "2026-03-02",
+    "uom": null,
+    "allowedSaleSizes": [
+      {
+        "size": "DETAIL",
+        "unitPrice": 18000,
+        "unitPriceWithTax": 21465,
+        "minQuantity": null,
+        "active": null,
+        "isNegotiable": false,
+        "minNegotiationPercentage": 0.0
+      },
+      {
+        "size": "DEMIS_GROS",
+        "unitPrice": 17000,
+        "unitPriceWithTax": 20272.5,
+        "minQuantity": 5,
+        "active": null,
+        "isNegotiable": true,
+        "minNegotiationPercentage": 2.0
+      },
+      {
+        "size": "GROS",
+        "unitPrice": 16000,
+        "unitPriceWithTax": 19080,
+        "minQuantity": 20,
+        "active": null,
+        "isNegotiable": true,
+        "minNegotiationPercentage": 5.0
+      }
+    ],
+    "activePromotions": [
+      {
+        "saleSize": "GROS",
+        "startDate": "2026-01-01",
+        "endDate": "2026-03-31",
+        "promotionalPrice": null,
+        "discountPercentage": 10.0,
+        "active": true
+      }
+    ],
+    "stockQuantity": 150.0,
+    "availableQuantity": 150.0,
+    "reservedQuantity": 0.0,
+    "organizationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  },
+  {
+    "idProduit": "5adc55fe-4e2f-4f8d-9003-f2e4c8002bc2",
+    "nomProduit": "Riz 25kg",
+    "typeProduit": "ALIMENTAIRE",
+    "prixVente": 18000.0,
+    "cout": 15000.0,
+    "categorie": "C\u00e9r\u00e9ales",
+    "reference": "RIZ-25KG",
+    "codeBarre": "1234567890123",
+    "photo": "riz25kg.jpg",
+    "active": true,
+    "createdAt": "2026-03-02",
+    "updatedAt": "2026-03-02",
+    "uom": null,
+    "allowedSaleSizes": [
+      {
+        "size": "DETAIL",
+        "unitPrice": 18000,
+        "unitPriceWithTax": 21465,
+        "minQuantity": null,
+        "active": null,
+        "isNegotiable": false,
+        "minNegotiationPercentage": 0.0
+      },
+      {
+        "size": "DEMIS_GROS",
+        "unitPrice": 17000,
+        "unitPriceWithTax": 20272.5,
+        "minQuantity": 5,
+        "active": null,
+        "isNegotiable": true,
+        "minNegotiationPercentage": 2.0
+      },
+      {
+        "size": "GROS",
+        "unitPrice": 16000,
+        "unitPriceWithTax": 19080,
+        "minQuantity": 20,
+        "active": null,
+        "isNegotiable": true,
+        "minNegotiationPercentage": 5.0
+      }
+    ],
+    "activePromotions": [
+      {
+        "saleSize": "GROS",
+        "startDate": "2026-01-01",
+        "endDate": "2026-03-31",
+        "promotionalPrice": null,
+        "discountPercentage": 10.0,
+        "active": true
+      }
+    ],
+    "stockQuantity": 5.0,
+    "availableQuantity": 3.0,
+    "reservedQuantity": 2.0,
+    "organizationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  },
+  {
+    "idProduit": "b213b699-6f75-4be2-be10-b2089b096e28",
+    "nomProduit": "Laptop Pro",
+    "typeProduit": "ARTICLE",
+    "prixVente": 1250.0,
+    "cout": 800.0,
+    "categorie": "Electronics",
+    "reference": "PROD-LPT",
+    "codeBarre": null,
+    "photo": null,
+    "active": true,
+    "createdAt": "2026-06-13",
+    "updatedAt": "2026-06-13",
+    "uom": null,
+    "allowedSaleSizes": null,
+    "activePromotions": null,
+    "stockQuantity": null,
+    "availableQuantity": 0.0,
+    "reservedQuantity": 0.0,
+    "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b"
+  },
+  {
+    "idProduit": "2bd4972b-aef3-4eb3-83cd-38dcfcbd9a1f",
+    "nomProduit": "Laptop Pro",
+    "typeProduit": "ARTICLE",
+    "prixVente": 1200.0,
+    "cout": 800.0,
+    "categorie": "Electronics",
+    "reference": "PROD-LPT",
+    "codeBarre": null,
+    "photo": null,
+    "active": true,
+    "createdAt": "2026-06-13",
+    "updatedAt": null,
+    "uom": null,
+    "allowedSaleSizes": null,
+    "activePromotions": null,
+    "stockQuantity": 0.0,
+    "availableQuantity": 0.0,
+    "reservedQuantity": 0.0,
+    "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b"
+  }
+]
+==================================================
+
+==================================================
+GET /api/v1/products/2bd4972b-aef3-4eb3-83cd-38dcfcbd9a1f
+Status Code: 200
+Response Body:
+{
+  "idProduit": "2bd4972b-aef3-4eb3-83cd-38dcfcbd9a1f",
+  "nomProduit": "Laptop Pro",
+  "typeProduit": "ARTICLE",
+  "prixVente": 1200.0,
+  "cout": 800.0,
+  "categorie": "Electronics",
+  "reference": "PROD-LPT",
+  "codeBarre": null,
+  "photo": null,
+  "active": true,
+  "createdAt": "2026-06-13",
+  "updatedAt": null,
+  "uom": null,
+  "allowedSaleSizes": null,
+  "activePromotions": null,
+  "stockQuantity": 0.0,
+  "availableQuantity": 0.0,
+  "reservedQuantity": 0.0,
+  "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b"
+}
+==================================================
+
+==================================================
+PUT /api/v1/products/2bd4972b-aef3-4eb3-83cd-38dcfcbd9a1f
+Status Code: 200
+Response Body:
+{
+  "idProduit": "2bd4972b-aef3-4eb3-83cd-38dcfcbd9a1f",
+  "nomProduit": "Laptop Pro",
+  "typeProduit": "ARTICLE",
+  "prixVente": 1250.0,
+  "cout": 800.0,
+  "categorie": "Electronics",
+  "reference": "PROD-LPT",
+  "codeBarre": null,
+  "photo": null,
+  "active": true,
+  "createdAt": "2026-06-13",
+  "updatedAt": "2026-06-13",
+  "uom": null,
+  "allowedSaleSizes": null,
+  "activePromotions": null,
+  "stockQuantity": null,
+  "availableQuantity": 0.0,
+  "reservedQuantity": 0.0,
+  "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b"
+}
+==================================================
+
+==================================================
+GET /api/v1/products/organization/d3b07384-d113-4953-a5e3-0350718c962b
+Status Code: 200
+Response Body:
+[
+  {
+    "idProduit": "b213b699-6f75-4be2-be10-b2089b096e28",
+    "nomProduit": "Laptop Pro",
+    "typeProduit": "ARTICLE",
+    "prixVente": 1250.0,
+    "cout": 800.0,
+    "categorie": "Electronics",
+    "reference": "PROD-LPT",
+    "codeBarre": null,
+    "photo": null,
+    "active": true,
+    "createdAt": "2026-06-13",
+    "updatedAt": "2026-06-13",
+    "uom": null,
+    "allowedSaleSizes": null,
+    "activePromotions": null,
+    "stockQuantity": null,
+    "availableQuantity": 0.0,
+    "reservedQuantity": 0.0,
+    "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b"
+  },
+  {
+    "idProduit": "2bd4972b-aef3-4eb3-83cd-38dcfcbd9a1f",
+    "nomProduit": "Laptop Pro",
+    "typeProduit": "ARTICLE",
+    "prixVente": 1250.0,
+    "cout": 800.0,
+    "categorie": "Electronics",
+    "reference": "PROD-LPT",
+    "codeBarre": null,
+    "photo": null,
+    "active": true,
+    "createdAt": "2026-06-13",
+    "updatedAt": "2026-06-13",
+    "uom": null,
+    "allowedSaleSizes": null,
+    "activePromotions": null,
+    "stockQuantity": null,
+    "availableQuantity": 0.0,
+    "reservedQuantity": 0.0,
+    "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b"
+  }
+]
+==================================================
+
+--- TESTING TAXES ---
+
+==================================================
+POST /api/taxes
+Status Code: 201
+Response Body:
+{
+  "idTaxe": "5c3af88f-edc2-4bd0-8b80-2fbb86c39790",
+  "nomTaxe": "VAT 20%",
+  "calculTaxe": 20.0,
+  "actif": true,
+  "typeTaxe": "TVA",
+  "porteTaxe": "VENTES",
+  "montant": 240.0,
+  "positionFiscale": "NATIONAL",
+  "createdAt": "2026-06-13T13:56:47.533997996",
+  "updatedAt": "2026-06-13T13:56:47.551459776"
+}
+==================================================
+
+==================================================
+GET /api/taxes
+Status Code: 200
+Response Body:
+[
+  {
+    "idTaxe": "5c3af88f-edc2-4bd0-8b80-2fbb86c39790",
+    "nomTaxe": "VAT 20%",
+    "calculTaxe": 20.0,
+    "actif": true,
+    "typeTaxe": "TVA",
+    "porteTaxe": "VENTES",
+    "montant": 240.0,
+    "positionFiscale": "NATIONAL",
+    "createdAt": "2026-06-13T13:56:47.533998",
+    "updatedAt": "2026-06-13T13:56:47.55146"
+  }
+]
+==================================================
+
+==================================================
+GET /api/taxes/5c3af88f-edc2-4bd0-8b80-2fbb86c39790
+Status Code: 200
+Response Body:
+{
+  "idTaxe": "5c3af88f-edc2-4bd0-8b80-2fbb86c39790",
+  "nomTaxe": "VAT 20%",
+  "calculTaxe": 20.0,
+  "actif": true,
+  "typeTaxe": "TVA",
+  "porteTaxe": "VENTES",
+  "montant": 240.0,
+  "positionFiscale": "NATIONAL",
+  "createdAt": "2026-06-13T13:56:47.533998",
+  "updatedAt": "2026-06-13T13:56:47.55146"
+}
+==================================================
+
+==================================================
+PUT /api/taxes/5c3af88f-edc2-4bd0-8b80-2fbb86c39790
+Status Code: 200
+Response Body:
+{
+  "idTaxe": "5c3af88f-edc2-4bd0-8b80-2fbb86c39790",
+  "nomTaxe": "VAT 20%",
+  "calculTaxe": 20.0,
+  "actif": true,
+  "typeTaxe": "TVA",
+  "porteTaxe": "VENTES",
+  "montant": 250.0,
+  "positionFiscale": "NATIONAL",
+  "createdAt": "2026-06-13T13:56:47.533998",
+  "updatedAt": "2026-06-13T13:56:47.831550918"
+}
+==================================================
+
+==================================================
+PUT /api/taxes/5c3af88f-edc2-4bd0-8b80-2fbb86c39790/desactiver
+Status Code: 200
+Response Body:
+{
+  "idTaxe": "5c3af88f-edc2-4bd0-8b80-2fbb86c39790",
+  "nomTaxe": "VAT 20%",
+  "calculTaxe": 20.0,
+  "actif": false,
+  "typeTaxe": "TVA",
+  "porteTaxe": "VENTES",
+  "montant": 250.0,
+  "positionFiscale": "NATIONAL",
+  "createdAt": "2026-06-13T13:56:47.533998",
+  "updatedAt": "2026-06-13T13:56:47.948502035"
+}
+==================================================
+
+==================================================
+PUT /api/taxes/5c3af88f-edc2-4bd0-8b80-2fbb86c39790/activer
+Status Code: 200
+Response Body:
+{
+  "idTaxe": "5c3af88f-edc2-4bd0-8b80-2fbb86c39790",
+  "nomTaxe": "VAT 20%",
+  "calculTaxe": 20.0,
+  "actif": true,
+  "typeTaxe": "TVA",
+  "porteTaxe": "VENTES",
+  "montant": 250.0,
+  "positionFiscale": "NATIONAL",
+  "createdAt": "2026-06-13T13:56:47.533998",
+  "updatedAt": "2026-06-13T13:56:48.018053281"
+}
+==================================================
+
+==================================================
+GET /api/taxes/actives
+Status Code: 200
+Response Body:
+[
+  {
+    "idTaxe": "5c3af88f-edc2-4bd0-8b80-2fbb86c39790",
+    "nomTaxe": "VAT 20%",
+    "calculTaxe": 20.0,
+    "actif": true,
+    "typeTaxe": "TVA",
+    "porteTaxe": "VENTES",
+    "montant": 250.0,
+    "positionFiscale": "NATIONAL",
+    "createdAt": "2026-06-13T13:56:47.533998",
+    "updatedAt": "2026-06-13T13:56:48.018053"
+  }
+]
+==================================================
+
+==================================================
+GET /api/taxes/nom/VAT 20%
+Status Code: 200
+Response Body:
+{
+  "idTaxe": "5c3af88f-edc2-4bd0-8b80-2fbb86c39790",
+  "nomTaxe": "VAT 20%",
+  "calculTaxe": 20.0,
+  "actif": true,
+  "typeTaxe": "TVA",
+  "porteTaxe": "VENTES",
+  "montant": 250.0,
+  "positionFiscale": "NATIONAL",
+  "createdAt": "2026-06-13T13:56:47.533998",
+  "updatedAt": "2026-06-13T13:56:48.018053"
+}
+==================================================
+
+==================================================
+GET /api/taxes/type/TVA
+Status Code: 200
+Response Body:
+[
+  {
+    "idTaxe": "5c3af88f-edc2-4bd0-8b80-2fbb86c39790",
+    "nomTaxe": "VAT 20%",
+    "calculTaxe": 20.0,
+    "actif": true,
+    "typeTaxe": "TVA",
+    "porteTaxe": "VENTES",
+    "montant": 250.0,
+    "positionFiscale": "NATIONAL",
+    "createdAt": "2026-06-13T13:56:47.533998",
+    "updatedAt": "2026-06-13T13:56:48.018053"
+  }
+]
+==================================================
+
+==================================================
+GET /api/taxes/type/TVA/actives
+Status Code: 200
+Response Body:
+[
+  {
+    "idTaxe": "5c3af88f-edc2-4bd0-8b80-2fbb86c39790",
+    "nomTaxe": "VAT 20%",
+    "calculTaxe": 20.0,
+    "actif": true,
+    "typeTaxe": "TVA",
+    "porteTaxe": "VENTES",
+    "montant": 250.0,
+    "positionFiscale": "NATIONAL",
+    "createdAt": "2026-06-13T13:56:47.533998",
+    "updatedAt": "2026-06-13T13:56:48.018053"
+  }
+]
+==================================================
+
+==================================================
+GET /api/taxes/porte/VENTES
+Status Code: 200
+Response Body:
+[
+  {
+    "idTaxe": "5c3af88f-edc2-4bd0-8b80-2fbb86c39790",
+    "nomTaxe": "VAT 20%",
+    "calculTaxe": 20.0,
+    "actif": true,
+    "typeTaxe": "TVA",
+    "porteTaxe": "VENTES",
+    "montant": 250.0,
+    "positionFiscale": "NATIONAL",
+    "createdAt": "2026-06-13T13:56:47.533998",
+    "updatedAt": "2026-06-13T13:56:48.018053"
+  }
+]
+==================================================
+
+==================================================
+GET /api/taxes/position/NATIONAL
+Status Code: 200
+Response Body:
+[
+  {
+    "idTaxe": "5c3af88f-edc2-4bd0-8b80-2fbb86c39790",
+    "nomTaxe": "VAT 20%",
+    "calculTaxe": 20.0,
+    "actif": true,
+    "typeTaxe": "TVA",
+    "porteTaxe": "VENTES",
+    "montant": 250.0,
+    "positionFiscale": "NATIONAL",
+    "createdAt": "2026-06-13T13:56:47.533998",
+    "updatedAt": "2026-06-13T13:56:48.018053"
+  }
+]
+==================================================
+
+==================================================
+GET /api/taxes/montant-range
+Status Code: 200
+Response Body:
+[
+  {
+    "idTaxe": "5c3af88f-edc2-4bd0-8b80-2fbb86c39790",
+    "nomTaxe": "VAT 20%",
+    "calculTaxe": 20.0,
+    "actif": true,
+    "typeTaxe": "TVA",
+    "porteTaxe": "VENTES",
+    "montant": 250.0,
+    "positionFiscale": "NATIONAL",
+    "createdAt": "2026-06-13T13:56:47.533998",
+    "updatedAt": "2026-06-13T13:56:48.018053"
+  }
+]
+==================================================
+
+==================================================
+GET /api/taxes/calcul-range
+Status Code: 200
+Response Body:
+[
+  {
+    "idTaxe": "5c3af88f-edc2-4bd0-8b80-2fbb86c39790",
+    "nomTaxe": "VAT 20%",
+    "calculTaxe": 20.0,
+    "actif": true,
+    "typeTaxe": "TVA",
+    "porteTaxe": "VENTES",
+    "montant": 250.0,
+    "positionFiscale": "NATIONAL",
+    "createdAt": "2026-06-13T13:56:47.533998",
+    "updatedAt": "2026-06-13T13:56:48.018053"
+  }
+]
+==================================================
+
+==================================================
+GET /api/taxes/count/actives
+Status Code: 200
+Response Body:
+1
+==================================================
+
+==================================================
+GET /api/taxes/count/type/TVA
+Status Code: 200
+Response Body:
+1
+==================================================
+
+--- TESTING JOURNALS ---
+
+==================================================
+POST /api/journals
+Status Code: 201
+Response Body:
+{
+  "idJournal": "1455fae2-991d-4867-a489-cede7b2684ab",
+  "nomJournal": "Sales Journal",
+  "type": "VENTE",
+  "createdAt": "2026-06-13T13:56:48.633205606",
+  "updatedAt": "2026-06-13T13:56:48.641215326"
+}
+==================================================
+
+==================================================
+GET /api/journals
+Status Code: 200
+Response Body:
+[
+  {
+    "idJournal": "1455fae2-991d-4867-a489-cede7b2684ab",
+    "nomJournal": "Sales Journal",
+    "type": "VENTE",
+    "createdAt": "2026-06-13T13:56:48.633206",
+    "updatedAt": "2026-06-13T13:56:48.641215"
+  }
+]
+==================================================
+
+==================================================
+GET /api/journals/1455fae2-991d-4867-a489-cede7b2684ab
+Status Code: 200
+Response Body:
+{
+  "idJournal": "1455fae2-991d-4867-a489-cede7b2684ab",
+  "nomJournal": "Sales Journal",
+  "type": "VENTE",
+  "createdAt": "2026-06-13T13:56:48.633206",
+  "updatedAt": "2026-06-13T13:56:48.641215"
+}
+==================================================
+
+==================================================
+PUT /api/journals/1455fae2-991d-4867-a489-cede7b2684ab
+Status Code: 200
+Response Body:
+{
+  "idJournal": "1455fae2-991d-4867-a489-cede7b2684ab",
+  "nomJournal": "Updated Sales Journal",
+  "type": "VENTE",
+  "createdAt": "2026-06-13T13:56:48.633206",
+  "updatedAt": "2026-06-13T13:56:48.859785447"
+}
+==================================================
+
+==================================================
+GET /api/journals/nom/Updated Sales Journal
+Status Code: 200
+Response Body:
+{
+  "idJournal": "1455fae2-991d-4867-a489-cede7b2684ab",
+  "nomJournal": "Updated Sales Journal",
+  "type": "VENTE",
+  "createdAt": "2026-06-13T13:56:48.633206",
+  "updatedAt": "2026-06-13T13:56:48.859785"
+}
+==================================================
+
+==================================================
+GET /api/journals/type/VENTE
+Status Code: 200
+Response Body:
+[
+  {
+    "idJournal": "1455fae2-991d-4867-a489-cede7b2684ab",
+    "nomJournal": "Updated Sales Journal",
+    "type": "VENTE",
+    "createdAt": "2026-06-13T13:56:48.633206",
+    "updatedAt": "2026-06-13T13:56:48.859785"
+  }
+]
+==================================================
+
+==================================================
+GET /api/journals/search
+Status Code: 200
+Response Body:
+[
+  {
+    "idJournal": "1455fae2-991d-4867-a489-cede7b2684ab",
+    "nomJournal": "Updated Sales Journal",
+    "type": "VENTE",
+    "createdAt": "2026-06-13T13:56:48.633206",
+    "updatedAt": "2026-06-13T13:56:48.859785"
+  }
+]
+==================================================
+
+==================================================
+GET /api/journals/count/type/VENTE
+Status Code: 200
+Response Body:
+1
+==================================================
+
+--- TESTING DEVIS ---
+
+==================================================
+POST /api/devis
+Status Code: 201
+Response Body:
+{
+  "idDevis": "c51279b9-38ab-4156-9c97-4c5d53eb4656",
+  "numeroDevis": "DEV-2026-001",
+  "dateCreation": null,
+  "dateValidite": null,
+  "type": null,
+  "statut": null,
+  "montantTotal": 1200.0,
+  "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+  "nomClient": "Test Client Company",
+  "adresseClient": null,
+  "emailClient": null,
+  "telephoneClient": null,
+  "lignesDevis": [
+    {
+      "idLigne": null,
+      "quantite": 1,
+      "description": "Laptop Pro",
+      "debit": null,
+      "credit": null,
+      "isTaxLine": false,
+      "idProduit": null,
+      "nomProduit": null,
+      "prixUnitaire": 1200.0,
+      "montantTotal": 1200.0,
+      "remisePourcentage": 0.0,
+      "remiseMontant": 0.0
+    }
+  ],
+  "montantHT": null,
+  "montantTVA": null,
+  "montantTTC": null,
+  "devise": null,
+  "tauxChange": 1,
+  "conditionsPaiement": null,
+  "notes": null,
+  "referenceExterne": null,
+  "pdfPath": null,
+  "envoyeParEmail": false,
+  "dateEnvoiEmail": null,
+  "dateAcceptation": null,
+  "dateRefus": null,
+  "motifRefus": null,
+  "idFactureConvertie": null,
+  "remiseGlobalePourcentage": null,
+  "remiseGlobaleMontant": null,
+  "validiteOffreJours": 30,
+  "applyVat": null,
+  "dateSysteme": null,
+  "modeReglement": null,
+  "nosRef": null,
+  "vosRef": null,
+  "nbreEcheance": null,
+  "referalClientId": null,
+  "finalAmount": null,
+  "createdAt": null,
+  "updatedAt": "2026-06-13T13:56:49.307573403",
+  "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b",
+  "createdBy": null
+}
+==================================================
+
+==================================================
+GET /api/devis
+Status Code: 200
+Response Body:
+[
+  {
+    "idDevis": "e8feae3c-9d8e-411a-9947-304eb19fedc4",
+    "numeroDevis": "EDB-QUO-NT-20260307-0080",
+    "dateCreation": "2026-03-12T02:29:42.179",
+    "dateValidite": "2026-03-12T02:29:42.179",
+    "type": null,
+    "statut": "REFUSE",
+    "montantTotal": 0.0,
+    "idClient": "d5e8f4a2-9b3c-4e1a-8f6d-7c2a1b0e9f4b",
+    "nomClient": "fureh mitoto",
+    "adresseClient": null,
+    "emailClient": "furehmitoto@gmail.com",
+    "telephoneClient": null,
+    "lignesDevis": [
+      {
+        "idLigne": null,
+        "quantite": 1,
+        "description": "Bon Bon Alcolisee - GROS",
+        "debit": 9975,
+        "credit": 0,
+        "isTaxLine": false,
+        "idProduit": "8b2f9a1c-7e34-4d81-9b45-f02a6c8e3d22",
+        "nomProduit": "Bon Bon Alcolisee",
+        "prixUnitaire": 3300,
+        "montantTotal": 3300,
+        "remisePourcentage": null,
+        "remiseMontant": 0
+      }
+    ],
+    "montantHT": 3300.0,
+    "montantTVA": 0.0,
+    "montantTTC": 3300.0,
+    "devise": "XAF",
+    "tauxChange": 1.0,
+    "conditionsPaiement": null,
+    "notes": null,
+    "referenceExterne": null,
+    "pdfPath": null,
+    "envoyeParEmail": false,
+    "dateEnvoiEmail": null,
+    "dateAcceptation": "2026-03-12T16:09:16.681431",
+    "dateRefus": "2026-03-12T16:11:55.15294",
+    "motifRefus": null,
+    "idFactureConvertie": null,
+    "remiseGlobalePourcentage": 3.0,
+    "remiseGlobaleMontant": 118.0,
+    "validiteOffreJours": 30,
+    "applyVat": false,
+    "dateSysteme": "2026-03-07T09:49:29.261",
+    "modeReglement": "VIREMENT",
+    "nosRef": "",
+    "vosRef": "",
+    "nbreEcheance": 3,
+    "referalClientId": null,
+    "finalAmount": 3817.0,
+    "createdAt": null,
+    "updatedAt": "2026-03-12T16:11:55.153327",
+    "organizationId": "020ed3d7-7039-4beb-9d63-4768cefe2c0e",
+    "createdBy": "1b164e46-96a8-47af-946e-ebf39ef34321"
+  },
+  {
+    "idDevis": "6e3435fc-20a3-4dbb-bb6f-2df447c12440",
+    "numeroDevis": "DEV-2026-001",
+    "dateCreation": "2026-02-28T11:15:21",
+    "dateValidite": "2026-03-30T11:15:21",
+    "type": null,
+    "statut": "BROUILLON",
+    "montantTotal": 1800.0,
+    "idClient": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "nomClient": "Acme Corp",
+    "adresseClient": "123 Rue de l'Innovation, Paris, France",
+    "emailClient": "contact@acme.com",
+    "telephoneClient": "+33 1 23 45 67 89",
+    "lignesDevis": [
+      {
+        "idLigne": null,
+        "quantite": 2,
+        "description": "Consulting Technique",
+        "debit": 0,
+        "credit": 1500,
+        "isTaxLine": false,
+        "idProduit": "e7b12f64-1234-4562-b3fc-2c963f66afa6",
+        "nomProduit": "Consulting Senior",
+        "prixUnitaire": 7500,
+        "montantTotal": 1500,
+        "remisePourcentage": 12,
+        "remiseMontant": 0
+      },
+      {
+        "idLigne": null,
+        "quantite": 1,
+        "description": "TVA (20%)",
+        "debit": 0,
+        "credit": 300,
+        "isTaxLine": true,
+        "idProduit": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "nomProduit": "TVA FR 20%",
+        "prixUnitaire": 300,
+        "montantTotal": 300,
+        "remisePourcentage": 0,
+        "remiseMontant": 0
+      }
+    ],
+    "montantHT": 1500.0,
+    "montantTVA": 300.0,
+    "montantTTC": 1800.0,
+    "devise": "EUR",
+    "tauxChange": 1.0,
+    "conditionsPaiement": "30 jours fin de mois",
+    "notes": "Merci pour votre confiance.",
+    "referenceExterne": "PO-98765",
+    "pdfPath": null,
+    "envoyeParEmail": false,
+    "dateEnvoiEmail": null,
+    "dateAcceptation": null,
+    "dateRefus": null,
+    "motifRefus": null,
+    "idFactureConvertie": null,
+    "remiseGlobalePourcentage": 0.0,
+    "remiseGlobaleMontant": 0.0,
+    "validiteOffreJours": 30,
+    "applyVat": true,
+    "dateSysteme": "2026-02-28T11:15:21",
+    "modeReglement": "VIREMENT",
+    "nosRef": "REF-INTERNAL-001",
+    "vosRef": "REF-CLIENT-99",
+    "nbreEcheance": 1,
+    "referalClientId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "finalAmount": 1800.0,
+    "createdAt": null,
+    "updatedAt": "2026-02-28T12:38:25.883877",
+    "organizationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "createdBy": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  },
+  {
+    "idDevis": "8eaba694-1d62-4c74-969d-6cb049c7001d",
+    "numeroDevis": "EDB-QUO-NT-20260312-8943",
+    "dateCreation": "2026-03-12T15:48:29.25",
+    "dateValidite": "2026-03-12T15:48:29.25",
+    "type": null,
+    "statut": "ACCEPTE",
+    "montantTotal": 0.0,
+    "idClient": "d5e8f4a2-9b3c-4e1a-8f6d-7c2a1b0e9f4b",
+    "nomClient": "fureh mitoto",
+    "adresseClient": null,
+    "emailClient": "furehmitoto@gmail.com",
+    "telephoneClient": null,
+    "lignesDevis": [
+      {
+        "idLigne": null,
+        "quantite": 1,
+        "description": "Bon Bon Alcolisee - GROS",
+        "debit": 9975,
+        "credit": 0,
+        "isTaxLine": false,
+        "idProduit": "8b2f9a1c-7e34-4d81-9b45-f02a6c8e3d22",
+        "nomProduit": "Bon Bon Alcolisee",
+        "prixUnitaire": 9975,
+        "montantTotal": 9975,
+        "remisePourcentage": null,
+        "remiseMontant": 0
+      }
+    ],
+    "montantHT": 9975.0,
+    "montantTVA": 0.0,
+    "montantTTC": 9975.0,
+    "devise": "XAF",
+    "tauxChange": 1.0,
+    "conditionsPaiement": null,
+    "notes": null,
+    "referenceExterne": null,
+    "pdfPath": null,
+    "envoyeParEmail": false,
+    "dateEnvoiEmail": null,
+    "dateAcceptation": "2026-03-12T16:58:39.2461",
+    "dateRefus": null,
+    "motifRefus": null,
+    "idFactureConvertie": null,
+    "remiseGlobalePourcentage": 0.0,
+    "remiseGlobaleMontant": 0.0,
+    "validiteOffreJours": 30,
+    "applyVat": false,
+    "dateSysteme": "2026-03-12T15:48:29.25",
+    "modeReglement": "VIREMENT",
+    "nosRef": "",
+    "vosRef": "",
+    "nbreEcheance": 1,
+    "referalClientId": null,
+    "finalAmount": 11895.0,
+    "createdAt": null,
+    "updatedAt": "2026-03-12T16:58:39.246564",
+    "organizationId": "020ed3d7-7039-4beb-9d63-4768cefe2c0e",
+    "createdBy": "1b164e46-96a8-47af-946e-ebf39ef34321"
+  },
+  {
+    "idDevis": "02ecfd1d-a1f0-40e0-9647-5dbb57f78d81",
+    "numeroDevis": "EDB-QUO-NT-20260312-9079",
+    "dateCreation": "2026-03-12T15:59:42.095",
+    "dateValidite": "2026-03-12T15:59:42.095",
+    "type": null,
+    "statut": "REFUSE",
+    "montantTotal": 0.0,
+    "idClient": "d5e8f4a2-9b3c-4e1a-8f6d-7c2a1b0e9f4b",
+    "nomClient": "fureh mitoto",
+    "adresseClient": null,
+    "emailClient": "furehmitoto@gmail.com",
+    "telephoneClient": null,
+    "lignesDevis": [
+      {
+        "idLigne": null,
+        "quantite": 1,
+        "description": "Bon Bon Alcolisee - GROS",
+        "debit": 9975,
+        "credit": 0,
+        "isTaxLine": false,
+        "idProduit": "8b2f9a1c-7e34-4d81-9b45-f02a6c8e3d22",
+        "nomProduit": "Bon Bon Alcolisee",
+        "prixUnitaire": 9975,
+        "montantTotal": 9975,
+        "remisePourcentage": null,
+        "remiseMontant": 0
+      }
+    ],
+    "montantHT": 9975.0,
+    "montantTVA": 0.0,
+    "montantTTC": 9975.0,
+    "devise": "XAF",
+    "tauxChange": 1.0,
+    "conditionsPaiement": null,
+    "notes": null,
+    "referenceExterne": null,
+    "pdfPath": null,
+    "envoyeParEmail": false,
+    "dateEnvoiEmail": null,
+    "dateAcceptation": null,
+    "dateRefus": "2026-03-12T17:01:11.411072",
+    "motifRefus": null,
+    "idFactureConvertie": null,
+    "remiseGlobalePourcentage": 0.0,
+    "remiseGlobaleMontant": 0.0,
+    "validiteOffreJours": 30,
+    "applyVat": false,
+    "dateSysteme": "2026-03-12T15:59:42.096",
+    "modeReglement": "CARTE_BANCAIRE",
+    "nosRef": "",
+    "vosRef": "",
+    "nbreEcheance": 1,
+    "referalClientId": null,
+    "finalAmount": 11895.0,
+    "createdAt": null,
+    "updatedAt": "2026-03-12T17:01:11.411507",
+    "organizationId": "020ed3d7-7039-4beb-9d63-4768cefe2c0e",
+    "createdBy": "1b164e46-96a8-47af-946e-ebf39ef34321"
+  },
+  {
+    "idDevis": "8d796fa4-4d2c-499d-8164-055be0035527",
+    "numeroDevis": "EDB-QUO-NT-20260312-3085",
+    "dateCreation": "2026-03-12T16:25:05.137",
+    "dateValidite": "2026-03-12T16:25:05.137",
+    "type": null,
+    "statut": "ACCEPTE",
+    "montantTotal": 0.0,
+    "idClient": "d5e8f4a2-9b3c-4e1a-8f6d-7c2a1b0e9f4b",
+    "nomClient": "fureh mitoto",
+    "adresseClient": null,
+    "emailClient": "furehmitoto@gmail.com",
+    "telephoneClient": null,
+    "lignesDevis": [
+      {
+        "idLigne": null,
+        "quantite": 20,
+        "description": "Bon Bon Alcolisee - GROS",
+        "debit": 66000,
+        "credit": 0,
+        "isTaxLine": false,
+        "idProduit": "8b2f9a1c-7e34-4d81-9b45-f02a6c8e3d22",
+        "nomProduit": "Bon Bon Alcolisee",
+        "prixUnitaire": 3300,
+        "montantTotal": 66000,
+        "remisePourcentage": null,
+        "remiseMontant": 0
+      },
+      {
+        "idLigne": null,
+        "quantite": 10,
+        "description": "Cartouche d'encre HP 652 Noir - GROS",
+        "debit": 33000,
+        "credit": 0,
+        "isTaxLine": false,
+        "idProduit": "8b2f9a1c-7e34-4d81-9b45-f02a6c8e3d12",
+        "nomProduit": "Cartouche d'encre HP 652 Noir",
+        "prixUnitaire": 3300,
+        "montantTotal": 33000,
+        "remisePourcentage": null,
+        "remiseMontant": 0
+      }
+    ],
+    "montantHT": 99000.0,
+    "montantTVA": 0.0,
+    "montantTTC": 99000.0,
+    "devise": "XAF",
+    "tauxChange": 1.0,
+    "conditionsPaiement": null,
+    "notes": null,
+    "referenceExterne": null,
+    "pdfPath": null,
+    "envoyeParEmail": false,
+    "dateEnvoiEmail": null,
+    "dateAcceptation": "2026-03-12T17:30:11.870314",
+    "dateRefus": null,
+    "motifRefus": null,
+    "idFactureConvertie": null,
+    "remiseGlobalePourcentage": 2.0,
+    "remiseGlobaleMontant": 2361.0,
+    "validiteOffreJours": 30,
+    "applyVat": false,
+    "dateSysteme": "2026-03-12T16:25:05.137",
+    "modeReglement": "VIREMENT",
+    "nosRef": "",
+    "vosRef": "",
+    "nbreEcheance": 1,
+    "referalClientId": null,
+    "finalAmount": 115696.0,
+    "createdAt": null,
+    "updatedAt": "2026-03-12T17:30:11.880448",
+    "organizationId": "020ed3d7-7039-4beb-9d63-4768cefe2c0e",
+    "createdBy": "1b164e46-96a8-47af-946e-ebf39ef34321"
+  },
+  {
+    "idDevis": "3007ac97-25d5-433a-8a68-65166a0719a4",
+    "numeroDevis": "EDB-QUO-NT-20260313-9728",
+    "dateCreation": "2026-03-13T09:29:00.997",
+    "dateValidite": "2026-03-13T09:29:00.997",
+    "type": null,
+    "statut": "ACCEPTE",
+    "montantTotal": 0.0,
+    "idClient": "d5e8f4a2-9b3c-4e1a-8f6d-7c2a1b0e9f4b",
+    "nomClient": "fureh mitoto",
+    "adresseClient": null,
+    "emailClient": "furehmitoto@gmail.com",
+    "telephoneClient": null,
+    "lignesDevis": [
+      {
+        "idLigne": null,
+        "quantite": 1,
+        "description": "Bon Bon Alcolisee - GROS",
+        "debit": 9975,
+        "credit": 0,
+        "isTaxLine": false,
+        "idProduit": "8b2f9a1c-7e34-4d81-9b45-f02a6c8e3d22",
+        "nomProduit": "Bon Bon Alcolisee",
+        "prixUnitaire": 9975,
+        "montantTotal": 9975,
+        "remisePourcentage": null,
+        "remiseMontant": 0
+      }
+    ],
+    "montantHT": 9975.0,
+    "montantTVA": 0.0,
+    "montantTTC": 9975.0,
+    "devise": "XAF",
+    "tauxChange": 1.0,
+    "conditionsPaiement": null,
+    "notes": null,
+    "referenceExterne": null,
+    "pdfPath": null,
+    "envoyeParEmail": false,
+    "dateEnvoiEmail": null,
+    "dateAcceptation": "2026-03-13T10:36:39.612976",
+    "dateRefus": null,
+    "motifRefus": null,
+    "idFactureConvertie": null,
+    "remiseGlobalePourcentage": 0.0,
+    "remiseGlobaleMontant": 0.0,
+    "validiteOffreJours": 30,
+    "applyVat": false,
+    "dateSysteme": "2026-03-13T09:29:00.997",
+    "modeReglement": "VIREMENT",
+    "nosRef": "",
+    "vosRef": "",
+    "nbreEcheance": 1,
+    "referalClientId": null,
+    "finalAmount": 11895.0,
+    "createdAt": null,
+    "updatedAt": "2026-03-13T10:36:39.61331",
+    "organizationId": "020ed3d7-7039-4beb-9d63-4768cefe2c0e",
+    "createdBy": "1b164e46-96a8-47af-946e-ebf39ef34321"
+  },
+  {
+    "idDevis": "7c1f64f6-0a63-4a88-abf6-4f5490e96e18",
+    "numeroDevis": "EDB-QUO-NT-20260313-8987",
+    "dateCreation": "2026-03-13T10:52:48.223",
+    "dateValidite": "2026-03-13T10:52:48.223",
+    "type": null,
+    "statut": "ACCEPTE",
+    "montantTotal": 0.0,
+    "idClient": "d5e8f4a2-9b3c-4e1a-8f6d-7c2a1b0e9f4b",
+    "nomClient": "fureh mitoto",
+    "adresseClient": null,
+    "emailClient": "furehmitoto@gmail.com",
+    "telephoneClient": null,
+    "lignesDevis": [
+      {
+        "idLigne": null,
+        "quantite": 1,
+        "description": "Bon Bon Alcolisee - GROS",
+        "debit": 9975,
+        "credit": 0,
+        "isTaxLine": false,
+        "idProduit": "8b2f9a1c-7e34-4d81-9b45-f02a6c8e3d22",
+        "nomProduit": "Bon Bon Alcolisee",
+        "prixUnitaire": 9975,
+        "montantTotal": 9975,
+        "remisePourcentage": null,
+        "remiseMontant": 0
+      }
+    ],
+    "montantHT": 9975.0,
+    "montantTVA": 0.0,
+    "montantTTC": 9975.0,
+    "devise": "XAF",
+    "tauxChange": 1.0,
+    "conditionsPaiement": null,
+    "notes": null,
+    "referenceExterne": null,
+    "pdfPath": null,
+    "envoyeParEmail": false,
+    "dateEnvoiEmail": null,
+    "dateAcceptation": "2026-03-13T12:12:41.380895",
+    "dateRefus": null,
+    "motifRefus": null,
+    "idFactureConvertie": null,
+    "remiseGlobalePourcentage": 0.0,
+    "remiseGlobaleMontant": 0.0,
+    "validiteOffreJours": 30,
+    "applyVat": false,
+    "dateSysteme": "2026-03-13T10:52:48.223",
+    "modeReglement": "VIREMENT",
+    "nosRef": "",
+    "vosRef": "",
+    "nbreEcheance": 1,
+    "referalClientId": null,
+    "finalAmount": 11895.0,
+    "createdAt": null,
+    "updatedAt": "2026-03-13T12:12:41.381562",
+    "organizationId": "020ed3d7-7039-4beb-9d63-4768cefe2c0e",
+    "createdBy": "1b164e46-96a8-47af-946e-ebf39ef34321"
+  },
+  {
+    "idDevis": "774d8c9f-441e-4ea6-907c-7759c9672cda",
+    "numeroDevis": "EDB-QUO-NT-20260313-4678",
+    "dateCreation": "2026-03-13T11:18:25.494",
+    "dateValidite": "2026-03-13T11:18:25.494",
+    "type": null,
+    "statut": "ENVOYE",
+    "montantTotal": 0.0,
+    "idClient": "d5e8f4a2-9b3c-4e1a-8f6d-7c2a1b0e9f4b",
+    "nomClient": "fureh mitoto",
+    "adresseClient": null,
+    "emailClient": "furehmitoto@gmail.com",
+    "telephoneClient": null,
+    "lignesDevis": [
+      {
+        "idLigne": null,
+        "quantite": 1,
+        "description": "Bon Bon Alcolisee - GROS",
+        "debit": 9975,
+        "credit": 0,
+        "isTaxLine": false,
+        "idProduit": "8b2f9a1c-7e34-4d81-9b45-f02a6c8e3d22",
+        "nomProduit": "Bon Bon Alcolisee",
+        "prixUnitaire": 9975,
+        "montantTotal": 9975,
+        "remisePourcentage": null,
+        "remiseMontant": 0
+      }
+    ],
+    "montantHT": 9975.0,
+    "montantTVA": 0.0,
+    "montantTTC": 9975.0,
+    "devise": "XAF",
+    "tauxChange": 1.0,
+    "conditionsPaiement": null,
+    "notes": null,
+    "referenceExterne": null,
+    "pdfPath": null,
+    "envoyeParEmail": false,
+    "dateEnvoiEmail": null,
+    "dateAcceptation": null,
+    "dateRefus": null,
+    "motifRefus": null,
+    "idFactureConvertie": null,
+    "remiseGlobalePourcentage": 0.0,
+    "remiseGlobaleMontant": 0.0,
+    "validiteOffreJours": 30,
+    "applyVat": false,
+    "dateSysteme": "2026-03-13T11:18:25.494",
+    "modeReglement": "VIREMENT",
+    "nosRef": "",
+    "vosRef": "",
+    "nbreEcheance": 1,
+    "referalClientId": null,
+    "finalAmount": 11895.0,
+    "createdAt": null,
+    "updatedAt": "2026-03-13T12:53:51.298105",
+    "organizationId": "020ed3d7-7039-4beb-9d63-4768cefe2c0e",
+    "createdBy": "1b164e46-96a8-47af-946e-ebf39ef34321"
+  },
+  {
+    "idDevis": "c51279b9-38ab-4156-9c97-4c5d53eb4656",
+    "numeroDevis": "DEV-2026-001",
+    "dateCreation": null,
+    "dateValidite": null,
+    "type": null,
+    "statut": null,
+    "montantTotal": 1200.0,
+    "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+    "nomClient": "Test Client Company",
+    "adresseClient": null,
+    "emailClient": null,
+    "telephoneClient": null,
+    "lignesDevis": [
+      {
+        "idLigne": null,
+        "quantite": 1,
+        "description": "Laptop Pro",
+        "debit": null,
+        "credit": null,
+        "isTaxLine": false,
+        "idProduit": null,
+        "nomProduit": null,
+        "prixUnitaire": 1200.0,
+        "montantTotal": 1200.0,
+        "remisePourcentage": 0.0,
+        "remiseMontant": 0.0
+      }
+    ],
+    "montantHT": null,
+    "montantTVA": null,
+    "montantTTC": null,
+    "devise": null,
+    "tauxChange": 1.0,
+    "conditionsPaiement": null,
+    "notes": null,
+    "referenceExterne": null,
+    "pdfPath": null,
+    "envoyeParEmail": false,
+    "dateEnvoiEmail": null,
+    "dateAcceptation": null,
+    "dateRefus": null,
+    "motifRefus": null,
+    "idFactureConvertie": null,
+    "remiseGlobalePourcentage": 0.0,
+    "remiseGlobaleMontant": 0.0,
+    "validiteOffreJours": 30,
+    "applyVat": true,
+    "dateSysteme": null,
+    "modeReglement": null,
+    "nosRef": null,
+    "vosRef": null,
+    "nbreEcheance": null,
+    "referalClientId": null,
+    "finalAmount": null,
+    "createdAt": null,
+    "updatedAt": "2026-06-13T13:56:49.307573",
+    "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b",
+    "createdBy": null
+  }
+]
+==================================================
+
+==================================================
+GET /api/devis/c51279b9-38ab-4156-9c97-4c5d53eb4656
+Status Code: 200
+Response Body:
+{
+  "idDevis": "c51279b9-38ab-4156-9c97-4c5d53eb4656",
+  "numeroDevis": "DEV-2026-001",
+  "dateCreation": null,
+  "dateValidite": null,
+  "type": null,
+  "statut": null,
+  "montantTotal": 1200.0,
+  "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+  "nomClient": "Test Client Company",
+  "adresseClient": null,
+  "emailClient": null,
+  "telephoneClient": null,
+  "lignesDevis": [
+    {
+      "idLigne": null,
+      "quantite": 1,
+      "description": "Laptop Pro",
+      "debit": null,
+      "credit": null,
+      "isTaxLine": false,
+      "idProduit": null,
+      "nomProduit": null,
+      "prixUnitaire": 1200.0,
+      "montantTotal": 1200.0,
+      "remisePourcentage": 0.0,
+      "remiseMontant": 0.0
+    }
+  ],
+  "montantHT": null,
+  "montantTVA": null,
+  "montantTTC": null,
+  "devise": null,
+  "tauxChange": 1.0,
+  "conditionsPaiement": null,
+  "notes": null,
+  "referenceExterne": null,
+  "pdfPath": null,
+  "envoyeParEmail": false,
+  "dateEnvoiEmail": null,
+  "dateAcceptation": null,
+  "dateRefus": null,
+  "motifRefus": null,
+  "idFactureConvertie": null,
+  "remiseGlobalePourcentage": 0.0,
+  "remiseGlobaleMontant": 0.0,
+  "validiteOffreJours": 30,
+  "applyVat": true,
+  "dateSysteme": null,
+  "modeReglement": null,
+  "nosRef": null,
+  "vosRef": null,
+  "nbreEcheance": null,
+  "referalClientId": null,
+  "finalAmount": null,
+  "createdAt": null,
+  "updatedAt": "2026-06-13T13:56:49.307573",
+  "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b",
+  "createdBy": null
+}
+==================================================
+
+==================================================
+PUT /api/devis/c51279b9-38ab-4156-9c97-4c5d53eb4656
+Status Code: 200
+Response Body:
+{
+  "idDevis": "c51279b9-38ab-4156-9c97-4c5d53eb4656",
+  "numeroDevis": "DEV-2026-001",
+  "dateCreation": null,
+  "dateValidite": null,
+  "type": null,
+  "statut": null,
+  "montantTotal": 1250.0,
+  "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+  "nomClient": "Test Client Company",
+  "adresseClient": null,
+  "emailClient": null,
+  "telephoneClient": null,
+  "lignesDevis": [
+    {
+      "idLigne": null,
+      "quantite": 1,
+      "description": "Laptop Pro",
+      "debit": null,
+      "credit": null,
+      "isTaxLine": false,
+      "idProduit": null,
+      "nomProduit": null,
+      "prixUnitaire": 1200.0,
+      "montantTotal": 1200.0,
+      "remisePourcentage": 0.0,
+      "remiseMontant": 0.0
+    }
+  ],
+  "montantHT": null,
+  "montantTVA": null,
+  "montantTTC": null,
+  "devise": null,
+  "tauxChange": 1,
+  "conditionsPaiement": null,
+  "notes": null,
+  "referenceExterne": null,
+  "pdfPath": null,
+  "envoyeParEmail": false,
+  "dateEnvoiEmail": null,
+  "dateAcceptation": null,
+  "dateRefus": null,
+  "motifRefus": null,
+  "idFactureConvertie": null,
+  "remiseGlobalePourcentage": null,
+  "remiseGlobaleMontant": null,
+  "validiteOffreJours": 30,
+  "applyVat": null,
+  "dateSysteme": null,
+  "modeReglement": null,
+  "nosRef": null,
+  "vosRef": null,
+  "nbreEcheance": null,
+  "referalClientId": null,
+  "finalAmount": null,
+  "createdAt": null,
+  "updatedAt": "2026-06-13T13:56:49.65341993",
+  "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b",
+  "createdBy": null
+}
+==================================================
+
+==================================================
+PUT /api/devis/c51279b9-38ab-4156-9c97-4c5d53eb4656/accepter
+Status Code: 200
+Response Body:
+Response Text: 
+==================================================
+
+==================================================
+PUT /api/devis/c51279b9-38ab-4156-9c97-4c5d53eb4656/refuser
+Status Code: 200
+Response Body:
+Response Text: 
+==================================================
+
+==================================================
+GET /api/devis/numero/DEV-2026-001
+Status Code: 500
+Response Body:
+{
+  "path": "/api/devis/numero/DEV-2026-001",
+  "message": "Query [SELECT devis.id_devis, devis.numero_devis, devis.date_creation, devis.date_validite, devis.statut, devis.lignes_devis, devis.montant_total, devis.id_client, devis.nom_client, devis.adresse_client, devis.email_client, devis.telephone_client, devis.montant_ht, devis.montant_tva, devis.montant_ttc, devis.devise, devis.taux_change, devis.conditions_paiement, devis.notes, devis.reference_externe, devis.envoye_par_email, devis.date_envoi_email, devis.date_acceptation, devis.date_refus, devis.motif_refus, devis.id_facture_convertie, devis.remise_globale_pourcentage, devis.remise_globale_montant, devis.validite_offre_jours, devis.apply_vat, devis.date_systeme, devis.mode_reglement, devis.nos_ref, devis.vos_ref, devis.nbre_echeance, devis.referal_client_id, devis.final_amount, devis.created_by, devis.updated_at, devis.organization_id, devis.version FROM devis WHERE devis.numero_devis = $1] returned non unique result.",
+  "error": "Internal Server Error"
+}
+==================================================
+
+==================================================
+GET /api/devis/enriched/d3b07384-d113-4953-a5e3-0350718c962b
+Status Code: 200
+Response Body:
+[
+  {
+    "idDevis": "c51279b9-38ab-4156-9c97-4c5d53eb4656",
+    "numeroDevis": "DEV-2026-001",
+    "dateCreation": null,
+    "dateValidite": null,
+    "type": null,
+    "statut": "REFUSE",
+    "montantTotal": 1250.0,
+    "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+    "nomClient": "Test Client Company",
+    "adresseClient": null,
+    "emailClient": null,
+    "telephoneClient": null,
+    "lignesDevis": [
+      {
+        "idLigne": null,
+        "quantite": 1,
+        "description": null,
+        "debit": null,
+        "credit": null,
+        "isTaxLine": null,
+        "idProduit": null,
+        "nomProduit": null,
+        "prixUnitaire": 1200.0,
+        "montantTotal": 1200.0,
+        "remisePourcentage": null,
+        "remiseMontant": null
+      }
+    ],
+    "montantHT": null,
+    "montantTVA": null,
+    "montantTTC": null,
+    "devise": null,
+    "tauxChange": 1.0,
+    "conditionsPaiement": null,
+    "notes": null,
+    "referenceExterne": null,
+    "pdfPath": null,
+    "envoyeParEmail": false,
+    "dateEnvoiEmail": null,
+    "dateAcceptation": "2026-06-13T13:56:49.733642",
+    "dateRefus": "2026-06-13T13:56:49.810283",
+    "motifRefus": null,
+    "idFactureConvertie": null,
+    "remiseGlobalePourcentage": 0.0,
+    "remiseGlobaleMontant": 0.0,
+    "validiteOffreJours": 30,
+    "applyVat": true,
+    "dateSysteme": null,
+    "modeReglement": null,
+    "nosRef": null,
+    "vosRef": null,
+    "nbreEcheance": null,
+    "referalClientId": null,
+    "finalAmount": null,
+    "createdAt": null,
+    "updatedAt": "2026-06-13T13:56:49.810726",
+    "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b",
+    "organizationName": null,
+    "agencyId": null,
+    "agencyName": null,
+    "salesPointId": null,
+    "salesPointName": null
+  }
+]
+==================================================
+
+--- TESTING FACTURES ---
+
+==================================================
+POST /api/factures
+Status Code: 201
+Response Body:
+{
+  "idFacture": "a5334546-8c0f-4e05-ad3f-8857db7da3ce",
+  "numeroFacture": "FAC-2026-001",
+  "dateFacturation": "2026-06-13T12:00:00",
+  "dateEcheance": "2026-07-13T12:00:00",
+  "dateSysteme": null,
+  "type": null,
+  "etat": "BROUILLON",
+  "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+  "nomClient": null,
+  "adresseClient": null,
+  "emailClient": null,
+  "telephoneClient": null,
+  "montantHT": null,
+  "montantTVA": null,
+  "montantTTC": null,
+  "montantTotal": null,
+  "montantRestant": 0,
+  "finalAmount": null,
+  "applyVat": null,
+  "devise": null,
+  "tauxChange": 1,
+  "modeReglement": null,
+  "conditionsPaiement": null,
+  "nbreEcheance": null,
+  "nosRef": null,
+  "vosRef": null,
+  "referenceCommande": null,
+  "idDevisOrigine": null,
+  "lignesFacture": [
+    {
+      "quantite": 1,
+      "description": "Laptop Pro",
+      "debit": 1200.0,
+      "credit": 0.0,
+      "isTaxLine": false,
+      "idProduit": null,
+      "referenceProduit": null,
+      "nomProduit": null,
+      "prixUnitaire": 1200.0,
+      "montantTotal": 1200.0,
+      "ordre": null
+    }
+  ],
+  "notes": null,
+  "pdfPath": null,
+  "envoyeParEmail": false,
+  "dateEnvoiEmail": null,
+  "referalClientId": null,
+  "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b",
+  "remiseGlobalePourcentage": null,
+  "remiseGlobaleMontant": null,
+  "createdBy": null,
+  "createdByUsername": null,
+  "validatedBy": null,
+  "validatedByUsername": null,
+  "validatedAt": null,
+  "version": 0,
+  "createdAt": null,
+  "updatedAt": "2026-06-13T13:56:50.170621751"
+}
+==================================================
+
+==================================================
+GET /api/factures
+Status Code: 200
+Response Body:
+[
+  {
+    "idFacture": "7a18f0c2-7b51-4efa-9038-49c58d927bd9",
+    "numeroFacture": "FACT-2026-001",
+    "dateFacturation": "2026-02-28T11:38:43.766",
+    "dateEcheance": "2026-03-30T11:38:43.766",
+    "dateSysteme": "2026-02-28T11:38:43.766",
+    "type": "FACTURE_STANDARD",
+    "etat": "BROUILLON",
+    "idClient": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "nomClient": "Acme Corp",
+    "adresseClient": "123 Rue de l'Innovation, Paris",
+    "emailClient": "billing@acme.com",
+    "telephoneClient": "+33 1 23 45 67 89",
+    "montantHT": 1000.0,
+    "montantTVA": 200.0,
+    "montantTTC": 1200.0,
+    "montantTotal": 1200.0,
+    "montantRestant": 1200.0,
+    "finalAmount": 1200.0,
+    "applyVat": true,
+    "devise": "EUR",
+    "tauxChange": 1.0,
+    "modeReglement": "VIREMENT",
+    "conditionsPaiement": "30 jours fin de mois",
+    "nbreEcheance": 1,
+    "nosRef": "OUR-REF-123",
+    "vosRef": "YOUR-PO-456",
+    "referenceCommande": "CMD-789",
+    "idDevisOrigine": "6e3435fc-20a3-4dbb-bb6f-2df447c12440",
+    "lignesFacture": [
+      {
+        "quantite": 2,
+        "description": "Licences Software Annuel",
+        "debit": 0,
+        "credit": 1000,
+        "isTaxLine": false,
+        "idProduit": "e7b12f64-1234-4562-b3fc-2c963f66afa6",
+        "referenceProduit": null,
+        "nomProduit": "SaaS License",
+        "prixUnitaire": 5000,
+        "montantTotal": 10000,
+        "ordre": null
+      },
+      {
+        "quantite": 1,
+        "description": "TVA 20%",
+        "debit": 0,
+        "credit": 200,
+        "isTaxLine": true,
+        "idProduit": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "referenceProduit": null,
+        "nomProduit": "TVA",
+        "prixUnitaire": 200,
+        "montantTotal": 200,
+        "ordre": null
+      }
+    ],
+    "notes": "Merci pour votre r\u00e8glement.",
+    "pdfPath": "/invoices/2026/FACT-2026-001.pdf",
+    "envoyeParEmail": false,
+    "dateEnvoiEmail": null,
+    "referalClientId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "organizationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "remiseGlobalePourcentage": 0.0,
+    "remiseGlobaleMontant": 0.0,
+    "createdBy": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "createdByUsername": null,
+    "validatedBy": null,
+    "validatedByUsername": null,
+    "validatedAt": null,
+    "version": 1,
+    "createdAt": null,
+    "updatedAt": "2026-02-28T12:40:37.921771"
+  },
+  {
+    "idFacture": "a5334546-8c0f-4e05-ad3f-8857db7da3ce",
+    "numeroFacture": "FAC-2026-001",
+    "dateFacturation": "2026-06-13T12:00:00",
+    "dateEcheance": "2026-07-13T12:00:00",
+    "dateSysteme": null,
+    "type": null,
+    "etat": "BROUILLON",
+    "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+    "nomClient": null,
+    "adresseClient": null,
+    "emailClient": null,
+    "telephoneClient": null,
+    "montantHT": null,
+    "montantTVA": null,
+    "montantTTC": null,
+    "montantTotal": null,
+    "montantRestant": 0.0,
+    "finalAmount": null,
+    "applyVat": null,
+    "devise": null,
+    "tauxChange": 1.0,
+    "modeReglement": null,
+    "conditionsPaiement": null,
+    "nbreEcheance": null,
+    "nosRef": null,
+    "vosRef": null,
+    "referenceCommande": null,
+    "idDevisOrigine": null,
+    "lignesFacture": [
+      {
+        "quantite": 1,
+        "description": "Laptop Pro",
+        "debit": 1200.0,
+        "credit": 0.0,
+        "isTaxLine": false,
+        "idProduit": null,
+        "referenceProduit": null,
+        "nomProduit": null,
+        "prixUnitaire": 1200.0,
+        "montantTotal": 1200.0,
+        "ordre": null
+      }
+    ],
+    "notes": null,
+    "pdfPath": null,
+    "envoyeParEmail": false,
+    "dateEnvoiEmail": null,
+    "referalClientId": null,
+    "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b",
+    "remiseGlobalePourcentage": 0.0,
+    "remiseGlobaleMontant": 0.0,
+    "createdBy": null,
+    "createdByUsername": null,
+    "validatedBy": null,
+    "validatedByUsername": null,
+    "validatedAt": null,
+    "version": 0,
+    "createdAt": null,
+    "updatedAt": "2026-06-13T13:56:50.170622"
+  }
+]
+==================================================
+
+==================================================
+GET /api/factures/a5334546-8c0f-4e05-ad3f-8857db7da3ce
+Status Code: 200
+Response Body:
+{
+  "idFacture": "a5334546-8c0f-4e05-ad3f-8857db7da3ce",
+  "numeroFacture": "FAC-2026-001",
+  "dateFacturation": "2026-06-13T12:00:00",
+  "dateEcheance": "2026-07-13T12:00:00",
+  "dateSysteme": null,
+  "type": null,
+  "etat": "BROUILLON",
+  "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+  "nomClient": null,
+  "adresseClient": null,
+  "emailClient": null,
+  "telephoneClient": null,
+  "montantHT": null,
+  "montantTVA": null,
+  "montantTTC": null,
+  "montantTotal": null,
+  "montantRestant": 0.0,
+  "finalAmount": null,
+  "applyVat": null,
+  "devise": null,
+  "tauxChange": 1.0,
+  "modeReglement": null,
+  "conditionsPaiement": null,
+  "nbreEcheance": null,
+  "nosRef": null,
+  "vosRef": null,
+  "referenceCommande": null,
+  "idDevisOrigine": null,
+  "lignesFacture": [
+    {
+      "quantite": 1,
+      "description": "Laptop Pro",
+      "debit": 1200.0,
+      "credit": 0.0,
+      "isTaxLine": false,
+      "idProduit": null,
+      "referenceProduit": null,
+      "nomProduit": null,
+      "prixUnitaire": 1200.0,
+      "montantTotal": 1200.0,
+      "ordre": null
+    }
+  ],
+  "notes": null,
+  "pdfPath": null,
+  "envoyeParEmail": false,
+  "dateEnvoiEmail": null,
+  "referalClientId": null,
+  "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b",
+  "remiseGlobalePourcentage": 0.0,
+  "remiseGlobaleMontant": 0.0,
+  "createdBy": null,
+  "createdByUsername": null,
+  "validatedBy": null,
+  "validatedByUsername": null,
+  "validatedAt": null,
+  "version": 0,
+  "createdAt": null,
+  "updatedAt": "2026-06-13T13:56:50.170622"
+}
+==================================================
+
+==================================================
+PUT /api/factures/a5334546-8c0f-4e05-ad3f-8857db7da3ce
+Status Code: 200
+Response Body:
+{
+  "idFacture": "a5334546-8c0f-4e05-ad3f-8857db7da3ce",
+  "numeroFacture": "FAC-2026-001-REV",
+  "dateFacturation": "2026-06-13T12:00:00",
+  "dateEcheance": "2026-07-13T12:00:00",
+  "dateSysteme": null,
+  "type": null,
+  "etat": "BROUILLON",
+  "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+  "nomClient": null,
+  "adresseClient": null,
+  "emailClient": null,
+  "telephoneClient": null,
+  "montantHT": null,
+  "montantTVA": null,
+  "montantTTC": null,
+  "montantTotal": null,
+  "montantRestant": 0.0,
+  "finalAmount": null,
+  "applyVat": null,
+  "devise": null,
+  "tauxChange": 1,
+  "modeReglement": null,
+  "conditionsPaiement": null,
+  "nbreEcheance": null,
+  "nosRef": null,
+  "vosRef": null,
+  "referenceCommande": null,
+  "idDevisOrigine": null,
+  "lignesFacture": [
+    {
+      "quantite": 1,
+      "description": "Laptop Pro",
+      "debit": 1200.0,
+      "credit": 0.0,
+      "isTaxLine": false,
+      "idProduit": null,
+      "referenceProduit": null,
+      "nomProduit": null,
+      "prixUnitaire": 1200.0,
+      "montantTotal": 1200.0,
+      "ordre": null
+    }
+  ],
+  "notes": null,
+  "pdfPath": null,
+  "envoyeParEmail": false,
+  "dateEnvoiEmail": null,
+  "referalClientId": null,
+  "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b",
+  "remiseGlobalePourcentage": 0.0,
+  "remiseGlobaleMontant": 0.0,
+  "createdBy": null,
+  "createdByUsername": null,
+  "validatedBy": null,
+  "validatedByUsername": null,
+  "validatedAt": null,
+  "version": 1,
+  "createdAt": null,
+  "updatedAt": "2026-06-13T13:56:50.366505853"
+}
+==================================================
+
+==================================================
+PUT /api/factures/a5334546-8c0f-4e05-ad3f-8857db7da3ce/paiement
+Status Code: 500
+Response Body:
+{
+  "path": "/api/factures/a5334546-8c0f-4e05-ad3f-8857db7da3ce/paiement",
+  "message": "Le montant pay\u00e9 d\u00e9passe le montant restant",
+  "error": "Internal Server Error"
+}
+==================================================
+
+==================================================
+PUT /api/factures/a5334546-8c0f-4e05-ad3f-8857db7da3ce/marquer-paye
+Status Code: 200
+Response Body:
+{
+  "idFacture": "a5334546-8c0f-4e05-ad3f-8857db7da3ce",
+  "numeroFacture": "FAC-2026-001-REV",
+  "dateFacturation": "2026-06-13T12:00:00",
+  "dateEcheance": "2026-07-13T12:00:00",
+  "dateSysteme": null,
+  "type": null,
+  "etat": "PAYE",
+  "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+  "nomClient": null,
+  "adresseClient": null,
+  "emailClient": null,
+  "telephoneClient": null,
+  "montantHT": null,
+  "montantTVA": null,
+  "montantTTC": null,
+  "montantTotal": null,
+  "montantRestant": 0,
+  "finalAmount": null,
+  "applyVat": null,
+  "devise": null,
+  "tauxChange": 1.0,
+  "modeReglement": null,
+  "conditionsPaiement": null,
+  "nbreEcheance": null,
+  "nosRef": null,
+  "vosRef": null,
+  "referenceCommande": null,
+  "idDevisOrigine": null,
+  "lignesFacture": [
+    {
+      "quantite": 1,
+      "description": "Laptop Pro",
+      "debit": 1200.0,
+      "credit": 0.0,
+      "isTaxLine": false,
+      "idProduit": null,
+      "referenceProduit": null,
+      "nomProduit": null,
+      "prixUnitaire": 1200.0,
+      "montantTotal": 1200.0,
+      "ordre": null
+    }
+  ],
+  "notes": null,
+  "pdfPath": null,
+  "envoyeParEmail": false,
+  "dateEnvoiEmail": null,
+  "referalClientId": null,
+  "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b",
+  "remiseGlobalePourcentage": 0.0,
+  "remiseGlobaleMontant": 0.0,
+  "createdBy": null,
+  "createdByUsername": null,
+  "validatedBy": null,
+  "validatedByUsername": null,
+  "validatedAt": null,
+  "version": 2,
+  "createdAt": null,
+  "updatedAt": "2026-06-13T13:56:50.486230451"
+}
+==================================================
+
+==================================================
+GET /api/factures/numero/FAC-2026-001-REV
+Status Code: 200
+Response Body:
+{
+  "idFacture": "a5334546-8c0f-4e05-ad3f-8857db7da3ce",
+  "numeroFacture": "FAC-2026-001-REV",
+  "dateFacturation": "2026-06-13T12:00:00",
+  "dateEcheance": "2026-07-13T12:00:00",
+  "dateSysteme": null,
+  "type": null,
+  "etat": "PAYE",
+  "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+  "nomClient": null,
+  "adresseClient": null,
+  "emailClient": null,
+  "telephoneClient": null,
+  "montantHT": null,
+  "montantTVA": null,
+  "montantTTC": null,
+  "montantTotal": null,
+  "montantRestant": 0.0,
+  "finalAmount": null,
+  "applyVat": null,
+  "devise": null,
+  "tauxChange": 1.0,
+  "modeReglement": null,
+  "conditionsPaiement": null,
+  "nbreEcheance": null,
+  "nosRef": null,
+  "vosRef": null,
+  "referenceCommande": null,
+  "idDevisOrigine": null,
+  "lignesFacture": [
+    {
+      "quantite": 1,
+      "description": "Laptop Pro",
+      "debit": 1200.0,
+      "credit": 0.0,
+      "isTaxLine": false,
+      "idProduit": null,
+      "referenceProduit": null,
+      "nomProduit": null,
+      "prixUnitaire": 1200.0,
+      "montantTotal": 1200.0,
+      "ordre": null
+    }
+  ],
+  "notes": null,
+  "pdfPath": null,
+  "envoyeParEmail": false,
+  "dateEnvoiEmail": null,
+  "referalClientId": null,
+  "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b",
+  "remiseGlobalePourcentage": 0.0,
+  "remiseGlobaleMontant": 0.0,
+  "createdBy": null,
+  "createdByUsername": null,
+  "validatedBy": null,
+  "validatedByUsername": null,
+  "validatedAt": null,
+  "version": 2,
+  "createdAt": null,
+  "updatedAt": "2026-06-13T13:56:50.48623"
+}
+==================================================
+
+==================================================
+GET /api/factures/non-payees
+Status Code: 200
+Response Body:
+[
+  {
+    "idFacture": "7a18f0c2-7b51-4efa-9038-49c58d927bd9",
+    "numeroFacture": "FACT-2026-001",
+    "dateFacturation": "2026-02-28T11:38:43.766",
+    "dateEcheance": "2026-03-30T11:38:43.766",
+    "dateSysteme": "2026-02-28T11:38:43.766",
+    "type": "FACTURE_STANDARD",
+    "etat": "BROUILLON",
+    "idClient": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "nomClient": "Acme Corp",
+    "adresseClient": "123 Rue de l'Innovation, Paris",
+    "emailClient": "billing@acme.com",
+    "telephoneClient": "+33 1 23 45 67 89",
+    "montantHT": 1000.0,
+    "montantTVA": 200.0,
+    "montantTTC": 1200.0,
+    "montantTotal": 1200.0,
+    "montantRestant": 1200.0,
+    "finalAmount": 1200.0,
+    "applyVat": true,
+    "devise": "EUR",
+    "tauxChange": 1.0,
+    "modeReglement": "VIREMENT",
+    "conditionsPaiement": "30 jours fin de mois",
+    "nbreEcheance": 1,
+    "nosRef": "OUR-REF-123",
+    "vosRef": "YOUR-PO-456",
+    "referenceCommande": "CMD-789",
+    "idDevisOrigine": "6e3435fc-20a3-4dbb-bb6f-2df447c12440",
+    "lignesFacture": [
+      {
+        "quantite": 2,
+        "description": "Licences Software Annuel",
+        "debit": 0,
+        "credit": 1000,
+        "isTaxLine": false,
+        "idProduit": "e7b12f64-1234-4562-b3fc-2c963f66afa6",
+        "referenceProduit": null,
+        "nomProduit": "SaaS License",
+        "prixUnitaire": 5000,
+        "montantTotal": 10000,
+        "ordre": null
+      },
+      {
+        "quantite": 1,
+        "description": "TVA 20%",
+        "debit": 0,
+        "credit": 200,
+        "isTaxLine": true,
+        "idProduit": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "referenceProduit": null,
+        "nomProduit": "TVA",
+        "prixUnitaire": 200,
+        "montantTotal": 200,
+        "ordre": null
+      }
+    ],
+    "notes": "Merci pour votre r\u00e8glement.",
+    "pdfPath": "/invoices/2026/FACT-2026-001.pdf",
+    "envoyeParEmail": false,
+    "dateEnvoiEmail": null,
+    "referalClientId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "organizationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "remiseGlobalePourcentage": 0.0,
+    "remiseGlobaleMontant": 0.0,
+    "createdBy": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "createdByUsername": null,
+    "validatedBy": null,
+    "validatedByUsername": null,
+    "validatedAt": null,
+    "version": 1,
+    "createdAt": null,
+    "updatedAt": "2026-02-28T12:40:37.921771"
+  }
+]
+==================================================
+
+==================================================
+GET /api/factures/retard
+Status Code: 200
+Response Body:
+[]
+==================================================
+
+==================================================
+GET /api/factures/etat/PAYE
+Status Code: 200
+Response Body:
+[
+  {
+    "idFacture": "a5334546-8c0f-4e05-ad3f-8857db7da3ce",
+    "numeroFacture": "FAC-2026-001-REV",
+    "dateFacturation": "2026-06-13T12:00:00",
+    "dateEcheance": "2026-07-13T12:00:00",
+    "dateSysteme": null,
+    "type": null,
+    "etat": "PAYE",
+    "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+    "nomClient": null,
+    "adresseClient": null,
+    "emailClient": null,
+    "telephoneClient": null,
+    "montantHT": null,
+    "montantTVA": null,
+    "montantTTC": null,
+    "montantTotal": null,
+    "montantRestant": 0.0,
+    "finalAmount": null,
+    "applyVat": null,
+    "devise": null,
+    "tauxChange": 1.0,
+    "modeReglement": null,
+    "conditionsPaiement": null,
+    "nbreEcheance": null,
+    "nosRef": null,
+    "vosRef": null,
+    "referenceCommande": null,
+    "idDevisOrigine": null,
+    "lignesFacture": [
+      {
+        "quantite": 1,
+        "description": "Laptop Pro",
+        "debit": 1200.0,
+        "credit": 0.0,
+        "isTaxLine": false,
+        "idProduit": null,
+        "referenceProduit": null,
+        "nomProduit": null,
+        "prixUnitaire": 1200.0,
+        "montantTotal": 1200.0,
+        "ordre": null
+      }
+    ],
+    "notes": null,
+    "pdfPath": null,
+    "envoyeParEmail": false,
+    "dateEnvoiEmail": null,
+    "referalClientId": null,
+    "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b",
+    "remiseGlobalePourcentage": 0.0,
+    "remiseGlobaleMontant": 0.0,
+    "createdBy": null,
+    "createdByUsername": null,
+    "validatedBy": null,
+    "validatedByUsername": null,
+    "validatedAt": null,
+    "version": 2,
+    "createdAt": null,
+    "updatedAt": "2026-06-13T13:56:50.48623"
+  }
+]
+==================================================
+
+==================================================
+GET /api/factures/count/etat/PAYE
+Status Code: 200
+Response Body:
+1
+==================================================
+
+==================================================
+GET /api/factures/client/e1a7b458-12c8-472d-bb91-030a21a92e10
+Status Code: 200
+Response Body:
+[
+  {
+    "idFacture": "a5334546-8c0f-4e05-ad3f-8857db7da3ce",
+    "numeroFacture": "FAC-2026-001-REV",
+    "dateFacturation": "2026-06-13T12:00:00",
+    "dateEcheance": "2026-07-13T12:00:00",
+    "dateSysteme": null,
+    "type": null,
+    "etat": "PAYE",
+    "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+    "nomClient": null,
+    "adresseClient": null,
+    "emailClient": null,
+    "telephoneClient": null,
+    "montantHT": null,
+    "montantTVA": null,
+    "montantTTC": null,
+    "montantTotal": null,
+    "montantRestant": 0.0,
+    "finalAmount": null,
+    "applyVat": null,
+    "devise": null,
+    "tauxChange": 1.0,
+    "modeReglement": null,
+    "conditionsPaiement": null,
+    "nbreEcheance": null,
+    "nosRef": null,
+    "vosRef": null,
+    "referenceCommande": null,
+    "idDevisOrigine": null,
+    "lignesFacture": [
+      {
+        "quantite": 1,
+        "description": "Laptop Pro",
+        "debit": 1200.0,
+        "credit": 0.0,
+        "isTaxLine": false,
+        "idProduit": null,
+        "referenceProduit": null,
+        "nomProduit": null,
+        "prixUnitaire": 1200.0,
+        "montantTotal": 1200.0,
+        "ordre": null
+      }
+    ],
+    "notes": null,
+    "pdfPath": null,
+    "envoyeParEmail": false,
+    "dateEnvoiEmail": null,
+    "referalClientId": null,
+    "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b",
+    "remiseGlobalePourcentage": 0.0,
+    "remiseGlobaleMontant": 0.0,
+    "createdBy": null,
+    "createdByUsername": null,
+    "validatedBy": null,
+    "validatedByUsername": null,
+    "validatedAt": null,
+    "version": 2,
+    "createdAt": null,
+    "updatedAt": "2026-06-13T13:56:50.48623"
+  }
+]
+==================================================
+
+==================================================
+GET /api/factures/periode
+Status Code: 200
+Response Body:
+[
+  {
+    "idFacture": "a5334546-8c0f-4e05-ad3f-8857db7da3ce",
+    "numeroFacture": "FAC-2026-001-REV",
+    "dateFacturation": "2026-06-13T12:00:00",
+    "dateEcheance": "2026-07-13T12:00:00",
+    "dateSysteme": null,
+    "type": null,
+    "etat": "PAYE",
+    "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+    "nomClient": null,
+    "adresseClient": null,
+    "emailClient": null,
+    "telephoneClient": null,
+    "montantHT": null,
+    "montantTVA": null,
+    "montantTTC": null,
+    "montantTotal": null,
+    "montantRestant": 0.0,
+    "finalAmount": null,
+    "applyVat": null,
+    "devise": null,
+    "tauxChange": 1.0,
+    "modeReglement": null,
+    "conditionsPaiement": null,
+    "nbreEcheance": null,
+    "nosRef": null,
+    "vosRef": null,
+    "referenceCommande": null,
+    "idDevisOrigine": null,
+    "lignesFacture": [
+      {
+        "quantite": 1,
+        "description": "Laptop Pro",
+        "debit": 1200.0,
+        "credit": 0.0,
+        "isTaxLine": false,
+        "idProduit": null,
+        "referenceProduit": null,
+        "nomProduit": null,
+        "prixUnitaire": 1200.0,
+        "montantTotal": 1200.0,
+        "ordre": null
+      }
+    ],
+    "notes": null,
+    "pdfPath": null,
+    "envoyeParEmail": false,
+    "dateEnvoiEmail": null,
+    "referalClientId": null,
+    "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b",
+    "remiseGlobalePourcentage": 0.0,
+    "remiseGlobaleMontant": 0.0,
+    "createdBy": null,
+    "createdByUsername": null,
+    "validatedBy": null,
+    "validatedByUsername": null,
+    "validatedAt": null,
+    "version": 2,
+    "createdAt": null,
+    "updatedAt": "2026-06-13T13:56:50.48623"
+  }
+]
+==================================================
+
+==================================================
+GET /api/factures/account/a5334546-8c0f-4e05-ad3f-8857db7da3ce
+Status Code: 400
+Response Body:
+Response Text: 
+==================================================
+
+--- TESTING PAIEMENTS ---
+
+==================================================
+POST /api/paiement
+Status Code: 201
+Response Body:
+{
+  "idPaiement": "4f5e5039-092e-4d59-a85b-5e55511a9f2a",
+  "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+  "montant": 500.0,
+  "date": "2026-06-13",
+  "journal": "CASH",
+  "modePaiement": "ESPECES",
+  "compteBancaireF": null,
+  "memo": null,
+  "idFacture": "a5334546-8c0f-4e05-ad3f-8857db7da3ce",
+  "createdAt": "2026-06-13T13:56:50.96617923",
+  "updatedAt": "2026-06-13T13:56:50.974897294"
+}
+==================================================
+
+==================================================
+GET /api/paiement
+Status Code: 200
+Response Body:
+[
+  {
+    "idPaiement": "4f5e5039-092e-4d59-a85b-5e55511a9f2a",
+    "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+    "montant": 500.0,
+    "date": "2026-06-13",
+    "journal": "CASH",
+    "modePaiement": "ESPECES",
+    "compteBancaireF": null,
+    "memo": null,
+    "idFacture": "a5334546-8c0f-4e05-ad3f-8857db7da3ce",
+    "createdAt": "2026-06-13T13:56:50.966179",
+    "updatedAt": "2026-06-13T13:56:50.974897"
+  }
+]
+==================================================
+
+==================================================
+GET /api/paiement/4f5e5039-092e-4d59-a85b-5e55511a9f2a
+Status Code: 200
+Response Body:
+{
+  "idPaiement": "4f5e5039-092e-4d59-a85b-5e55511a9f2a",
+  "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+  "montant": 500.0,
+  "date": "2026-06-13",
+  "journal": "CASH",
+  "modePaiement": "ESPECES",
+  "compteBancaireF": null,
+  "memo": null,
+  "idFacture": "a5334546-8c0f-4e05-ad3f-8857db7da3ce",
+  "createdAt": "2026-06-13T13:56:50.966179",
+  "updatedAt": "2026-06-13T13:56:50.974897"
+}
+==================================================
+
+==================================================
+PUT /api/paiement/4f5e5039-092e-4d59-a85b-5e55511a9f2a
+Status Code: 200
+Response Body:
+{
+  "idPaiement": "4f5e5039-092e-4d59-a85b-5e55511a9f2a",
+  "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+  "montant": 600.0,
+  "date": "2026-06-13",
+  "journal": "CASH",
+  "modePaiement": "ESPECES",
+  "compteBancaireF": null,
+  "memo": null,
+  "idFacture": "a5334546-8c0f-4e05-ad3f-8857db7da3ce",
+  "createdAt": "2026-06-13T13:56:50.966179",
+  "updatedAt": "2026-06-13T13:56:51.196228403"
+}
+==================================================
+
+==================================================
+GET /api/paiement/facture/a5334546-8c0f-4e05-ad3f-8857db7da3ce
+Status Code: 200
+Response Body:
+[
+  {
+    "idPaiement": "4f5e5039-092e-4d59-a85b-5e55511a9f2a",
+    "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+    "montant": 600.0,
+    "date": "2026-06-13",
+    "journal": "CASH",
+    "modePaiement": "ESPECES",
+    "compteBancaireF": null,
+    "memo": null,
+    "idFacture": "a5334546-8c0f-4e05-ad3f-8857db7da3ce",
+    "createdAt": "2026-06-13T13:56:50.966179",
+    "updatedAt": "2026-06-13T13:56:51.196228"
+  }
+]
+==================================================
+
+==================================================
+GET /api/paiement/client/e1a7b458-12c8-472d-bb91-030a21a92e10
+Status Code: 200
+Response Body:
+[
+  {
+    "idPaiement": "4f5e5039-092e-4d59-a85b-5e55511a9f2a",
+    "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+    "montant": 600.0,
+    "date": "2026-06-13",
+    "journal": "CASH",
+    "modePaiement": "ESPECES",
+    "compteBancaireF": null,
+    "memo": null,
+    "idFacture": "a5334546-8c0f-4e05-ad3f-8857db7da3ce",
+    "createdAt": "2026-06-13T13:56:50.966179",
+    "updatedAt": "2026-06-13T13:56:51.196228"
+  }
+]
+==================================================
+
+--- TESTING FACTURES PROFORMA ---
+
+==================================================
+POST /api/factures-proforma
+Status Code: 201
+Response Body:
+{
+  "idFactureProforma": "6426eabb-2d7a-4bae-b13d-ed212b8b3183",
+  "numeroProformaInvoice": "PROF-2026-001",
+  "dateCreation": "2026-06-13T13:56:51.470332909",
+  "type": null,
+  "statut": "BROUILLON",
+  "montantTotal": null,
+  "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+  "nomClient": null,
+  "adresseClient": null,
+  "emailClient": null,
+  "telephoneClient": null,
+  "lignesFactureProforma": [
+    {
+      "idProduit": "2bd4972b-aef3-4eb3-83cd-38dcfcbd9a1f",
+      "nomProduit": "Laptop Pro",
+      "description": null,
+      "quantite": 1,
+      "prixUnitaire": 1200.0,
+      "montantTotal": 1200.0,
+      "remisePourcentage": null,
+      "remiseMontant": null,
+      "tauxTva": null
+    }
+  ],
+  "montantHT": null,
+  "montantTVA": null,
+  "montantTTC": null,
+  "devise": null,
+  "tauxChange": null,
+  "conditionsPaiement": null,
+  "notes": null,
+  "referenceExterne": null,
+  "pdfPath": null,
+  "envoyeParEmail": false,
+  "dateEnvoiEmail": null,
+  "dateAcceptation": null,
+  "dateRefus": null,
+  "motifRefus": null,
+  "idFactureConvertie": null,
+  "remiseGlobalePourcentage": null,
+  "remiseGlobaleMontant": null,
+  "validiteOffreJours": null,
+  "applyVat": null,
+  "dateSysteme": null,
+  "modeReglement": null,
+  "nosRef": null,
+  "vosRef": null,
+  "nbreEcheance": null,
+  "referalClientId": null,
+  "finalAmount": null,
+  "createdAt": null,
+  "updatedAt": "2026-06-13T13:56:51.48196168",
+  "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b",
+  "createdBy": null
+}
+==================================================
+
+==================================================
+GET /api/factures-proforma
+Status Code: 200
+Response Body:
+[
+  {
+    "idFactureProforma": "89912671-4706-43f0-853d-98ea2a7cb10d",
+    "numeroProformaInvoice": "PROF-2026-045",
+    "dateCreation": "2026-02-28T13:51:25.162095",
+    "type": "PROFORMA_EQUIPEMENT",
+    "statut": "BROUILLON",
+    "montantTotal": null,
+    "idClient": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "nomClient": "Global Tech Solutions",
+    "adresseClient": "45 Ave des Champs-\u00c9lys\u00e9es, Paris, France",
+    "emailClient": "procurement@globaltech.com",
+    "telephoneClient": "+33 1 88 77 66 55",
+    "lignesFactureProforma": [
+      {
+        "idProduit": "e7b12f64-1234-4562-b3fc-2c963f66afa6",
+        "nomProduit": "Workstation Z4",
+        "description": "High-performance workstation for 3D rendering",
+        "quantite": 5,
+        "prixUnitaire": 2500.0,
+        "montantTotal": null,
+        "remisePourcentage": 5.0,
+        "remiseMontant": 625.0,
+        "tauxTva": 20.0
+      }
+    ],
+    "montantHT": 11875.0,
+    "montantTVA": 2375.0,
+    "montantTTC": 14250.0,
+    "devise": "EUR",
+    "tauxChange": 1.0,
+    "conditionsPaiement": "Acompte 30% \u00e0 la commande",
+    "notes": "Validit\u00e9 de l'offre soumise \u00e0 disponibilit\u00e9 des stocks.",
+    "referenceExterne": "EXT-PRO-99",
+    "pdfPath": null,
+    "envoyeParEmail": false,
+    "dateEnvoiEmail": null,
+    "dateAcceptation": null,
+    "dateRefus": null,
+    "motifRefus": null,
+    "idFactureConvertie": null,
+    "remiseGlobalePourcentage": 0.0,
+    "remiseGlobaleMontant": 0.0,
+    "validiteOffreJours": 15,
+    "applyVat": true,
+    "dateSysteme": "2026-02-28",
+    "modeReglement": "VIREMENT",
+    "nosRef": "REF-INT-2026",
+    "vosRef": "DEMANDE-ACHAT-001",
+    "nbreEcheance": 1,
+    "referalClientId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "finalAmount": null,
+    "createdAt": null,
+    "updatedAt": "2026-02-28T13:51:25.2471",
+    "organizationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "createdBy": null
+  },
+  {
+    "idFactureProforma": "f1c253ce-7586-4b1d-9647-3967e63c3ebb",
+    "numeroProformaInvoice": "PROF-2026-0045",
+    "dateCreation": "2026-02-28T13:52:21.378421",
+    "type": "PROFORMA_Vente",
+    "statut": "BROUILLON",
+    "montantTotal": null,
+    "idClient": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "nomClient": "Tech Solutions SARL",
+    "adresseClient": "123 Avenue de l\u2019Ind\u00e9pendance, Douala, Cameroun",
+    "emailClient": "contact@techsolutions.cm",
+    "telephoneClient": "+237 670 00 00 00",
+    "lignesFactureProforma": [
+      {
+        "idProduit": "e7b12f64-1234-4562-b3fc-2c963f66afa6",
+        "nomProduit": "Laptop Pro 16",
+        "description": "High-end workstation for development",
+        "quantite": 2,
+        "prixUnitaire": 1200.0,
+        "montantTotal": 2400.0,
+        "remisePourcentage": 5.0,
+        "remiseMontant": 120.0,
+        "tauxTva": 19.25
+      }
+    ],
+    "montantHT": 2280.0,
+    "montantTVA": 438.9,
+    "montantTTC": 2718.9,
+    "devise": "XAF",
+    "tauxChange": 1.0,
+    "conditionsPaiement": "Paiement \u00e0 la livraison",
+    "notes": "Offre valable sous r\u00e9serve de stock disponible.",
+    "referenceExterne": "REF-EXT-778",
+    "pdfPath": null,
+    "envoyeParEmail": false,
+    "dateEnvoiEmail": null,
+    "dateAcceptation": null,
+    "dateRefus": null,
+    "motifRefus": null,
+    "idFactureConvertie": null,
+    "remiseGlobalePourcentage": 0.0,
+    "remiseGlobaleMontant": 0.0,
+    "validiteOffreJours": 30,
+    "applyVat": true,
+    "dateSysteme": "2026-02-28",
+    "modeReglement": "VIREMENT",
+    "nosRef": "NOTRE-REF-001",
+    "vosRef": "VOTRE-PO-99",
+    "nbreEcheance": 1,
+    "referalClientId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "finalAmount": null,
+    "createdAt": null,
+    "updatedAt": "2026-02-28T13:52:21.378928",
+    "organizationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "createdBy": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  },
+  {
+    "idFactureProforma": "6426eabb-2d7a-4bae-b13d-ed212b8b3183",
+    "numeroProformaInvoice": "PROF-2026-001",
+    "dateCreation": "2026-06-13T13:56:51.470333",
+    "type": null,
+    "statut": "BROUILLON",
+    "montantTotal": null,
+    "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+    "nomClient": null,
+    "adresseClient": null,
+    "emailClient": null,
+    "telephoneClient": null,
+    "lignesFactureProforma": [
+      {
+        "idProduit": "2bd4972b-aef3-4eb3-83cd-38dcfcbd9a1f",
+        "nomProduit": "Laptop Pro",
+        "description": null,
+        "quantite": 1,
+        "prixUnitaire": 1200.0,
+        "montantTotal": 1200.0,
+        "remisePourcentage": null,
+        "remiseMontant": null,
+        "tauxTva": null
+      }
+    ],
+    "montantHT": null,
+    "montantTVA": null,
+    "montantTTC": null,
+    "devise": null,
+    "tauxChange": null,
+    "conditionsPaiement": null,
+    "notes": null,
+    "referenceExterne": null,
+    "pdfPath": null,
+    "envoyeParEmail": false,
+    "dateEnvoiEmail": null,
+    "dateAcceptation": null,
+    "dateRefus": null,
+    "motifRefus": null,
+    "idFactureConvertie": null,
+    "remiseGlobalePourcentage": null,
+    "remiseGlobaleMontant": null,
+    "validiteOffreJours": null,
+    "applyVat": true,
+    "dateSysteme": null,
+    "modeReglement": null,
+    "nosRef": null,
+    "vosRef": null,
+    "nbreEcheance": null,
+    "referalClientId": null,
+    "finalAmount": null,
+    "createdAt": null,
+    "updatedAt": "2026-06-13T13:56:51.481962",
+    "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b",
+    "createdBy": null
+  }
+]
+==================================================
+
+==================================================
+GET /api/factures-proforma/6426eabb-2d7a-4bae-b13d-ed212b8b3183
+Status Code: 200
+Response Body:
+{
+  "idFactureProforma": "6426eabb-2d7a-4bae-b13d-ed212b8b3183",
+  "numeroProformaInvoice": "PROF-2026-001",
+  "dateCreation": "2026-06-13T13:56:51.470333",
+  "type": null,
+  "statut": "BROUILLON",
+  "montantTotal": null,
+  "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+  "nomClient": null,
+  "adresseClient": null,
+  "emailClient": null,
+  "telephoneClient": null,
+  "lignesFactureProforma": [
+    {
+      "idProduit": "2bd4972b-aef3-4eb3-83cd-38dcfcbd9a1f",
+      "nomProduit": "Laptop Pro",
+      "description": null,
+      "quantite": 1,
+      "prixUnitaire": 1200.0,
+      "montantTotal": 1200.0,
+      "remisePourcentage": null,
+      "remiseMontant": null,
+      "tauxTva": null
+    }
+  ],
+  "montantHT": null,
+  "montantTVA": null,
+  "montantTTC": null,
+  "devise": null,
+  "tauxChange": null,
+  "conditionsPaiement": null,
+  "notes": null,
+  "referenceExterne": null,
+  "pdfPath": null,
+  "envoyeParEmail": false,
+  "dateEnvoiEmail": null,
+  "dateAcceptation": null,
+  "dateRefus": null,
+  "motifRefus": null,
+  "idFactureConvertie": null,
+  "remiseGlobalePourcentage": null,
+  "remiseGlobaleMontant": null,
+  "validiteOffreJours": null,
+  "applyVat": true,
+  "dateSysteme": null,
+  "modeReglement": null,
+  "nosRef": null,
+  "vosRef": null,
+  "nbreEcheance": null,
+  "referalClientId": null,
+  "finalAmount": null,
+  "createdAt": null,
+  "updatedAt": "2026-06-13T13:56:51.481962",
+  "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b",
+  "createdBy": null
+}
+==================================================
+
+==================================================
+PUT /api/factures-proforma/6426eabb-2d7a-4bae-b13d-ed212b8b3183
+Status Code: 200
+Response Body:
+{
+  "idFactureProforma": "6426eabb-2d7a-4bae-b13d-ed212b8b3183",
+  "numeroProformaInvoice": "PROF-2026-001-REV",
+  "dateCreation": "2026-06-13T13:56:51.470333",
+  "type": null,
+  "statut": "BROUILLON",
+  "montantTotal": null,
+  "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+  "nomClient": null,
+  "adresseClient": null,
+  "emailClient": null,
+  "telephoneClient": null,
+  "lignesFactureProforma": [
+    {
+      "idProduit": "2bd4972b-aef3-4eb3-83cd-38dcfcbd9a1f",
+      "nomProduit": "Laptop Pro",
+      "description": null,
+      "quantite": 1,
+      "prixUnitaire": 1200.0,
+      "montantTotal": 1200.0,
+      "remisePourcentage": null,
+      "remiseMontant": null,
+      "tauxTva": null
+    }
+  ],
+  "montantHT": null,
+  "montantTVA": null,
+  "montantTTC": null,
+  "devise": null,
+  "tauxChange": null,
+  "conditionsPaiement": null,
+  "notes": null,
+  "referenceExterne": null,
+  "pdfPath": null,
+  "envoyeParEmail": false,
+  "dateEnvoiEmail": null,
+  "dateAcceptation": null,
+  "dateRefus": null,
+  "motifRefus": null,
+  "idFactureConvertie": null,
+  "remiseGlobalePourcentage": null,
+  "remiseGlobaleMontant": null,
+  "validiteOffreJours": null,
+  "applyVat": true,
+  "dateSysteme": null,
+  "modeReglement": null,
+  "nosRef": null,
+  "vosRef": null,
+  "nbreEcheance": null,
+  "referalClientId": null,
+  "finalAmount": null,
+  "createdAt": null,
+  "updatedAt": "2026-06-13T13:56:51.658397318",
+  "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b",
+  "createdBy": null
+}
+==================================================
+
+==================================================
+PATCH /api/factures-proforma/6426eabb-2d7a-4bae-b13d-ed212b8b3183/statut
+Status Code: 200
+Response Body:
+{
+  "idFactureProforma": "6426eabb-2d7a-4bae-b13d-ed212b8b3183",
+  "numeroProformaInvoice": "PROF-2026-001-REV",
+  "dateCreation": "2026-06-13T13:56:51.470333",
+  "type": null,
+  "statut": "ACCEPTE",
+  "montantTotal": null,
+  "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+  "nomClient": null,
+  "adresseClient": null,
+  "emailClient": null,
+  "telephoneClient": null,
+  "lignesFactureProforma": [
+    {
+      "idProduit": "2bd4972b-aef3-4eb3-83cd-38dcfcbd9a1f",
+      "nomProduit": "Laptop Pro",
+      "description": null,
+      "quantite": 1,
+      "prixUnitaire": 1200.0,
+      "montantTotal": 1200.0,
+      "remisePourcentage": null,
+      "remiseMontant": null,
+      "tauxTva": null
+    }
+  ],
+  "montantHT": null,
+  "montantTVA": null,
+  "montantTTC": null,
+  "devise": null,
+  "tauxChange": null,
+  "conditionsPaiement": null,
+  "notes": null,
+  "referenceExterne": null,
+  "pdfPath": null,
+  "envoyeParEmail": false,
+  "dateEnvoiEmail": null,
+  "dateAcceptation": "2026-06-13T13:56:51.73348198",
+  "dateRefus": null,
+  "motifRefus": null,
+  "idFactureConvertie": null,
+  "remiseGlobalePourcentage": null,
+  "remiseGlobaleMontant": null,
+  "validiteOffreJours": null,
+  "applyVat": true,
+  "dateSysteme": null,
+  "modeReglement": null,
+  "nosRef": null,
+  "vosRef": null,
+  "nbreEcheance": null,
+  "referalClientId": null,
+  "finalAmount": null,
+  "createdAt": null,
+  "updatedAt": "2026-06-13T13:56:51.733767091",
+  "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b",
+  "createdBy": null
+}
+==================================================
+
+==================================================
+GET /api/factures-proforma/client/e1a7b458-12c8-472d-bb91-030a21a92e10
+Status Code: 200
+Response Body:
+[
+  {
+    "idFactureProforma": "6426eabb-2d7a-4bae-b13d-ed212b8b3183",
+    "numeroProformaInvoice": "PROF-2026-001-REV",
+    "dateCreation": "2026-06-13T13:56:51.470333",
+    "type": null,
+    "statut": "ACCEPTE",
+    "montantTotal": null,
+    "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+    "nomClient": null,
+    "adresseClient": null,
+    "emailClient": null,
+    "telephoneClient": null,
+    "lignesFactureProforma": [
+      {
+        "idProduit": "2bd4972b-aef3-4eb3-83cd-38dcfcbd9a1f",
+        "nomProduit": "Laptop Pro",
+        "description": null,
+        "quantite": 1,
+        "prixUnitaire": 1200.0,
+        "montantTotal": 1200.0,
+        "remisePourcentage": null,
+        "remiseMontant": null,
+        "tauxTva": null
+      }
+    ],
+    "montantHT": null,
+    "montantTVA": null,
+    "montantTTC": null,
+    "devise": null,
+    "tauxChange": null,
+    "conditionsPaiement": null,
+    "notes": null,
+    "referenceExterne": null,
+    "pdfPath": null,
+    "envoyeParEmail": false,
+    "dateEnvoiEmail": null,
+    "dateAcceptation": "2026-06-13T13:56:51.733482",
+    "dateRefus": null,
+    "motifRefus": null,
+    "idFactureConvertie": null,
+    "remiseGlobalePourcentage": null,
+    "remiseGlobaleMontant": null,
+    "validiteOffreJours": null,
+    "applyVat": true,
+    "dateSysteme": null,
+    "modeReglement": null,
+    "nosRef": null,
+    "vosRef": null,
+    "nbreEcheance": null,
+    "referalClientId": null,
+    "finalAmount": null,
+    "createdAt": null,
+    "updatedAt": "2026-06-13T13:56:51.733767",
+    "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b",
+    "createdBy": null
+  }
+]
+==================================================
+
+--- TESTING BONS DE LIVRAISON ---
+
+==================================================
+POST /api/bons-livraison
+Status Code: 201
+Response Body:
+{
+  "idBonLivraison": "d5a81cc1-17d4-4cf6-ac4b-fe45d223234a",
+  "numeroBonLivraison": "DLV-2026-001",
+  "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+  "nomClient": null,
+  "adresseClient": null,
+  "emailClient": null,
+  "telephoneClient": null,
+  "lignes": [
+    {
+      "idProduit": "2bd4972b-aef3-4eb3-83cd-38dcfcbd9a1f",
+      "description": "Delivery of Laptop Pro",
+      "quantite": 1,
+      "prixUnitaire": 1200.0,
+      "montant": 1200.0
+    }
+  ],
+  "montantHT": null,
+  "montantTVA": null,
+  "montantTTC": null,
+  "dateLivraison": "2026-06-13T12:00:00",
+  "statut": "EN_PREPARATION",
+  "notes": null,
+  "createdBy": null,
+  "dateSysteme": null,
+  "updatedAt": "2026-06-13T13:56:51.855176864",
+  "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b"
+}
+==================================================
+
+==================================================
+GET /api/bons-livraison
+Status Code: 200
+Response Body:
+[
+  {
+    "idBonLivraison": "f6a63e19-f5d5-4ef2-ba18-cdc28032db33",
+    "numeroBonLivraison": "BL-2026-002",
+    "idClient": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "nomClient": "Farm Central Ltd",
+    "adresseClient": "123 Agriculture St, Yaounde, Cameroon",
+    "emailClient": "contact@farmcentral.cm",
+    "telephoneClient": "+237699112233",
+    "lignes": [
+      {
+        "idProduit": null,
+        "description": "NPK Fertilizer 20-10-10 (50kg)",
+        "quantite": null,
+        "prixUnitaire": null,
+        "montant": null
+      },
+      {
+        "idProduit": null,
+        "description": "Hybrid Maize Seeds (25kg)",
+        "quantite": null,
+        "prixUnitaire": null,
+        "montant": null
+      }
+    ],
+    "montantHT": 150000.0,
+    "montantTVA": 28875.0,
+    "montantTTC": 178875.0,
+    "dateLivraison": "2026-02-27T13:23:25.392",
+    "statut": "EN_PREPARATION",
+    "notes": "Urgent delivery for upcoming planting season.",
+    "createdBy": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "dateSysteme": "2026-02-27T13:23:25.392",
+    "updatedAt": "2026-02-27T16:31:11.70627",
+    "organizationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  },
+  {
+    "idBonLivraison": "bc6057e5-ca39-4363-b019-3522fc4f8cbe",
+    "numeroBonLivraison": "BL-2026-003",
+    "idClient": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "nomClient": "Farm Central Ltd",
+    "adresseClient": "123 Agriculture St, Yaounde, Cameroon",
+    "emailClient": "contact@farmcentral.cm",
+    "telephoneClient": "+237699112233",
+    "lignes": [
+      {
+        "idProduit": "11111111-2222-3333-4444-555555555555",
+        "description": "NPK Fertilizer 20-10-10 (50kg)",
+        "quantite": null,
+        "prixUnitaire": null,
+        "montant": null
+      },
+      {
+        "idProduit": "66666666-7777-8888-9999-000000000000",
+        "description": "Hybrid Maize Seeds (25kg)",
+        "quantite": null,
+        "prixUnitaire": null,
+        "montant": null
+      }
+    ],
+    "montantHT": 150000.0,
+    "montantTVA": 28875.0,
+    "montantTTC": 178875.0,
+    "dateLivraison": "2026-02-27T13:23:25.392",
+    "statut": "EN_PREPARATION",
+    "notes": "Urgent delivery for upcoming planting season.",
+    "createdBy": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "dateSysteme": "2026-02-27T13:23:25.392",
+    "updatedAt": "2026-02-27T16:34:05.745931",
+    "organizationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  },
+  {
+    "idBonLivraison": "8e29594f-f249-4137-ae0c-ea47c7bba45c",
+    "numeroBonLivraison": "BL-2026-004",
+    "idClient": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "nomClient": "Farm Central Ltd",
+    "adresseClient": "123 Agriculture St, Yaounde, Cameroon",
+    "emailClient": "contact@farmcentral.cm",
+    "telephoneClient": "+237699112233",
+    "lignes": [
+      {
+        "idProduit": null,
+        "description": "NPK Fertilizer 20-10-10 (50kg)",
+        "quantite": null,
+        "prixUnitaire": null,
+        "montant": null
+      },
+      {
+        "idProduit": null,
+        "description": "Hybrid Maize Seeds (25kg)",
+        "quantite": null,
+        "prixUnitaire": null,
+        "montant": null
+      }
+    ],
+    "montantHT": 150000.0,
+    "montantTVA": 28875.0,
+    "montantTTC": 178875.0,
+    "dateLivraison": "2026-02-27T13:23:25.392",
+    "statut": "EN_PREPARATION",
+    "notes": "Urgent delivery for upcoming planting season.",
+    "createdBy": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "dateSysteme": "2026-02-27T13:23:25.392",
+    "updatedAt": "2026-02-27T16:38:51.992504",
+    "organizationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  },
+  {
+    "idBonLivraison": "4b050424-a6c7-451d-9bbb-703ab60d3e7b",
+    "numeroBonLivraison": "BL-2026-005",
+    "idClient": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "nomClient": "Farm Central Ltd",
+    "adresseClient": "123 Agriculture St, Yaounde, Cameroon",
+    "emailClient": "contact@farmcentral.cm",
+    "telephoneClient": "+237699112233",
+    "lignes": [
+      {
+        "idProduit": "11111111-2222-3333-4444-555555555555",
+        "description": "NPK Fertilizer 20-10-10 (50kg)",
+        "quantite": 10,
+        "prixUnitaire": 10000,
+        "montant": 100000
+      },
+      {
+        "idProduit": "66666666-7777-8888-9999-000000000000",
+        "description": "Hybrid Maize Seeds (25kg)",
+        "quantite": 5,
+        "prixUnitaire": 100,
+        "montant": 50000
+      }
+    ],
+    "montantHT": 150000.0,
+    "montantTVA": 28875.0,
+    "montantTTC": 178875.0,
+    "dateLivraison": "2026-02-27T13:23:25.392",
+    "statut": "EN_PREPARATION",
+    "notes": "Urgent delivery for upcoming planting season.",
+    "createdBy": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "dateSysteme": "2026-02-27T13:23:25.392",
+    "updatedAt": "2026-02-28T07:49:47.571445",
+    "organizationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  },
+  {
+    "idBonLivraison": "15c89892-c621-4fe7-b921-1b6f0f9502e8",
+    "numeroBonLivraison": "BL-2026-0001",
+    "idClient": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "nomClient": "Farm Central Ltd",
+    "adresseClient": "123 Agriiculture St, Yaounde, Cameroon",
+    "emailClient": "contact@farmcentral.cm",
+    "telephoneClient": "+237699112233",
+    "lignes": null,
+    "montantHT": 150000.0,
+    "montantTVA": 28875.0,
+    "montantTTC": 178875.0,
+    "dateLivraison": "2026-02-27T13:23:25.392",
+    "statut": "EN_PREPARATION",
+    "notes": "Urgent delivery for upcoming planting season.",
+    "createdBy": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "dateSysteme": "2026-02-27T13:23:25.392",
+    "updatedAt": "2026-02-27T16:15:34.359156",
+    "organizationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  },
+  {
+    "idBonLivraison": "fdbc210c-f33f-4d1e-ac44-1bc0a33f3689",
+    "numeroBonLivraison": "BL-2026-001",
+    "idClient": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "nomClient": "Farm Central Ltd",
+    "adresseClient": "123 Agriculture St, Yaounde, Cameroon",
+    "emailClient": "contact@farmcentral.cm",
+    "telephoneClient": "+237699112233",
+    "lignes": [
+      {
+        "idProduit": "11111111-2222-3333-4444-555555555555",
+        "description": "NPK Fertilizer 20-10-10 (50kg)",
+        "quantite": 10,
+        "prixUnitaire": 10000,
+        "montant": 100000
+      },
+      {
+        "idProduit": "66666666-7777-8888-9999-000000000000",
+        "description": "Hybrid Maize Seeds (25kg)",
+        "quantite": 5,
+        "prixUnitaire": 100,
+        "montant": 50000
+      }
+    ],
+    "montantHT": 150000.0,
+    "montantTVA": 28875.0,
+    "montantTTC": 178875.0,
+    "dateLivraison": "2026-02-27T13:23:25.392",
+    "statut": "EN_PREPARATION",
+    "notes": "Urgent delivery for upcoming planting season.",
+    "createdBy": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "dateSysteme": "2026-02-27T13:23:25.392",
+    "updatedAt": "2026-02-28T07:50:06.82192",
+    "organizationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  },
+  {
+    "idBonLivraison": "d5a81cc1-17d4-4cf6-ac4b-fe45d223234a",
+    "numeroBonLivraison": "DLV-2026-001",
+    "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+    "nomClient": null,
+    "adresseClient": null,
+    "emailClient": null,
+    "telephoneClient": null,
+    "lignes": [
+      {
+        "idProduit": "2bd4972b-aef3-4eb3-83cd-38dcfcbd9a1f",
+        "description": "Delivery of Laptop Pro",
+        "quantite": 1,
+        "prixUnitaire": 1200.0,
+        "montant": 1200.0
+      }
+    ],
+    "montantHT": 0.0,
+    "montantTVA": 0.0,
+    "montantTTC": 0.0,
+    "dateLivraison": "2026-06-13T12:00:00",
+    "statut": "EN_PREPARATION",
+    "notes": null,
+    "createdBy": null,
+    "dateSysteme": "2026-06-13T13:56:51.84838",
+    "updatedAt": "2026-06-13T13:56:51.855177",
+    "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b"
+  }
+]
+==================================================
+
+==================================================
+GET /api/bons-livraison/d5a81cc1-17d4-4cf6-ac4b-fe45d223234a
+Status Code: 200
+Response Body:
+{
+  "idBonLivraison": "d5a81cc1-17d4-4cf6-ac4b-fe45d223234a",
+  "numeroBonLivraison": "DLV-2026-001",
+  "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+  "nomClient": null,
+  "adresseClient": null,
+  "emailClient": null,
+  "telephoneClient": null,
+  "lignes": [
+    {
+      "idProduit": "2bd4972b-aef3-4eb3-83cd-38dcfcbd9a1f",
+      "description": "Delivery of Laptop Pro",
+      "quantite": 1,
+      "prixUnitaire": 1200.0,
+      "montant": 1200.0
+    }
+  ],
+  "montantHT": 0.0,
+  "montantTVA": 0.0,
+  "montantTTC": 0.0,
+  "dateLivraison": "2026-06-13T12:00:00",
+  "statut": "EN_PREPARATION",
+  "notes": null,
+  "createdBy": null,
+  "dateSysteme": "2026-06-13T13:56:51.84838",
+  "updatedAt": "2026-06-13T13:56:51.855177",
+  "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b"
+}
+==================================================
+
+==================================================
+PUT /api/bons-livraison/d5a81cc1-17d4-4cf6-ac4b-fe45d223234a
+Status Code: 200
+Response Body:
+{
+  "idBonLivraison": "d5a81cc1-17d4-4cf6-ac4b-fe45d223234a",
+  "numeroBonLivraison": "DLV-2026-001-REV",
+  "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+  "nomClient": null,
+  "adresseClient": null,
+  "emailClient": null,
+  "telephoneClient": null,
+  "lignes": [
+    {
+      "idProduit": "2bd4972b-aef3-4eb3-83cd-38dcfcbd9a1f",
+      "description": "Delivery of Laptop Pro",
+      "quantite": 1,
+      "prixUnitaire": 1200.0,
+      "montant": 1200.0
+    }
+  ],
+  "montantHT": 0.0,
+  "montantTVA": 0.0,
+  "montantTTC": 0.0,
+  "dateLivraison": "2026-06-13T12:00:00",
+  "statut": "EN_PREPARATION",
+  "notes": null,
+  "createdBy": null,
+  "dateSysteme": "2026-06-13T13:56:51.84838",
+  "updatedAt": "2026-06-13T13:56:52.023144735",
+  "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b"
+}
+==================================================
+
+==================================================
+PATCH /api/bons-livraison/d5a81cc1-17d4-4cf6-ac4b-fe45d223234a/statut
+Status Code: 200
+Response Body:
+{
+  "idBonLivraison": "d5a81cc1-17d4-4cf6-ac4b-fe45d223234a",
+  "numeroBonLivraison": "DLV-2026-001-REV",
+  "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+  "nomClient": null,
+  "adresseClient": null,
+  "emailClient": null,
+  "telephoneClient": null,
+  "lignes": [
+    {
+      "idProduit": "2bd4972b-aef3-4eb3-83cd-38dcfcbd9a1f",
+      "description": "Delivery of Laptop Pro",
+      "quantite": 1,
+      "prixUnitaire": 1200.0,
+      "montant": 1200.0
+    }
+  ],
+  "montantHT": 0.0,
+  "montantTVA": 0.0,
+  "montantTTC": 0.0,
+  "dateLivraison": "2026-06-13T12:00:00",
+  "statut": "EXPEDIE",
+  "notes": null,
+  "createdBy": null,
+  "dateSysteme": "2026-06-13T13:56:51.84838",
+  "updatedAt": "2026-06-13T13:56:52.078768178",
+  "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b"
+}
+==================================================
+
+==================================================
+POST /api/bons-livraison/d5a81cc1-17d4-4cf6-ac4b-fe45d223234a/effectuer
+Status Code: 200
+Response Body:
+{
+  "idBonLivraison": "d5a81cc1-17d4-4cf6-ac4b-fe45d223234a",
+  "numeroBonLivraison": "DLV-2026-001-REV",
+  "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+  "nomClient": null,
+  "adresseClient": null,
+  "emailClient": null,
+  "telephoneClient": null,
+  "lignes": [
+    {
+      "idProduit": "2bd4972b-aef3-4eb3-83cd-38dcfcbd9a1f",
+      "description": "Delivery of Laptop Pro",
+      "quantite": 1,
+      "prixUnitaire": 1200.0,
+      "montant": 1200.0
+    }
+  ],
+  "montantHT": 0.0,
+  "montantTVA": 0.0,
+  "montantTTC": 0.0,
+  "dateLivraison": "2026-06-13T12:00:00",
+  "statut": "LIVRE",
+  "notes": null,
+  "createdBy": null,
+  "dateSysteme": "2026-06-13T13:56:51.84838",
+  "updatedAt": "2026-06-13T13:56:52.130878067",
+  "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b"
+}
+==================================================
+
+==================================================
+GET /api/bons-livraison/client/e1a7b458-12c8-472d-bb91-030a21a92e10
+Status Code: 200
+Response Body:
+[
+  {
+    "idBonLivraison": "d5a81cc1-17d4-4cf6-ac4b-fe45d223234a",
+    "numeroBonLivraison": "DLV-2026-001-REV",
+    "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+    "nomClient": null,
+    "adresseClient": null,
+    "emailClient": null,
+    "telephoneClient": null,
+    "lignes": [
+      {
+        "idProduit": "2bd4972b-aef3-4eb3-83cd-38dcfcbd9a1f",
+        "description": "Delivery of Laptop Pro",
+        "quantite": 1,
+        "prixUnitaire": 1200.0,
+        "montant": 1200.0
+      }
+    ],
+    "montantHT": 0.0,
+    "montantTVA": 0.0,
+    "montantTTC": 0.0,
+    "dateLivraison": "2026-06-13T12:00:00",
+    "statut": "LIVRE",
+    "notes": null,
+    "createdBy": null,
+    "dateSysteme": "2026-06-13T13:56:51.84838",
+    "updatedAt": "2026-06-13T13:56:52.130878",
+    "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b"
+  }
+]
+==================================================
+
+--- TESTING BONS D'ACHAT ---
+
+==================================================
+POST /api/bons-achat
+Status Code: 201
+Response Body:
+{
+  "idBonAchat": "457f0d38-b990-49ed-8fc4-99b12c9b1f0e",
+  "numeroBonAchat": "PO-2026-001",
+  "supplierId": "f2c8d569-34b9-482e-cc02-140b32ba3f21",
+  "supplierName": null,
+  "supplierCode": null,
+  "supplierEmail": null,
+  "supplierContact": null,
+  "supplierAddress": null,
+  "deliveryName": null,
+  "deliveryAddress": null,
+  "deliveryEmail": null,
+  "deliveryContact": null,
+  "dateBonAchat": null,
+  "dateSysteme": null,
+  "dateLivraisonPrevue": null,
+  "transportMethod": null,
+  "instructionsLivraison": null,
+  "status": "BROUILLON",
+  "lines": [
+    {
+      "productId": "2bd4972b-aef3-4eb3-83cd-38dcfcbd9a1f",
+      "productCode": null,
+      "productName": null,
+      "uom": null,
+      "orderedQuantity": 5,
+      "unitPrice": 800.0,
+      "taxable": null,
+      "vatAmount": null,
+      "totalAmount": 4000.0
+    }
+  ],
+  "subtotalAmount": null,
+  "taxAmount": null,
+  "grandTotal": null,
+  "preparedBy": null,
+  "approvedBy": null,
+  "remarks": null,
+  "createdAt": null,
+  "updatedAt": "2026-06-13T13:56:52.299951733",
+  "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b"
+}
+==================================================
+
+==================================================
+GET /api/bons-achat
+Status Code: 200
+Response Body:
+[
+  {
+    "idBonAchat": "f135b6c0-53a3-4f54-a371-6bfdc490016d",
+    "numeroBonAchat": "BA-2026-0025",
+    "supplierId": "8c1a2f40-6d3b-4f8e-9a21-7b9d0c123456",
+    "supplierName": "AgroTech Supplies Ltd",
+    "supplierCode": "SUP-AGT-01",
+    "supplierEmail": "contact@agrotech.cm",
+    "supplierContact": "+237677889900",
+    "supplierAddress": "Zone Industrielle, Douala, Cameroon",
+    "deliveryName": "Farm Central Warehouse",
+    "deliveryAddress": "Nkolbisson, Yaounde, Cameroon",
+    "deliveryEmail": "warehouse@farmcentral.cm",
+    "deliveryContact": "+237699112233",
+    "dateBonAchat": "2026-02-27T12:14:33.661",
+    "dateSysteme": "2026-02-27T12:14:33.661",
+    "dateLivraisonPrevue": "2026-03-05T08:00:00",
+    "transportMethod": "Road Freight",
+    "instructionsLivraison": "Deliver between 8AM and 3PM. Call before arrival.",
+    "status": "BROUILLON",
+    "lines": [
+      {
+        "productId": "11111111-2222-3333-4444-555555555555",
+        "productCode": "FERT-NPK-50KG",
+        "productName": "NPK Fertilizer 20-10-10 (50kg)",
+        "uom": "Bag",
+        "orderedQuantity": 10,
+        "unitPrice": 10000,
+        "taxable": true,
+        "vatAmount": 19250,
+        "totalAmount": 119250
+      },
+      {
+        "productId": "66666666-7777-8888-9999-000000000000",
+        "productCode": "SEED-MAIZE-25KG",
+        "productName": "Hybrid Maize Seeds (25kg)",
+        "uom": "Bag",
+        "orderedQuantity": 5,
+        "unitPrice": 10000,
+        "taxable": true,
+        "vatAmount": 9625,
+        "totalAmount": 59625
+      }
+    ],
+    "subtotalAmount": 150000.0,
+    "taxAmount": 28875.0,
+    "grandTotal": 178875.0,
+    "preparedBy": "2f7c9e10-1122-4a55-8899-abcdeffedc01",
+    "approvedBy": "5a3d7f88-7788-4b11-9922-abcdef123456",
+    "remarks": "Urgent order for upcoming planting season.",
+    "createdAt": "2026-02-27T13:49:20.439429",
+    "updatedAt": "2026-02-27T13:49:20.493171",
+    "organizationId": "9b8c7d6e-1234-4a55-b321-abcdef654321"
+  },
+  {
+    "idBonAchat": "457f0d38-b990-49ed-8fc4-99b12c9b1f0e",
+    "numeroBonAchat": "PO-2026-001",
+    "supplierId": "f2c8d569-34b9-482e-cc02-140b32ba3f21",
+    "supplierName": null,
+    "supplierCode": null,
+    "supplierEmail": null,
+    "supplierContact": null,
+    "supplierAddress": null,
+    "deliveryName": null,
+    "deliveryAddress": null,
+    "deliveryEmail": null,
+    "deliveryContact": null,
+    "dateBonAchat": null,
+    "dateSysteme": null,
+    "dateLivraisonPrevue": null,
+    "transportMethod": null,
+    "instructionsLivraison": null,
+    "status": "BROUILLON",
+    "lines": [
+      {
+        "productId": "2bd4972b-aef3-4eb3-83cd-38dcfcbd9a1f",
+        "productCode": null,
+        "productName": null,
+        "uom": null,
+        "orderedQuantity": 5,
+        "unitPrice": 800.0,
+        "taxable": null,
+        "vatAmount": null,
+        "totalAmount": 4000.0
+      }
+    ],
+    "subtotalAmount": null,
+    "taxAmount": null,
+    "grandTotal": null,
+    "preparedBy": null,
+    "approvedBy": null,
+    "remarks": null,
+    "createdAt": "2026-06-13T13:56:52.243286",
+    "updatedAt": "2026-06-13T13:56:52.299952",
+    "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b"
+  }
+]
+==================================================
+
+==================================================
+GET /api/bons-achat/457f0d38-b990-49ed-8fc4-99b12c9b1f0e
+Status Code: 200
+Response Body:
+{
+  "idBonAchat": "457f0d38-b990-49ed-8fc4-99b12c9b1f0e",
+  "numeroBonAchat": "PO-2026-001",
+  "supplierId": "f2c8d569-34b9-482e-cc02-140b32ba3f21",
+  "supplierName": null,
+  "supplierCode": null,
+  "supplierEmail": null,
+  "supplierContact": null,
+  "supplierAddress": null,
+  "deliveryName": null,
+  "deliveryAddress": null,
+  "deliveryEmail": null,
+  "deliveryContact": null,
+  "dateBonAchat": null,
+  "dateSysteme": null,
+  "dateLivraisonPrevue": null,
+  "transportMethod": null,
+  "instructionsLivraison": null,
+  "status": "BROUILLON",
+  "lines": [
+    {
+      "productId": "2bd4972b-aef3-4eb3-83cd-38dcfcbd9a1f",
+      "productCode": null,
+      "productName": null,
+      "uom": null,
+      "orderedQuantity": 5,
+      "unitPrice": 800.0,
+      "taxable": null,
+      "vatAmount": null,
+      "totalAmount": 4000.0
+    }
+  ],
+  "subtotalAmount": null,
+  "taxAmount": null,
+  "grandTotal": null,
+  "preparedBy": null,
+  "approvedBy": null,
+  "remarks": null,
+  "createdAt": "2026-06-13T13:56:52.243286",
+  "updatedAt": "2026-06-13T13:56:52.299952",
+  "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b"
+}
+==================================================
+
+==================================================
+PUT /api/bons-achat/457f0d38-b990-49ed-8fc4-99b12c9b1f0e
+Status Code: 200
+Response Body:
+{
+  "idBonAchat": "457f0d38-b990-49ed-8fc4-99b12c9b1f0e",
+  "numeroBonAchat": "PO-2026-001-REV",
+  "supplierId": "f2c8d569-34b9-482e-cc02-140b32ba3f21",
+  "supplierName": null,
+  "supplierCode": null,
+  "supplierEmail": null,
+  "supplierContact": null,
+  "supplierAddress": null,
+  "deliveryName": null,
+  "deliveryAddress": null,
+  "deliveryEmail": null,
+  "deliveryContact": null,
+  "dateBonAchat": null,
+  "dateSysteme": null,
+  "dateLivraisonPrevue": null,
+  "transportMethod": null,
+  "instructionsLivraison": null,
+  "status": "BROUILLON",
+  "lines": [
+    {
+      "productId": "2bd4972b-aef3-4eb3-83cd-38dcfcbd9a1f",
+      "productCode": null,
+      "productName": null,
+      "uom": null,
+      "orderedQuantity": 5,
+      "unitPrice": 800.0,
+      "taxable": null,
+      "vatAmount": null,
+      "totalAmount": 4000.0
+    }
+  ],
+  "subtotalAmount": null,
+  "taxAmount": null,
+  "grandTotal": null,
+  "preparedBy": null,
+  "approvedBy": null,
+  "remarks": null,
+  "createdAt": "2026-06-13T13:56:52.243286",
+  "updatedAt": "2026-06-13T13:56:52.46253366",
+  "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b"
+}
+==================================================
+
+--- TESTING NOTES DE CREDIT ---
+
+==================================================
+POST /api/v1/facturation/note-credits
+Status Code: 200
+Response Body:
+{
+  "idNoteCredit": "853b1205-12b6-4f35-8ff1-51e3fd7c621b",
+  "numeroNoteCredit": "CN-2026-001",
+  "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+  "nomClient": null,
+  "adresseClient": null,
+  "emailClient": null,
+  "telephoneClient": null,
+  "idFactureOrigine": null,
+  "numeroFactureOrigine": null,
+  "lignesNoteCredit": [
+    {
+      "idLigne": null,
+      "quantite": 1,
+      "description": "Credit for Laptop Pro",
+      "debit": 0.0,
+      "credit": 1200.0,
+      "isTaxLine": null,
+      "idProduit": null,
+      "referenceProduit": null,
+      "nomProduit": null,
+      "prixUnitaire": 1200.0,
+      "montantTotal": 1200.0,
+      "ordre": null
+    }
+  ],
+  "montantHT": null,
+  "montantTVA": null,
+  "montantTTC": null,
+  "montantTotal": null,
+  "dateEmission": null,
+  "dateSysteme": null,
+  "modeReglement": null,
+  "statut": null,
+  "motif": null,
+  "notes": null,
+  "devise": null,
+  "pdfPath": null,
+  "createdBy": null,
+  "validatedBy": null,
+  "validatedAt": null,
+  "createdAt": null,
+  "updatedAt": "2026-06-13T13:56:52.537854949",
+  "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b"
+}
+==================================================
+
+==================================================
+GET /api/v1/facturation/note-credits
+Status Code: 200
+Response Body:
+[
+  {
+    "idNoteCredit": "95e55ea6-5462-4690-830f-66b213108844",
+    "numeroNoteCredit": "NC-2026-0042",
+    "idClient": "7b2e3a1f-4c5d-4e6f-8a9b-0c1d2e3f4a5b",
+    "nomClient": "Acme Corporation",
+    "adresseClient": "452 Business Avenue, Paris, France",
+    "emailClient": "accounts@acme-corp.com",
+    "telephoneClient": "+33 1 23 45 67 89",
+    "idFactureOrigine": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "numeroFactureOrigine": "FAC-2026-0881",
+    "lignesNoteCredit": [
+      {
+        "idLigne": "11111111-2222-3333-4444-555555555555",
+        "quantite": 2,
+        "description": "Retour produit d\u00e9fectueux - Ecran 24 pouces",
+        "debit": 0,
+        "credit": 5000,
+        "isTaxLine": false,
+        "idProduit": "8c7b6a5f-4d3e-2f1a-0b9c-8d7e6f5a4b3c",
+        "referenceProduit": "SCR-24-PRO",
+        "nomProduit": "Monitor Pro 24",
+        "prixUnitaire": 250,
+        "montantTotal": 500,
+        "ordre": 1
+      }
+    ],
+    "montantHT": 500.0,
+    "montantTVA": 100.0,
+    "montantTTC": 600.0,
+    "montantTotal": 600.0,
+    "dateEmission": "2026-02-28T13:13:31.904",
+    "dateSysteme": "2026-02-28T13:13:31.904",
+    "modeReglement": "VIREMENT",
+    "statut": "BROUILLON",
+    "motif": "Produit arriv\u00e9 endommag\u00e9",
+    "notes": "Cr\u00e9dit \u00e0 valoir sur la prochaine facture.",
+    "devise": "EUR",
+    "pdfPath": "/storage/credit-notes/NC-2026-0042.pdf",
+    "createdBy": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "validatedBy": null,
+    "validatedAt": null,
+    "createdAt": "2026-02-28T14:16:25.103455",
+    "updatedAt": "2026-02-28T14:17:02.566088",
+    "organizationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  },
+  {
+    "idNoteCredit": "853b1205-12b6-4f35-8ff1-51e3fd7c621b",
+    "numeroNoteCredit": "CN-2026-001",
+    "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+    "nomClient": null,
+    "adresseClient": null,
+    "emailClient": null,
+    "telephoneClient": null,
+    "idFactureOrigine": null,
+    "numeroFactureOrigine": null,
+    "lignesNoteCredit": [
+      {
+        "idLigne": null,
+        "quantite": 1,
+        "description": "Credit for Laptop Pro",
+        "debit": 0.0,
+        "credit": 1200.0,
+        "isTaxLine": null,
+        "idProduit": null,
+        "referenceProduit": null,
+        "nomProduit": null,
+        "prixUnitaire": 1200.0,
+        "montantTotal": 1200.0,
+        "ordre": null
+      }
+    ],
+    "montantHT": null,
+    "montantTVA": null,
+    "montantTTC": null,
+    "montantTotal": null,
+    "dateEmission": null,
+    "dateSysteme": null,
+    "modeReglement": null,
+    "statut": null,
+    "motif": null,
+    "notes": null,
+    "devise": null,
+    "pdfPath": null,
+    "createdBy": null,
+    "validatedBy": null,
+    "validatedAt": null,
+    "createdAt": "2026-06-13T13:56:52.527936",
+    "updatedAt": "2026-06-13T13:56:52.537855",
+    "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b"
+  }
+]
+==================================================
+
+==================================================
+GET /api/v1/facturation/note-credits/853b1205-12b6-4f35-8ff1-51e3fd7c621b
+Status Code: 200
+Response Body:
+{
+  "idNoteCredit": "853b1205-12b6-4f35-8ff1-51e3fd7c621b",
+  "numeroNoteCredit": "CN-2026-001",
+  "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+  "nomClient": null,
+  "adresseClient": null,
+  "emailClient": null,
+  "telephoneClient": null,
+  "idFactureOrigine": null,
+  "numeroFactureOrigine": null,
+  "lignesNoteCredit": [
+    {
+      "idLigne": null,
+      "quantite": 1,
+      "description": "Credit for Laptop Pro",
+      "debit": 0.0,
+      "credit": 1200.0,
+      "isTaxLine": null,
+      "idProduit": null,
+      "referenceProduit": null,
+      "nomProduit": null,
+      "prixUnitaire": 1200.0,
+      "montantTotal": 1200.0,
+      "ordre": null
+    }
+  ],
+  "montantHT": null,
+  "montantTVA": null,
+  "montantTTC": null,
+  "montantTotal": null,
+  "dateEmission": null,
+  "dateSysteme": null,
+  "modeReglement": null,
+  "statut": null,
+  "motif": null,
+  "notes": null,
+  "devise": null,
+  "pdfPath": null,
+  "createdBy": null,
+  "validatedBy": null,
+  "validatedAt": null,
+  "createdAt": "2026-06-13T13:56:52.527936",
+  "updatedAt": "2026-06-13T13:56:52.537855",
+  "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b"
+}
+==================================================
+
+==================================================
+PUT /api/v1/facturation/note-credits/853b1205-12b6-4f35-8ff1-51e3fd7c621b
+Status Code: 200
+Response Body:
+{
+  "idNoteCredit": "853b1205-12b6-4f35-8ff1-51e3fd7c621b",
+  "numeroNoteCredit": "CN-2026-001-REV",
+  "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+  "nomClient": null,
+  "adresseClient": null,
+  "emailClient": null,
+  "telephoneClient": null,
+  "idFactureOrigine": null,
+  "numeroFactureOrigine": null,
+  "lignesNoteCredit": [
+    {
+      "idLigne": null,
+      "quantite": 1,
+      "description": "Credit for Laptop Pro",
+      "debit": 0.0,
+      "credit": 1200.0,
+      "isTaxLine": null,
+      "idProduit": null,
+      "referenceProduit": null,
+      "nomProduit": null,
+      "prixUnitaire": 1200.0,
+      "montantTotal": 1200.0,
+      "ordre": null
+    }
+  ],
+  "montantHT": null,
+  "montantTVA": null,
+  "montantTTC": null,
+  "montantTotal": null,
+  "dateEmission": null,
+  "dateSysteme": null,
+  "modeReglement": null,
+  "statut": null,
+  "motif": null,
+  "notes": null,
+  "devise": null,
+  "pdfPath": null,
+  "createdBy": null,
+  "validatedBy": null,
+  "validatedAt": null,
+  "createdAt": "2026-06-13T13:56:52.527936",
+  "updatedAt": "2026-06-13T13:56:52.720218473",
+  "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b"
+}
+==================================================
+
+--- TESTING BONS DE RECEPTION ---
+
+==================================================
+POST /api/v1/facturation/bon-receptions
+Status Code: 201
+Response Body:
+{
+  "idBonReception": "b42a1533-92c9-418c-a3e6-41f929ed18a3",
+  "numeroReception": "GRN-2026-001",
+  "idFournisseur": "f2c8d569-34b9-482e-cc02-140b32ba3f21",
+  "nomFournisseur": null,
+  "lines": [
+    {
+      "productId": "2bd4972b-aef3-4eb3-83cd-38dcfcbd9a1f",
+      "description": null,
+      "uom": null,
+      "orderedQuantity": 5.0,
+      "receivedQuantity": 5.0,
+      "acceptedQuantity": 5.0,
+      "rejectedQuantity": null,
+      "shortQuantity": null,
+      "damagedQuantity": null,
+      "excessQuantity": null,
+      "rate": null,
+      "lineAmount": null
+    }
+  ],
+  "dateReception": null,
+  "statut": null,
+  "notes": null,
+  "createdBy": null,
+  "updatedAt": "2026-06-13T13:56:52.785859474",
+  "dateSysteme": null,
+  "numeroBonAchat": null,
+  "idBonAchat": null,
+  "agenceDeTransport": null,
+  "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b"
+}
+==================================================
+
+==================================================
+GET /api/v1/facturation/bon-receptions
+Status Code: 200
+Response Body:
+[
+  {
+    "idBonReception": "a160c6c4-bf45-4fcd-bd2e-795afdd001e4",
+    "numeroReception": "REC-2026-0008",
+    "idFournisseur": "8c1a2f40-6d3b-4f8e-9a21-7b9d0c123456",
+    "nomFournisseur": "AgroTech Supplies Ltd",
+    "lines": [
+      {
+        "productId": "11111111-2222-3333-4444-555555555555",
+        "description": "NPK Fertilizer 20-10-10 (50kg)",
+        "uom": "Bag",
+        "orderedQuantity": 10.0,
+        "receivedQuantity": 10.0,
+        "acceptedQuantity": 9.0,
+        "rejectedQuantity": 11.0,
+        "shortQuantity": 0.0,
+        "damagedQuantity": 1.0,
+        "excessQuantity": 0.0,
+        "rate": 10000.0,
+        "lineAmount": 90000.0
+      },
+      {
+        "productId": "66666666-7777-8888-9999-000000000000",
+        "description": "Hybrid Maize Seeds (25kg)",
+        "uom": "Bag",
+        "orderedQuantity": 5.0,
+        "receivedQuantity": 6.0,
+        "acceptedQuantity": 5.0,
+        "rejectedQuantity": 0.0,
+        "shortQuantity": 0.0,
+        "damagedQuantity": 0.0,
+        "excessQuantity": 11.0,
+        "rate": 10000.0,
+        "lineAmount": 50000.0
+      }
+    ],
+    "dateReception": "2026-02-28T06:55:16.508",
+    "statut": "DRAFT",
+    "notes": "One fertilizer bag was damaged during transport. One extra maize seed bag delivered.",
+    "createdBy": "2f7c9e10-1122-4a55-8899-abcdeffedc01",
+    "updatedAt": "2026-02-28T08:11:36.064691",
+    "dateSysteme": "2026-02-28T06:55:16.508",
+    "numeroBonAchat": "BA-2026-0025",
+    "idBonAchat": "9a7b6c5d-1234-4e55-b999-abcdef000111",
+    "agenceDeTransport": "Cameroon Logistics Express",
+    "organizationId": "9b8c7d6e-1234-4a55-b321-abcdef654321"
+  },
+  {
+    "idBonReception": "b2c360c2-0950-407f-be65-1445377ec0fa",
+    "numeroReception": "GRN-2026-0884",
+    "idFournisseur": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "nomFournisseur": "Logistics Pro Solutions",
+    "lines": [
+      {
+        "productId": "e7b12f64-1234-4562-b3fc-2c963f66afa6",
+        "description": "Serveur Dell PowerEdge R740",
+        "uom": "UNIT",
+        "orderedQuantity": 10.0,
+        "receivedQuantity": 10.0,
+        "acceptedQuantity": 8.0,
+        "rejectedQuantity": 2.0,
+        "shortQuantity": 0.0,
+        "damagedQuantity": 2.0,
+        "excessQuantity": 0.0,
+        "rate": 1500.0,
+        "lineAmount": 15000.0
+      },
+      {
+        "productId": "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d",
+        "description": "C\u00e2bles Ethernet Cat6 30m",
+        "uom": "PACK",
+        "orderedQuantity": 50.0,
+        "receivedQuantity": 45.0,
+        "acceptedQuantity": 45.0,
+        "rejectedQuantity": 0.0,
+        "shortQuantity": 5.0,
+        "damagedQuantity": 0.0,
+        "excessQuantity": 0.0,
+        "rate": 25.0,
+        "lineAmount": 1125.0
+      }
+    ],
+    "dateReception": "2026-02-28T13:51:45.103",
+    "statut": "DRAFT",
+    "notes": "2 serveurs rejet\u00e9s car bo\u00eetiers enfonc\u00e9s. 5 c\u00e2bles manquants sur la livraison totale.",
+    "createdBy": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "updatedAt": "2026-02-28T14:52:16.366105",
+    "dateSysteme": "2026-02-28T13:51:45.103",
+    "numeroBonAchat": "PO-2026-9901",
+    "idBonAchat": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "agenceDeTransport": "Express DHL Logistics",
+    "organizationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  },
+  {
+    "idBonReception": "b42a1533-92c9-418c-a3e6-41f929ed18a3",
+    "numeroReception": "GRN-2026-001",
+    "idFournisseur": "f2c8d569-34b9-482e-cc02-140b32ba3f21",
+    "nomFournisseur": null,
+    "lines": [
+      {
+        "productId": "2bd4972b-aef3-4eb3-83cd-38dcfcbd9a1f",
+        "description": null,
+        "uom": null,
+        "orderedQuantity": 5.0,
+        "receivedQuantity": 5.0,
+        "acceptedQuantity": 5.0,
+        "rejectedQuantity": null,
+        "shortQuantity": null,
+        "damagedQuantity": null,
+        "excessQuantity": null,
+        "rate": null,
+        "lineAmount": null
+      }
+    ],
+    "dateReception": null,
+    "statut": null,
+    "notes": null,
+    "createdBy": null,
+    "updatedAt": "2026-06-13T13:56:52.785859",
+    "dateSysteme": null,
+    "numeroBonAchat": null,
+    "idBonAchat": null,
+    "agenceDeTransport": null,
+    "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b"
+  }
+]
+==================================================
+
+==================================================
+GET /api/v1/facturation/bon-receptions/b42a1533-92c9-418c-a3e6-41f929ed18a3
+Status Code: 200
+Response Body:
+{
+  "idBonReception": "b42a1533-92c9-418c-a3e6-41f929ed18a3",
+  "numeroReception": "GRN-2026-001",
+  "idFournisseur": "f2c8d569-34b9-482e-cc02-140b32ba3f21",
+  "nomFournisseur": null,
+  "lines": [
+    {
+      "productId": "2bd4972b-aef3-4eb3-83cd-38dcfcbd9a1f",
+      "description": null,
+      "uom": null,
+      "orderedQuantity": 5.0,
+      "receivedQuantity": 5.0,
+      "acceptedQuantity": 5.0,
+      "rejectedQuantity": null,
+      "shortQuantity": null,
+      "damagedQuantity": null,
+      "excessQuantity": null,
+      "rate": null,
+      "lineAmount": null
+    }
+  ],
+  "dateReception": null,
+  "statut": null,
+  "notes": null,
+  "createdBy": null,
+  "updatedAt": "2026-06-13T13:56:52.785859",
+  "dateSysteme": null,
+  "numeroBonAchat": null,
+  "idBonAchat": null,
+  "agenceDeTransport": null,
+  "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b"
+}
+==================================================
+
+==================================================
+PUT /api/v1/facturation/bon-receptions/b42a1533-92c9-418c-a3e6-41f929ed18a3
+Status Code: 200
+Response Body:
+{
+  "idBonReception": "b42a1533-92c9-418c-a3e6-41f929ed18a3",
+  "numeroReception": "GRN-2026-001-REV",
+  "idFournisseur": "f2c8d569-34b9-482e-cc02-140b32ba3f21",
+  "nomFournisseur": null,
+  "lines": [
+    {
+      "productId": "2bd4972b-aef3-4eb3-83cd-38dcfcbd9a1f",
+      "description": null,
+      "uom": null,
+      "orderedQuantity": 5.0,
+      "receivedQuantity": 5.0,
+      "acceptedQuantity": 5.0,
+      "rejectedQuantity": null,
+      "shortQuantity": null,
+      "damagedQuantity": null,
+      "excessQuantity": null,
+      "rate": null,
+      "lineAmount": null
+    }
+  ],
+  "dateReception": null,
+  "statut": null,
+  "notes": null,
+  "createdBy": null,
+  "updatedAt": "2026-06-13T13:56:52.94420753",
+  "dateSysteme": null,
+  "numeroBonAchat": null,
+  "idBonAchat": null,
+  "agenceDeTransport": null,
+  "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b"
+}
+==================================================
+
+--- TESTING ANALYTICS & DASHBOARD ---
+
+==================================================
+GET /api/analytics/ventes/periode
+Status Code: 200
+Response Body:
+{
+  "montantMoyen": 0.0,
+  "montantTotal": 0,
+  "nombreFactures": 1,
+  "periode": {
+    "debut": "2026-06-01",
+    "fin": "2026-06-30"
+  }
+}
+==================================================
+
+==================================================
+GET /api/analytics/clients/top
+Status Code: 200
+Response Body:
+[]
+==================================================
+
+==================================================
+GET /api/tableau-de-bord
+Status Code: 500
+Response Body:
+{
+  "path": "/api/tableau-de-bord",
+  "message": "404 Not Found from GET http://localhost:8081/api/clients",
+  "error": "Internal Server Error"
+}
+==================================================
+
+--- TESTING PORTAL ACCESS TOKENS ---
+
+==================================================
+POST /api/v1/portal-tokens/generate
+Status Code: 201
+Response Body:
+{
+  "tokenId": 13,
+  "token": "d820063ece1d44a9adae6258a4d5b504b235e1933e1b4df884a783e8df47ad0a",
+  "resourceType": "QUOTATION",
+  "resourceId": "c51279b9-38ab-4156-9c97-4c5d53eb4656",
+  "clientEmail": "client@test.com",
+  "canView": true,
+  "canModify": false,
+  "canAccept": true,
+  "canReject": true,
+  "expiresAt": "2026-06-20T13:56:53.086117365",
+  "used": false,
+  "usedAt": null,
+  "createdAt": "2026-06-13T13:56:53.086106465"
+}
+==================================================
+
+==================================================
+GET /api/v1/portal-tokens
+Status Code: 200
+Response Body:
+[
+  {
+    "tokenId": 4,
+    "token": "6010b19b7d2446759f34cb860a7e2e0ae8ce2d1499c3438c9a26e8b2b3761f08",
+    "resourceType": "QUOTATION",
+    "resourceId": "8eaba694-1d62-4c74-969d-6cb049c7001d",
+    "clientEmail": "furehmitoto@gmail.com",
+    "canView": true,
+    "canModify": true,
+    "canAccept": true,
+    "canReject": true,
+    "expiresAt": "2026-03-19T16:55:03.098528",
+    "used": true,
+    "usedAt": null,
+    "createdAt": "2026-03-12T16:55:03.098508"
+  },
+  {
+    "tokenId": 5,
+    "token": "9f78302fa14947649806955d66a312a9369ac4f2783f4b19a2c3caa0d27dfed0",
+    "resourceType": "QUOTATION",
+    "resourceId": "02ecfd1d-a1f0-40e0-9647-5dbb57f78d81",
+    "clientEmail": "furehmitoto@gmail.com",
+    "canView": true,
+    "canModify": false,
+    "canAccept": true,
+    "canReject": true,
+    "expiresAt": "2026-03-19T17:00:31.719152",
+    "used": true,
+    "usedAt": null,
+    "createdAt": "2026-03-12T17:00:31.719145"
+  },
+  {
+    "tokenId": 6,
+    "token": "dd17db3255194119ab31fe8c26ded3ef375117da55e646dbbfafad03614ee73c",
+    "resourceType": "QUOTATION",
+    "resourceId": "8d796fa4-4d2c-499d-8164-055be0035527",
+    "clientEmail": "furehmitoto@gmail.com",
+    "canView": true,
+    "canModify": false,
+    "canAccept": true,
+    "canReject": false,
+    "expiresAt": "2026-03-19T17:25:21.321918",
+    "used": true,
+    "usedAt": null,
+    "createdAt": "2026-03-12T17:25:21.321904"
+  },
+  {
+    "tokenId": 8,
+    "token": "42dbd72c855d44fd833ade006769f36a60354cf7b14f4dcb8a578df75cbd13df",
+    "resourceType": "QUOTATION",
+    "resourceId": "3007ac97-25d5-433a-8a68-65166a0719a4",
+    "clientEmail": "furehmitoto@gmail.com",
+    "canView": true,
+    "canModify": false,
+    "canAccept": true,
+    "canReject": true,
+    "expiresAt": "2026-03-20T10:32:28.808076",
+    "used": true,
+    "usedAt": null,
+    "createdAt": "2026-03-13T10:32:28.808053"
+  },
+  {
+    "tokenId": 10,
+    "token": "4edc33a7497e44e4a6619fb78bbe24a1d79bc90e3640494994e6f9e3ccd747e1",
+    "resourceType": "QUOTATION",
+    "resourceId": "7c1f64f6-0a63-4a88-abf6-4f5490e96e18",
+    "clientEmail": "furehmitoto@gmail.com",
+    "canView": true,
+    "canModify": false,
+    "canAccept": true,
+    "canReject": true,
+    "expiresAt": "2026-03-20T12:08:00.386126",
+    "used": true,
+    "usedAt": null,
+    "createdAt": "2026-03-13T12:08:00.386109"
+  },
+  {
+    "tokenId": 11,
+    "token": "b48928a8d0dc4655944c6318dd38a0a4c2dad5688f6141dbbe4ce625554a52c8",
+    "resourceType": "QUOTATION",
+    "resourceId": "774d8c9f-441e-4ea6-907c-7759c9672cda",
+    "clientEmail": "furehmitoto@gmail.com",
+    "canView": true,
+    "canModify": true,
+    "canAccept": true,
+    "canReject": true,
+    "expiresAt": "2026-03-20T12:53:43.433499",
+    "used": false,
+    "usedAt": null,
+    "createdAt": "2026-03-13T12:53:43.433486"
+  },
+  {
+    "tokenId": 12,
+    "token": "1fe6e2c30c22458d9dd28ac37032f30c9da002d47390493686209219f3cacad8",
+    "resourceType": "QUOTATION",
+    "resourceId": "d845c709-7a72-4ca2-8046-053e8d3c17aa",
+    "clientEmail": "client@test.com",
+    "canView": true,
+    "canModify": false,
+    "canAccept": true,
+    "canReject": true,
+    "expiresAt": "2026-06-20T13:52:31.313331",
+    "used": true,
+    "usedAt": null,
+    "createdAt": "2026-06-13T13:52:31.313321"
+  },
+  {
+    "tokenId": 13,
+    "token": "d820063ece1d44a9adae6258a4d5b504b235e1933e1b4df884a783e8df47ad0a",
+    "resourceType": "QUOTATION",
+    "resourceId": "c51279b9-38ab-4156-9c97-4c5d53eb4656",
+    "clientEmail": "client@test.com",
+    "canView": true,
+    "canModify": false,
+    "canAccept": true,
+    "canReject": true,
+    "expiresAt": "2026-06-20T13:56:53.086117",
+    "used": false,
+    "usedAt": null,
+    "createdAt": "2026-06-13T13:56:53.086106"
+  }
+]
+==================================================
+
+==================================================
+GET /api/v1/portal-tokens/validate/d820063ece1d44a9adae6258a4d5b504b235e1933e1b4df884a783e8df47ad0a
+Status Code: 200
+Response Body:
+{
+  "tokenId": 13,
+  "token": "d820063ece1d44a9adae6258a4d5b504b235e1933e1b4df884a783e8df47ad0a",
+  "resourceType": "QUOTATION",
+  "resourceId": "c51279b9-38ab-4156-9c97-4c5d53eb4656",
+  "clientEmail": "client@test.com",
+  "canView": true,
+  "canModify": false,
+  "canAccept": true,
+  "canReject": true,
+  "expiresAt": "2026-06-20T13:56:53.086117",
+  "used": false,
+  "usedAt": null,
+  "createdAt": "2026-06-13T13:56:53.086106"
+}
+==================================================
+
+==================================================
+GET /portal-access/quotation/d820063ece1d44a9adae6258a4d5b504b235e1933e1b4df884a783e8df47ad0a
+Status Code: 200
+Response Body:
+{
+  "data": {
+    "idDevis": "c51279b9-38ab-4156-9c97-4c5d53eb4656",
+    "numeroDevis": "DEV-2026-001",
+    "dateCreation": null,
+    "dateValidite": null,
+    "type": null,
+    "statut": "REFUSE",
+    "montantTotal": 1250.0,
+    "idClient": "e1a7b458-12c8-472d-bb91-030a21a92e10",
+    "nomClient": "Test Client Company",
+    "adresseClient": null,
+    "emailClient": null,
+    "telephoneClient": null,
+    "lignesDevis": [
+      {
+        "idLigne": null,
+        "quantite": 1,
+        "description": "Laptop Pro",
+        "debit": null,
+        "credit": null,
+        "isTaxLine": false,
+        "idProduit": null,
+        "nomProduit": null,
+        "prixUnitaire": 1200.0,
+        "montantTotal": 1200.0,
+        "remisePourcentage": 0.0,
+        "remiseMontant": 0.0
+      }
+    ],
+    "montantHT": null,
+    "montantTVA": null,
+    "montantTTC": null,
+    "devise": null,
+    "tauxChange": 1.0,
+    "conditionsPaiement": null,
+    "notes": null,
+    "referenceExterne": null,
+    "pdfPath": null,
+    "envoyeParEmail": false,
+    "dateEnvoiEmail": null,
+    "dateAcceptation": "2026-06-13T13:56:49.733642",
+    "dateRefus": "2026-06-13T13:56:49.810283",
+    "motifRefus": null,
+    "idFactureConvertie": null,
+    "remiseGlobalePourcentage": 0.0,
+    "remiseGlobaleMontant": 0.0,
+    "validiteOffreJours": 30,
+    "applyVat": true,
+    "dateSysteme": null,
+    "modeReglement": null,
+    "nosRef": null,
+    "vosRef": null,
+    "nbreEcheance": null,
+    "referalClientId": null,
+    "finalAmount": null,
+    "createdAt": null,
+    "updatedAt": "2026-06-13T13:56:49.810726",
+    "organizationId": "d3b07384-d113-4953-a5e3-0350718c962b",
+    "createdBy": null
+  },
+  "canView": true,
+  "canModify": false,
+  "canReject": true,
+  "canAccept": true
+}
+==================================================
+
+==================================================
+GET /portal-access/d820063ece1d44a9adae6258a4d5b504b235e1933e1b4df884a783e8df47ad0a
+Status Code: 200
+Response Body:
+Response Text: 
+==================================================
+
+--- TESTING DELETIONS ---
+
+==================================================
+DELETE /api/v1/facturation/bon-receptions/b42a1533-92c9-418c-a3e6-41f929ed18a3
+Status Code: 204
+Response Body:
+Response Text: 
+==================================================
+
+==================================================
+DELETE /api/v1/facturation/note-credits/853b1205-12b6-4f35-8ff1-51e3fd7c621b
+Status Code: 204
+Response Body:
+Response Text: 
+==================================================
+
+==================================================
+DELETE /api/bons-achat/457f0d38-b990-49ed-8fc4-99b12c9b1f0e
+Status Code: 204
+Response Body:
+Response Text: 
+==================================================
+
+==================================================
+DELETE /api/bons-livraison/d5a81cc1-17d4-4cf6-ac4b-fe45d223234a
+Status Code: 204
+Response Body:
+Response Text: 
+==================================================
+
+==================================================
+DELETE /api/factures-proforma/6426eabb-2d7a-4bae-b13d-ed212b8b3183
+Status Code: 204
+Response Body:
+Response Text: 
+==================================================
+
+==================================================
+DELETE /api/paiement/4f5e5039-092e-4d59-a85b-5e55511a9f2a
+Status Code: 204
+Response Body:
+Response Text: 
+==================================================
+
+==================================================
+DELETE /api/factures/a5334546-8c0f-4e05-ad3f-8857db7da3ce
+Status Code: 204
+Response Body:
+Response Text: 
+==================================================
+
+==================================================
+DELETE /api/devis/c51279b9-38ab-4156-9c97-4c5d53eb4656
+Status Code: 204
+Response Body:
+Response Text: 
+==================================================
+
+==================================================
+DELETE /api/journals/1455fae2-991d-4867-a489-cede7b2684ab
+Status Code: 204
+Response Body:
+Response Text: 
+==================================================
+
+==================================================
+DELETE /api/taxes/5c3af88f-edc2-4bd0-8b80-2fbb86c39790
+Status Code: 204
+Response Body:
+Response Text: 
+==================================================

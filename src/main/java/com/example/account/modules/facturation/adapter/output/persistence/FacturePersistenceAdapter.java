@@ -135,6 +135,16 @@ public class FacturePersistenceAdapter implements FactureRepositoryPort {
     }
 
     @Override
+    public Flux<Facture> findByOrganizationId(UUID organizationId) {
+        return repository.findByOrganizationId(organizationId).map(mapper::toDomain);
+    }
+
+    @Override
+    public Flux<Facture> findByAgencyId(UUID agencyId) {
+        return repository.findByAgencyId(agencyId).map(mapper::toDomain);
+    }
+
+    @Override
     public Mono<Facture> save(Facture facture) {
         return repository.save(mapper.toEntity(facture)).map(mapper::toDomain);
     }

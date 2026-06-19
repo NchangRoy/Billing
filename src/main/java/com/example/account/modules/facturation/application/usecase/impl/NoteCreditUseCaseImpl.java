@@ -42,7 +42,13 @@ public class NoteCreditUseCaseImpl implements NoteCreditUseCase {
         return noteCreditRepository.findById(id)
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("Note de crédit non trouvée")))
                 .flatMap(entity -> {
+                    UUID originalOrgId = entity.getOrganizationId();
+                    UUID originalId = entity.getIdNoteCredit();
                     noteCreditMapper.updateEntityFromRequest(request, entity);
+                    entity.setIdNoteCredit(originalId);
+                    if (entity.getOrganizationId() == null) {
+                        entity.setOrganizationId(originalOrgId);
+                    }
                     return noteCreditRepository.save(entity);
                 })
                 .map(noteCreditMapper::toResponse);
@@ -72,5 +78,19 @@ public class NoteCreditUseCaseImpl implements NoteCreditUseCase {
         return noteCreditRepository.findById(id)
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("Note de crédit non trouvée")))
                 .flatMap(noteCreditRepository::delete);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Flux<NoteCreditResponse> getNotesCreditByOrganizationId(UUID organizationId) {
+        log.info("Récupération des notes de crédit par organisation: {}", organizationId);
+        return noteCreditRepository.findByOrganizationId(organizationId).map(noteCreditMapper::toResponse);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Flux<NoteCreditResponse> getNotesCreditByAgencyId(UUID agencyId) {
+        log.info("Récupération des notes de crédit par agence: {}", agencyId);
+        return noteCreditRepository.findByAgencyId(agencyId).map(noteCreditMapper::toResponse);
     }
 }

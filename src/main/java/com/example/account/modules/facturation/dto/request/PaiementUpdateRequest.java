@@ -33,4 +33,6 @@ public class PaiementUpdateRequest {
     private String memo;
 
     private UUID idFacture;
+    private UUID organizationId;
+    private UUID agencyId;
 }

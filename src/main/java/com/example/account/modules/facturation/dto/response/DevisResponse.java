@@ -74,5 +74,6 @@ public class DevisResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private UUID organizationId;
+    private UUID agencyId;
     private UUID createdBy;
 }

@@ -47,4 +47,14 @@ public class BondeReceptionController {
         return bonReceptionService.deleteBondeReception(id)
                 .thenReturn(ResponseEntity.noContent().build());
     }
+
+    @GetMapping("/organisation/{organizationId}")
+    public Flux<BondeReceptionResponse> getByOrganizationId(@PathVariable UUID organizationId) {
+        return bonReceptionService.getByOrganizationId(organizationId);
+    }
+
+    @GetMapping("/agence/{agencyId}")
+    public Flux<BondeReceptionResponse> getByAgencyId(@PathVariable UUID agencyId) {
+        return bonReceptionService.getByAgencyId(agencyId);
+    }
 }
