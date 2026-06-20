@@ -46,7 +46,7 @@ public class Product {
     private String uom;
 
     @Column("allowed_sale_sizes") // Matches $13
-    private List<ClientSaleSize> allowedSaleSizes; 
+    private List<SaleSize> allowedSaleSizes;
 
     @Column("active_promotions") // Matches $14
     private List<SaleSizePromotion> activePromotions;

@@ -11,7 +11,7 @@ import com.example.account.modules.facturation.domain.model.LigneFacture;
 import com.example.account.modules.facturation.model.entity.Lines.LineBonCommande;
 import com.example.account.modules.facturation.model.entity.Lines.LineBonReception;
 import com.example.account.modules.facturation.model.entity.Lines.LineFactureFournisseur;
-import com.example.account.modules.facturation.service.ExternalServices.entity.JsonToClientSaleSizeConverter;
+import com.example.account.modules.facturation.service.ExternalServices.entity.JsonToSaleSizeConverter;
 import com.example.account.modules.facturation.service.ExternalServices.entity.JsonToPromotionConverter;
 import com.example.account.modules.facturation.service.ExternalServices.entity.ObjectListToJsonConverter;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -126,10 +126,10 @@ protected List<Object> getCustomConverters() {
     converters.add(new GenericListReadingConverter(LineBonReception.class));
     converters.add(new GenericListReadingConverter(com.example.account.modules.facturation.domain.model.LigneBackOrder.class));
     
-      converters.add(new GenericListReadingConverter(com.example.account.modules.facturation.dto.response.ExternalResponses.ProductResponse.ClientSaleSize.class));
+      converters.add(new GenericListReadingConverter(com.example.account.modules.facturation.dto.response.ExternalResponses.ProductResponse.SaleSize.class));
     converters.add(new GenericListReadingConverter(com.example.account.modules.facturation.dto.response.ExternalResponses.ProductResponse.SaleSizePromotion.class));
     converters.add(new ObjectListToJsonConverter());
-    converters.add(new JsonToClientSaleSizeConverter());
+    converters.add(new JsonToSaleSizeConverter());
     converters.add(new JsonToPromotionConverter());
        converters.add(new GenericListReadingConverter(AccessPortalPermissionsDTO.class));
 

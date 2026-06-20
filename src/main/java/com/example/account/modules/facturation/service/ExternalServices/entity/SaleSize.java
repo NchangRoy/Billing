@@ -1,5 +1,6 @@
 package com.example.account.modules.facturation.service.ExternalServices.entity;
 
+import com.example.account.modules.facturation.service.ExternalServices.entity.enums.SaleSizeType;
 import lombok.*;
 import java.math.BigDecimal;
 
@@ -7,9 +8,9 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ClientSaleSize {
+public class SaleSize {
 
-    private String size;
+    private SaleSizeType size;
 
     private BigDecimal unitPrice;
 

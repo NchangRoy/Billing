@@ -1,5 +1,6 @@
 package com.example.account.modules.facturation.dto.response.ExternalResponses;
 
+import com.example.account.modules.facturation.service.ExternalServices.entity.enums.SaleSizeType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
@@ -33,7 +34,7 @@ public class ProductResponse {
     private LocalDate updatedAt;
 
     private String uom;
-    private List<ClientSaleSize> allowedSaleSizes;
+    private List<SaleSize> allowedSaleSizes;
     private List<SaleSizePromotion> activePromotions;
     
     private Double stockQuantity;
@@ -44,8 +45,8 @@ public class ProductResponse {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ClientSaleSize {
-        private String size; // Matches TypeScript 'size' enum string
+    public static class SaleSize {
+        private SaleSizeType size;
         private BigDecimal unitPrice;
         private BigDecimal unitPriceWithTax;
         private Integer minQuantity;
@@ -58,7 +59,7 @@ public class ProductResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SaleSizePromotion {
-        private String saleSize; // Matches 'saleSize' in JSON
+        private SaleSizeType saleSize;
         private LocalDate startDate;
         private LocalDate endDate;
         private BigDecimal promotionalPrice;

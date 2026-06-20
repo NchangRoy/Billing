@@ -48,6 +48,21 @@ public class ProductExternalService {
                 .doOnComplete(() -> log.info("Sync complete for org: {}", organizationId));
     }
 
+    public Mono<ProductResponse> fetchAndSaveProductById(UUID productId) {
+        String url = String.format("http://%s/api/products/%s", comOpsUrl, productId);
+        return webClientBuilder.build()
+                .get()
+                .uri(url)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, response ->
+                        response.bodyToMono(String.class)
+                                .flatMap(error -> Mono.error(new RuntimeException("API Error: " + error)))
+                )
+                .bodyToMono(ProductResponse.class)
+                .doOnNext(dto -> log.info("Fetched from ComOps: {}", dto.getNomProduit()))
+                .flatMap(this::saveProduct);
+    }
+
     public Flux<ProductResponse> getProductsByOrganization(UUID organizationId) {
         String url = String.format("http://%s/api/products/organizations/%s", comOpsUrl, organizationId);
 

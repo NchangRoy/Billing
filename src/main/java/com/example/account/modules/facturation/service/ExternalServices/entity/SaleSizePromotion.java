@@ -1,9 +1,9 @@
 package com.example.account.modules.facturation.service.ExternalServices.entity;
 
+import com.example.account.modules.facturation.service.ExternalServices.entity.enums.SaleSizeType;
 import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
 
 @Data
 @Builder
@@ -11,7 +11,7 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 public class SaleSizePromotion {
 
-    private String saleSize;
+    private SaleSizeType saleSize;
 
     private LocalDate startDate;
 
