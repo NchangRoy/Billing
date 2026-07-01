@@ -16,6 +16,7 @@ public class ReactiveOrganizationContext {
 
     public static final String ORGANIZATION_ID_KEY = "organizationId";
     public static final String USER_ID_KEY = "userId";
+    public static final String TOKEN_KEY = "bearerToken";
 
     private ReactiveOrganizationContext() {
         // Private constructor
@@ -54,6 +55,18 @@ public class ReactiveOrganizationContext {
                 return Mono.just(ctx.get(USER_ID_KEY));
             }
             return Mono.empty(); // User ID might not always be present
+        });
+    }
+
+    /**
+     * Gets the Bearer token from the Reactor Context (without "Bearer " prefix).
+     */
+    public static Mono<String> getBearerToken() {
+        return Mono.deferContextual(ctx -> {
+            if (ctx.hasKey(TOKEN_KEY)) {
+                return Mono.just(ctx.get(TOKEN_KEY));
+            }
+            return Mono.empty();
         });
     }
 

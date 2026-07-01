@@ -25,20 +25,23 @@ public class OrganizationFilter implements WebFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         String orgIdHeader = exchange.getRequest().getHeaders().getFirst(ORGANIZATION_ID_HEADER);
+        String authHeader = exchange.getRequest().getHeaders().getFirst("Authorization");
 
-        if (orgIdHeader != null && !orgIdHeader.isBlank()) {
-            try {
-                UUID orgId = UUID.fromString(orgIdHeader);
-                log.debug("Found Organization ID in header: {}", orgId);
-                
-                return chain.filter(exchange)
-                        .contextWrite(ctx -> ctx.put(ReactiveOrganizationContext.ORGANIZATION_ID_KEY, orgId));
-                
-            } catch (IllegalArgumentException e) {
-                log.error("Invalid Organization ID format in header: {}", orgIdHeader);
-            }
-        }
-
-        return chain.filter(exchange);
+        return chain.filter(exchange)
+                .contextWrite(ctx -> {
+                    if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                        ctx = ctx.put(ReactiveOrganizationContext.TOKEN_KEY, authHeader.substring(7));
+                    }
+                    if (orgIdHeader != null && !orgIdHeader.isBlank()) {
+                        try {
+                            UUID orgId = UUID.fromString(orgIdHeader);
+                            log.debug("Found Organization ID in header: {}", orgId);
+                            ctx = ctx.put(ReactiveOrganizationContext.ORGANIZATION_ID_KEY, orgId);
+                        } catch (IllegalArgumentException e) {
+                            log.error("Invalid Organization ID format in header: {}", orgIdHeader);
+                        }
+                    }
+                    return ctx;
+                });
     }
 }

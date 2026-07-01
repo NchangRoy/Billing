@@ -2,12 +2,9 @@ package com.example.account.modules.facturation.adapter.output.external;
 
 import com.example.account.modules.facturation.domain.port.output.SellerServicePort;
 import com.example.account.modules.facturation.dto.response.ExternalResponses.SellerAuthResponse;
-import com.example.account.modules.shared.dto.kernel.ApiResponseListThirdPartyResponse;
-import com.example.account.modules.shared.dto.kernel.ThirdPartyResponse;
-import lombok.RequiredArgsConstructor;
+import com.example.account.modules.shared.dto.kernel.KernelCashierResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
@@ -16,53 +13,43 @@ import reactor.core.publisher.Mono;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class SellerServiceAdapter implements SellerServicePort {
 
-    private final WebClient.Builder webClientBuilder;
+    private final WebClient kernelWebClient;
 
-    @Value("${comops.kernel.ip}")
-    private String kernelIp;
+    public SellerServiceAdapter(@Qualifier("kernelWebClient") WebClient kernelWebClient) {
+        this.kernelWebClient = kernelWebClient;
+    }
 
     @Override
     public Flux<SellerAuthResponse> getSellersByOrganization(UUID organizationId) {
-        String url = String.format(
-                "http://%s/api/sales-agents?organizationId=%s",
-                kernelIp,
-                organizationId
-        );
-        log.info("Requesting sales agents from: {}", url);
-
-        return webClientBuilder.build()
+        log.info("Fetching cashiers from Kernel for organization: {}", organizationId);
+        // /api/cashiers returns a plain JSON array, not a {success, data} wrapper
+        return kernelWebClient
                 .get()
-                .uri(url)
-                .header("X-Organization-ID", organizationId.toString())
+                .uri(u -> u.path("/api/cashiers").queryParam("organizationId", organizationId).build())
                 .retrieve()
-                .onStatus(HttpStatusCode::isError, response -> {
-                    log.error("Error calling Kernel sales-agents: {}", response.statusCode());
+                .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(), resp -> {
+                    log.error("Kernel cashiers error: {}", resp.statusCode());
                     return Mono.empty();
                 })
-                .bodyToMono(ApiResponseListThirdPartyResponse.class)
-                .flatMapMany(resp -> {
-                    if (resp == null || resp.getData() == null) {
-                        return Flux.empty();
-                    }
-                    return Flux.fromIterable(resp.getData());
-                })
-                .map(this::mapThirdPartyToSellerAuthResponse)
-                .doOnComplete(() -> log.info("Successfully requested sales agents."))
+                .bodyToFlux(KernelCashierResponse.class)
+                .map(this::mapToSellerAuthResponse)
+                .doOnComplete(() -> log.info("Fetched cashiers for organization: {}", organizationId))
                 .onErrorResume(e -> {
-                    log.error("Error calling Kernel sales-agents: {}", e.getMessage());
+                    log.error("Error fetching cashiers: {}", e.getMessage());
                     return Flux.empty();
                 });
     }
 
-    private SellerAuthResponse mapThirdPartyToSellerAuthResponse(ThirdPartyResponse tp) {
+    private SellerAuthResponse mapToSellerAuthResponse(KernelCashierResponse cashier) {
         SellerAuthResponse r = new SellerAuthResponse();
-        r.setId(tp.getId());
-        r.setUsername(tp.getDisplayName());
-        r.setOrganizationId(tp.getOrganizationId() != null ? tp.getOrganizationId() : tp.getTenantId());
+        r.setId(cashier.getId());
+        r.setUsername(cashier.getFullName());
+        r.setOrganizationId(cashier.getOrganizationId());
+        r.setAgencyId(cashier.getAgencyId());
+        r.setCreatedAt(cashier.getCreatedAt());
         return r;
     }
 }

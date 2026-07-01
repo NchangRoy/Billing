@@ -11,6 +11,9 @@ import java.util.UUID;
 @NoArgsConstructor
 public class SellerAuthResponse {
 
+    // JWT returned by the Kernel — the frontend must send this as Authorization: Bearer {accessToken}
+    private String accessToken;
+
     // Seller Identity
     private UUID id;
     private String username;

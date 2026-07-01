@@ -30,9 +30,6 @@ public class ProductUseCaseImpl implements ProductUseCase {
 
     @Override
     public Mono<ProductResponse> getProductById(UUID productId) {
-        return productServicePort.fetchAllProducts()
-                .filter(p -> productId.equals(p.getIdProduit()))
-                .next()
-                .switchIfEmpty(Mono.error(new RuntimeException("Product not found: " + productId)));
+        return productServicePort.fetchProductById(productId);
     }
 }

@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
-@RestController("productCatalogController")
+@RestController
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
 @Slf4j

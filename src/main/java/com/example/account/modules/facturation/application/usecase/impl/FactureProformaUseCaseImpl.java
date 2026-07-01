@@ -6,6 +6,7 @@ import com.example.account.modules.facturation.domain.port.output.FactureProform
 import com.example.account.modules.facturation.dto.request.ProformaInvoiceRequest;
 import com.example.account.modules.facturation.dto.response.ProformaInvoiceResponse;
 import com.example.account.modules.facturation.mapper.FactureProformaMapper;
+import com.example.account.modules.core.context.ReactiveOrganizationContext;
 import com.example.account.modules.facturation.model.enums.StatutProforma;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +41,11 @@ public class FactureProformaUseCaseImpl implements FactureProformaUseCase {
             proforma.setStatut(StatutProforma.BROUILLON);
         }
 
-        return proformaRepository.insert(proforma)
+        return ReactiveOrganizationContext.getOrganizationId()
+                .flatMap(orgId -> {
+                    proforma.setOrganizationId(orgId);
+                    return proformaRepository.insert(proforma);
+                })
                 .map(proformaMapper::toResponse);
     }
 
