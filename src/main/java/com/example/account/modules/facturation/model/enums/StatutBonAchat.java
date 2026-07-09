@@ -5,6 +5,8 @@ import lombok.Getter;
 @Getter
 public enum StatutBonAchat {
     BROUILLON("Brouillon"),
+    ENVOYE("Envoyé"),
+    ACCEPTE("Accepté"),
     RECU_PARTIEL("Reçu partiellement"),
     RECU("Reçu"),
     REJETE("Rejeté"),

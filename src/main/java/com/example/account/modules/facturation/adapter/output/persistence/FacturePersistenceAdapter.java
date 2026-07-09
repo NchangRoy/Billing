@@ -145,6 +145,11 @@ public class FacturePersistenceAdapter implements FactureRepositoryPort {
     }
 
     @Override
+    public Flux<Facture> findByCreatedBy(UUID createdBy) {
+        return repository.findByCreatedBy(createdBy).map(mapper::toDomain);
+    }
+
+    @Override
     public Mono<Facture> save(Facture facture) {
         return repository.save(mapper.toEntity(facture)).map(mapper::toDomain);
     }

@@ -16,6 +16,9 @@ import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import com.example.account.modules.facturation.mapper.FactureFournisseurMapper;
 import com.example.account.modules.facturation.model.entity.FactureFournisseur;
 import com.example.account.modules.facturation.repository.FactureFournisseurRepository;
+import com.example.account.modules.facturation.dto.request.AssignDocPermissionRequest;
+import com.example.account.modules.facturation.model.enums.DocPermissionLevel;
+import com.example.account.modules.facturation.model.enums.DocType;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +28,22 @@ public class FactureFournisseurService {
     private final FactureFournisseurRepository factureFournisseurRepository;
     private final FactureFournisseurMapper factureFournisseurMapper;
     private final R2dbcEntityTemplate entityTemplate;
+    private final DocPermissionService docPermissionService;
+
+    private <T> Mono<T> grantOwnerPermission(UUID sellerId, UUID docId, T response) {
+        if (sellerId == null || docId == null) return Mono.just(response);
+        AssignDocPermissionRequest request = new AssignDocPermissionRequest();
+        request.setSellerId(sellerId);
+        request.setDocId(docId);
+        request.setDocType(DocType.FACTURE_FOURNISSEUR);
+        request.setPermission(DocPermissionLevel.OWNER);
+        return docPermissionService.grant(request)
+                .thenReturn(response)
+                .onErrorResume(e -> {
+                    log.error("Failed to grant owner doc-permission for facture fournisseur {}: {}", docId, e.getMessage());
+                    return Mono.just(response);
+                });
+    }
 
     @Transactional
     public Mono<FactureFournisseurResponse> createFacture(FactureFournisseurCreateRequest dto) {
@@ -34,7 +53,7 @@ public class FactureFournisseurService {
             factureFournisseur.setIdFactureFournisseur(UUID.randomUUID());
         }
         return entityTemplate.insert(factureFournisseur)
-                .map(factureFournisseurMapper::toDto);
+                .flatMap(saved -> grantOwnerPermission(saved.getCreatedBy(), saved.getIdFactureFournisseur(), factureFournisseurMapper.toDto(saved)));
     }
 
     @Transactional(readOnly = true)
@@ -76,5 +95,16 @@ public class FactureFournisseurService {
     @Transactional(readOnly = true)
     public Flux<FactureFournisseurResponse> getByAgencyId(UUID agencyId) {
         return factureFournisseurRepository.findByAgencyId(agencyId).map(factureFournisseurMapper::toDto);
+    }
+
+    @Transactional(readOnly = true)
+    public Flux<FactureFournisseurResponse> getBySellerId(UUID sellerId) {
+        return docPermissionService.findBySellerAndDocType(sellerId, DocType.FACTURE_FOURNISSEUR)
+                .flatMap(permission -> factureFournisseurRepository.findById(permission.getDocId())
+                        .map(entity -> {
+                            FactureFournisseurResponse response = factureFournisseurMapper.toDto(entity);
+                            response.setDocPermission(docPermissionService.toResponse(permission));
+                            return response;
+                        }));
     }
 }

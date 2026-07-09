@@ -14,4 +14,5 @@ public interface BonAchatRepository extends R2dbcRepository<BonAchat, UUID> {
     Flux<BonAchat> findByIdFournisseur(UUID idFournisseur);
     Flux<BonAchat> findByOrganizationId(UUID organizationId);
     Flux<BonAchat> findByAgencyId(UUID agencyId);
+    Flux<BonAchat> findByCreatedBy(UUID createdBy);
 }

@@ -21,4 +21,6 @@ public interface ClientRepositoryPort {
     Mono<Void> deleteById(UUID id);
     Mono<Boolean> existsById(UUID id);
     Mono<Long> count();
+    Mono<Void> resendCredentials(UUID id, String email, String name);
+    Mono<Void> ensurePortalAccess(UUID id, String email, String name);
 }

@@ -1,6 +1,7 @@
 package com.example.account.modules.facturation.dto.response;
 
 
+import com.example.account.modules.facturation.model.enums.OriginType;
 import com.example.account.modules.facturation.model.enums.StatutFacture;
 import com.example.account.modules.facturation.model.enums.TypePaiementFacture;
 import lombok.AllArgsConstructor;
@@ -68,7 +69,13 @@ public class FactureResponse {
     private UUID referalClientId;
     private UUID organizationId;
     private UUID agencyId;
-    
+    private OriginType originType;
+    private UUID sessionId;
+
+    /** Populated only by the agency+session enrichment endpoint; null otherwise. */
+    private SessionResponse session;
+
+
     private BigDecimal remiseGlobalePourcentage;
     private BigDecimal remiseGlobaleMontant;
     
@@ -82,5 +89,6 @@ public class FactureResponse {
     private Long version;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    
+    private DocPermissionResponse docPermission;
+
 }

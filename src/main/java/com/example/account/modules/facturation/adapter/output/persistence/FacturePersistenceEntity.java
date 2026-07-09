@@ -1,6 +1,7 @@
 package com.example.account.modules.facturation.adapter.output.persistence;
 
 import com.example.account.modules.facturation.domain.model.LigneFacture;
+import com.example.account.modules.facturation.model.enums.OriginType;
 import com.example.account.modules.facturation.model.enums.StatutFacture;
 import com.example.account.modules.facturation.model.enums.TypePaiementFacture;
 import lombok.*;
@@ -162,6 +163,13 @@ public class FacturePersistenceEntity {
 
     @Column("agency_id")
     private UUID agencyId;
+
+    @Column("origin_type")
+    @Builder.Default
+    private OriginType originType = OriginType.SALES;
+
+    @Column("session_id")
+    private UUID sessionId;
 
     @Version
     @Column("version")

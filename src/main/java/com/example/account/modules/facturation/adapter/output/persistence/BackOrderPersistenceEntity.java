@@ -27,17 +27,26 @@ public class BackOrderPersistenceEntity {
     @Column("numero_back_order")
     private String numeroBackOrder;
 
-    @Column("id_bon_achat")
-    private UUID idBonAchat;
+    @Column("id_client")
+    private UUID idClient;
 
-    @Column("numero_bon_achat")
-    private String numeroBonAchat;
+    @Column("nom_client")
+    private String nomClient;
 
-    @Column("id_fournisseur")
-    private UUID idFournisseur;
+    @Column("adresse_client")
+    private String adresseClient;
 
-    @Column("nom_fournisseur")
-    private String nomFournisseur;
+    @Column("email_client")
+    private String emailClient;
+
+    @Column("telephone_client")
+    private String telephoneClient;
+
+    @Column("id_bon_livraison")
+    private UUID idBonLivraison;
+
+    @Column("numero_bon_livraison")
+    private String numeroBonLivraison;
 
     @Column("lignes")
     private List<LigneBackOrder> lignes;

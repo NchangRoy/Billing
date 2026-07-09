@@ -20,4 +20,6 @@ public interface FournisseurRepositoryPort {
     Mono<Fournisseur> save(Fournisseur fournisseur);
     Mono<Void> deleteById(UUID id);
     Mono<Boolean> existsById(UUID id);
+    Mono<Void> resendCredentials(UUID id, String email, String name);
+    Mono<Void> ensurePortalAccess(UUID id, String email, String name);
 }

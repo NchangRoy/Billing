@@ -10,6 +10,7 @@ import java.util.UUID;
 public interface BackOrderR2dbcRepository extends R2dbcRepository<BackOrderPersistenceEntity, UUID> {
     Flux<BackOrderPersistenceEntity> findByOrganizationId(UUID organizationId);
     Flux<BackOrderPersistenceEntity> findByAgencyId(UUID agencyId);
-    Flux<BackOrderPersistenceEntity> findByIdBonAchat(UUID idBonAchat);
-    Flux<BackOrderPersistenceEntity> findByIdFournisseur(UUID idFournisseur);
+    Flux<BackOrderPersistenceEntity> findByIdBonLivraison(UUID idBonLivraison);
+    Flux<BackOrderPersistenceEntity> findByIdClient(UUID idClient);
+    Flux<BackOrderPersistenceEntity> findByCreatedBy(UUID createdBy);
 }

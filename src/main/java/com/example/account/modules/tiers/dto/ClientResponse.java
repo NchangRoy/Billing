@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -20,6 +21,7 @@ public class ClientResponse {
     private String categorie;
     private String siteWeb;
     private Boolean nTva;
+    private List<String> allowedSaleSizes;
     private String adresse;
     private String telephone;
     private String email;

@@ -20,12 +20,15 @@ public class BackOrderRequest {
 
     private String numeroBackOrder;
 
-    @NotNull(message = "L'ID du bon d'achat est obligatoire")
-    private UUID idBonAchat;
-    private String numeroBonAchat;
+    @NotNull(message = "L'ID du bon de livraison est obligatoire")
+    private UUID idBonLivraison;
+    private String numeroBonLivraison;
 
-    private UUID idFournisseur;
-    private String nomFournisseur;
+    private UUID idClient;
+    private String nomClient;
+    private String adresseClient;
+    private String emailClient;
+    private String telephoneClient;
 
     @NotNull(message = "Les lignes sont obligatoires")
     private List<LigneBackOrder> lignes;

@@ -6,6 +6,7 @@ import com.example.account.modules.facturation.model.entity.BonAchat;
 import com.example.account.modules.facturation.model.entity.BonCommande;
 import com.example.account.modules.facturation.model.entity.LigneBonAchat;
 import com.example.account.modules.facturation.model.entity.LigneBonLivraison;
+import com.example.account.modules.facturation.model.entity.LigneQuotationProposal;
 import com.example.account.modules.facturation.domain.model.LigneDevis;
 import com.example.account.modules.facturation.domain.model.LigneFacture;
 import com.example.account.modules.facturation.model.entity.Lines.LineBonCommande;
@@ -125,6 +126,7 @@ protected List<Object> getCustomConverters() {
     converters.add(new GenericListReadingConverter(LineBonCommande.class));
     converters.add(new GenericListReadingConverter(LineBonReception.class));
     converters.add(new GenericListReadingConverter(com.example.account.modules.facturation.domain.model.LigneBackOrder.class));
+    converters.add(new GenericListReadingConverter(LigneQuotationProposal.class));
     
       converters.add(new GenericListReadingConverter(com.example.account.modules.facturation.dto.response.ExternalResponses.ProductResponse.SaleSize.class));
     converters.add(new GenericListReadingConverter(com.example.account.modules.facturation.dto.response.ExternalResponses.ProductResponse.SaleSizePromotion.class));

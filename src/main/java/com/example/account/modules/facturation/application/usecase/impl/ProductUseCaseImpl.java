@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -31,5 +32,15 @@ public class ProductUseCaseImpl implements ProductUseCase {
     @Override
     public Mono<ProductResponse> getProductById(UUID productId) {
         return productServicePort.fetchProductById(productId);
+    }
+
+    @Override
+    public Mono<List<ProductResponse.SaleSize>> updateSaleSizes(UUID productId, List<ProductResponse.SaleSize> allowedSaleSizes) {
+        return productServicePort.updateSaleSizes(productId, allowedSaleSizes);
+    }
+
+    @Override
+    public Mono<String> updatePhoto(UUID productId, String photo) {
+        return productServicePort.updatePhoto(productId, photo);
     }
 }

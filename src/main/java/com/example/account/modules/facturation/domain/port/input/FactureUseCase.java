@@ -31,4 +31,5 @@ public interface FactureUseCase {
     Mono<Long> countByEtat(StatutFacture etat);
     Flux<FactureResponse> getFacturesByOrganizationId(UUID organizationId);
     Flux<FactureResponse> getFacturesByAgencyId(UUID agencyId);
+    Flux<FactureResponse> getFacturesBySellerId(UUID sellerId);
 }

@@ -14,13 +14,13 @@ public class CorsConfig {
     @Bean
     public CorsWebFilter corsWebFilter() {
         CorsConfiguration config = new CorsConfiguration();
-        
+
         // Allow your specific frontend origin
         config.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(Arrays.asList("*"));
         config.setAllowCredentials(true);
-        
+
         // Essential: Allow the browser to see these headers if you use them
         config.setExposedHeaders(Arrays.asList("Authorization", "Content-Disposition"));
 

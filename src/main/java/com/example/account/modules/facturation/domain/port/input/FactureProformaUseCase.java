@@ -18,4 +18,5 @@ public interface FactureProformaUseCase {
     Mono<ProformaInvoiceResponse> updateFactureProforma(UUID id, ProformaInvoiceRequest request);
     Flux<ProformaInvoiceResponse> getProformasByOrganizationId(UUID organizationId);
     Flux<ProformaInvoiceResponse> getProformasByAgencyId(UUID agencyId);
+    Flux<ProformaInvoiceResponse> getProformasBySellerId(UUID sellerId);
 }

@@ -8,6 +8,9 @@ import com.example.account.modules.facturation.dto.response.BondeReceptionRespon
 import com.example.account.modules.facturation.mapper.BondeReceptionMapper;
 import com.example.account.modules.facturation.model.entity.BondeReception;
 import com.example.account.modules.facturation.repository.BonReceptionRepository;
+import com.example.account.modules.facturation.dto.request.AssignDocPermissionRequest;
+import com.example.account.modules.facturation.model.enums.DocPermissionLevel;
+import com.example.account.modules.facturation.model.enums.DocType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
@@ -25,6 +28,22 @@ public class BonReceptionService {
     private final BonReceptionRepository bonReceptionRepository;
     private final BondeReceptionMapper bondeReceptionMapper;
     private final R2dbcEntityTemplate entityTemplate;
+    private final DocPermissionService docPermissionService;
+
+    private <T> Mono<T> grantOwnerPermission(UUID sellerId, UUID docId, T response) {
+        if (sellerId == null || docId == null) return Mono.just(response);
+        AssignDocPermissionRequest request = new AssignDocPermissionRequest();
+        request.setSellerId(sellerId);
+        request.setDocId(docId);
+        request.setDocType(DocType.BON_RECEPTION);
+        request.setPermission(DocPermissionLevel.OWNER);
+        return docPermissionService.grant(request)
+                .thenReturn(response)
+                .onErrorResume(e -> {
+                    log.error("Failed to grant owner doc-permission for bon reception {}: {}", docId, e.getMessage());
+                    return Mono.just(response);
+                });
+    }
 
     @Transactional
     public Mono<BondeReceptionResponse> createBondeReception(BondeReceptionCreateRequest dto) {
@@ -34,7 +53,7 @@ public class BonReceptionService {
             bondeReception.setIdBonReception(UUID.randomUUID());
         }
         return entityTemplate.insert(bondeReception)
-                .map(bondeReceptionMapper::toDto);
+                .flatMap(saved -> grantOwnerPermission(saved.getCreatedBy(), saved.getIdBonReception(), bondeReceptionMapper.toDto(saved)));
     }
 
     @Transactional(readOnly = true)
@@ -87,5 +106,16 @@ public class BonReceptionService {
     @Transactional(readOnly = true)
     public Flux<BondeReceptionResponse> getByAgencyId(UUID agencyId) {
         return bonReceptionRepository.findByAgencyId(agencyId).map(bondeReceptionMapper::toDto);
+    }
+
+    @Transactional(readOnly = true)
+    public Flux<BondeReceptionResponse> getBySellerId(UUID sellerId) {
+        return docPermissionService.findBySellerAndDocType(sellerId, DocType.BON_RECEPTION)
+                .flatMap(permission -> bonReceptionRepository.findById(permission.getDocId())
+                        .map(entity -> {
+                            BondeReceptionResponse response = bondeReceptionMapper.toDto(entity);
+                            response.setDocPermission(docPermissionService.toResponse(permission));
+                            return response;
+                        }));
     }
 }

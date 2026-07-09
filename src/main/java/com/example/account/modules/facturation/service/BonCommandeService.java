@@ -12,6 +12,9 @@ import com.example.account.modules.facturation.domain.model.Devis;
 import com.example.account.modules.facturation.model.enums.StatusBonCommande;
 import com.example.account.modules.facturation.repository.BonCommandeRepository;
 import com.example.account.modules.facturation.service.producer.BonCommandeEventProducer;
+import com.example.account.modules.facturation.dto.request.AssignDocPermissionRequest;
+import com.example.account.modules.facturation.model.enums.DocPermissionLevel;
+import com.example.account.modules.facturation.model.enums.DocType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -35,6 +38,22 @@ public class BonCommandeService {
     private final BonCommandeEventProducer bonCommandeEventProducer;
     private final BonCommandeMapper bonCommandeMapper;
     private final R2dbcEntityTemplate entityTemplate;
+    private final DocPermissionService docPermissionService;
+
+    private <T> Mono<T> grantOwnerPermission(UUID sellerId, UUID docId, T response) {
+        if (sellerId == null || docId == null) return Mono.just(response);
+        AssignDocPermissionRequest request = new AssignDocPermissionRequest();
+        request.setSellerId(sellerId);
+        request.setDocId(docId);
+        request.setDocType(DocType.BON_COMMANDE);
+        request.setPermission(DocPermissionLevel.OWNER);
+        return docPermissionService.grant(request)
+                .thenReturn(response)
+                .onErrorResume(e -> {
+                    log.error("Failed to grant owner doc-permission for bon commande {}: {}", docId, e.getMessage());
+                    return Mono.just(response);
+                });
+    }
 
     @Transactional
     public Mono<BonCommandeResponse> createBonCommande(BonCommandeCreateRequest request) {
@@ -46,11 +65,11 @@ public class BonCommandeService {
         }
 
         return entityTemplate.insert(bonCommande)
-                .map(savedBonCommande -> {
+                .flatMap(savedBonCommande -> {
                     BonCommandeResponse response = bonCommandeMapper.toResponse(savedBonCommande);
                     bonCommandeEventProducer.publishBonCommandeCreated(response);
                     log.info("Bon de commande créé avec succès: {}", savedBonCommande.getIdBonCommande());
-                    return response;
+                    return grantOwnerPermission(savedBonCommande.getCreatedBy(), savedBonCommande.getIdBonCommande(), response);
                 });
     }
 
@@ -148,6 +167,17 @@ public class BonCommandeService {
    @Transactional(readOnly = true)
    public Flux<BonCommandeResponse> getByAgencyId(UUID agencyId) {
        return bonCommandeRepository.findByIdAgency(agencyId).map(bonCommandeMapper::toResponse);
+   }
+
+   @Transactional(readOnly = true)
+   public Flux<BonCommandeResponse> getBySellerId(UUID sellerId) {
+       return docPermissionService.findBySellerAndDocType(sellerId, DocType.BON_COMMANDE)
+               .flatMap(permission -> bonCommandeRepository.findById(permission.getDocId())
+                       .map(entity -> {
+                           BonCommandeResponse response = bonCommandeMapper.toResponse(entity);
+                           response.setDocPermission(docPermissionService.toResponse(permission));
+                           return response;
+                       }));
    }
 
    public Mono<BonCommande> createFromQuotation(Devis devis) {

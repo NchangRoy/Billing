@@ -54,4 +54,9 @@ public class FactureFournisseurController {
     public Flux<FactureFournisseurResponse> getByAgencyId(@PathVariable UUID agencyId) {
         return factureFournisseurService.getByAgencyId(agencyId);
     }
+
+    @GetMapping("/seller/{sellerId}")
+    public Flux<FactureFournisseurResponse> getBySellerId(@PathVariable UUID sellerId) {
+        return factureFournisseurService.getBySellerId(sellerId);
+    }
 }

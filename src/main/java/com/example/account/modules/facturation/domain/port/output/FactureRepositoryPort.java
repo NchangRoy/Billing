@@ -34,6 +34,7 @@ public interface FactureRepositoryPort {
     Mono<Boolean> existsByNumeroFacture(String numeroFacture);
     Flux<Facture> findByOrganizationId(UUID organizationId);
     Flux<Facture> findByAgencyId(UUID agencyId);
+    Flux<Facture> findByCreatedBy(UUID createdBy);
     Mono<Facture> save(Facture facture);
     Mono<Facture> insert(Facture facture);
     Mono<Void> deleteById(UUID id);

@@ -1,6 +1,7 @@
 package com.example.account.modules.core.config;
 
 import com.example.account.modules.core.context.ReactiveOrganizationContext;
+import com.example.account.modules.facturation.adapter.output.external.AccountingKernelAuthService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,32 +33,34 @@ public class KernelWebClientConfig {
 
     @Bean
     @Qualifier("kernelWebClient")
-    public WebClient kernelWebClient(WebClient.Builder builder) {
+    public WebClient kernelWebClient(WebClient.Builder builder, AccountingKernelAuthService authService) {
         return builder
                 .baseUrl(baseUrl)
                 .defaultHeader("X-Client-Id", clientId)
                 .defaultHeader("X-Api-Key", apiKey)
                 .defaultHeader("X-Tenant-Id", tenantId)
-                .filter(injectBearerToken())
+                .filter(injectBearerToken(authService))
                 .filter(injectOrganizationId())
                 .build();
     }
 
     /**
-     * Reads the Bearer token from the Reactor context and adds it to outgoing Kernel requests.
-     * Skips if the request already has an Authorization header (e.g. the auth call sets it manually).
+     * Sellers authenticate locally against sales-core, not Kernel, so their access
+     * token is never a valid Kernel token. Every kernelWebClient call instead
+     * authenticates as the platform's Kernel service account (same cached-token
+     * pattern as AccountingKernelAuthService) rather than forwarding the caller's
+     * own token.
      */
-    private ExchangeFilterFunction injectBearerToken() {
-        return (request, next) -> Mono.deferContextual(ctx -> {
-            String token = ctx.getOrDefault(ReactiveOrganizationContext.TOKEN_KEY, null);
-            if (token != null && !request.headers().containsKey(HttpHeaders.AUTHORIZATION)) {
-                ClientRequest modified = ClientRequest.from(request)
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                        .build();
-                return next.exchange(modified);
+    private ExchangeFilterFunction injectBearerToken(AccountingKernelAuthService authService) {
+        return (request, next) -> {
+            if (request.headers().containsKey(HttpHeaders.AUTHORIZATION)) {
+                return next.exchange(request);
             }
-            return next.exchange(request);
-        });
+            return authService.getValidToken()
+                    .flatMap(token -> next.exchange(ClientRequest.from(request)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                            .build()));
+        };
     }
 
     /**

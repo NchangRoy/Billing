@@ -79,9 +79,15 @@ public class BackOrderController {
         return backOrderUseCase.getByAgencyId(agencyId);
     }
 
-    @GetMapping("/bon-achat/{idBonAchat}")
-    @Operation(summary = "Récupérer les back-orders par bon d'achat")
-    public Flux<BackOrderResponse> getByIdBonAchat(@PathVariable UUID idBonAchat) {
-        return backOrderUseCase.getByIdBonAchat(idBonAchat);
+    @GetMapping("/bon-livraison/{idBonLivraison}")
+    @Operation(summary = "Récupérer les back-orders par bon de livraison")
+    public Flux<BackOrderResponse> getByIdBonLivraison(@PathVariable UUID idBonLivraison) {
+        return backOrderUseCase.getByIdBonLivraison(idBonLivraison);
+    }
+
+    @GetMapping("/seller/{sellerId}")
+    @Operation(summary = "Récupérer les back-orders créés par un vendeur")
+    public Flux<BackOrderResponse> getBySellerId(@PathVariable UUID sellerId) {
+        return backOrderUseCase.getBySellerId(sellerId);
     }
 }

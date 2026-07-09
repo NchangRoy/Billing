@@ -45,4 +45,5 @@ public class FactureFournisseurResponse {
     private LocalDateTime dateSysteme;
     private UUID organizationId;
     private UUID agencyId;
+    private DocPermissionResponse docPermission;
 }

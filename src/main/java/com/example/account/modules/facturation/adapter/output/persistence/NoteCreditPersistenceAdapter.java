@@ -62,6 +62,11 @@ public class NoteCreditPersistenceAdapter implements NoteCreditRepositoryPort {
     }
 
     @Override
+    public Flux<NoteCredit> findByCreatedBy(UUID createdBy) {
+        return repository.findByCreatedBy(createdBy).map(mapper::toDomain);
+    }
+
+    @Override
     public Mono<Void> deleteById(UUID id) {
         return repository.deleteById(id);
     }

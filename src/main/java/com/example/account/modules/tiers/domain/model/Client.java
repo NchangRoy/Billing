@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -24,6 +25,9 @@ public class Client extends OrganizationScoped {
     private String siteWeb;
     @Builder.Default
     private Boolean nTva = false;
+    // Third-party sale config from sales-core (ThirdPartySaleConfig) — which sale
+    // sizes (DETAIL, GROS, etc.) this client is allowed to buy at.
+    private List<String> allowedSaleSizes;
     private String adresse;
     private String telephone;
     private String email;

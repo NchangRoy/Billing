@@ -184,4 +184,15 @@ public class FournisseurUseCaseImpl implements FournisseurUseCase {
     public Mono<Long> countActiveFournisseurs() {
         return fournisseurRepositoryPort.countActiveFournisseurs();
     }
+
+    @Override
+    public Mono<Void> inviteFournisseur(UUID fournisseurId, String email, String name) {
+        log.info("Envoi des identifiants du portail au fournisseur: {}", fournisseurId);
+        return fournisseurRepositoryPort.resendCredentials(fournisseurId, email, name);
+    }
+
+    @Override
+    public Mono<Void> ensureFournisseurPortalAccess(UUID fournisseurId, String email, String name) {
+        return fournisseurRepositoryPort.ensurePortalAccess(fournisseurId, email, name);
+    }
 }

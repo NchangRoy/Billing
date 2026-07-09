@@ -68,4 +68,31 @@ public class BonAchatController {
     public Flux<BonAchatResponse> getByAgencyId(@PathVariable UUID agencyId) {
         return bonAchatService.getByAgencyId(agencyId);
     }
+
+    @GetMapping("/seller/{sellerId}")
+    @Operation(summary = "Récupérer les bons d'achat créés par un vendeur")
+    public Flux<BonAchatResponse> getBySellerId(@PathVariable UUID sellerId) {
+        return bonAchatService.getBySellerId(sellerId);
+    }
+
+    @PutMapping("/{id}/accepter")
+    @Operation(summary = "Accepter un bon d'achat")
+    public Mono<ResponseEntity<Void>> accepterBonAchat(@PathVariable UUID id) {
+        return bonAchatService.accepterBonAchat(id)
+                .thenReturn(ResponseEntity.ok().build());
+    }
+
+    @PutMapping("/{id}/refuser")
+    @Operation(summary = "Refuser un bon d'achat")
+    public Mono<ResponseEntity<Void>> refuserBonAchat(@PathVariable UUID id) {
+        return bonAchatService.refuserBonAchat(id)
+                .thenReturn(ResponseEntity.ok().build());
+    }
+
+    @PostMapping("/{id}/send-to-portal")
+    @Operation(summary = "Envoyer le bon d'achat au fournisseur via le portail (login requis)")
+    public Mono<ResponseEntity<Void>> sendToPortal(@PathVariable UUID id) {
+        return bonAchatService.sendToPortal(id)
+                .thenReturn(ResponseEntity.ok().build());
+    }
 }

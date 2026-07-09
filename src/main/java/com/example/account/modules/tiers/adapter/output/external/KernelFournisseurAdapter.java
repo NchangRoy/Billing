@@ -1,9 +1,7 @@
 package com.example.account.modules.tiers.adapter.output.external;
 
 import com.example.account.modules.core.context.ReactiveOrganizationContext;
-import com.example.account.modules.shared.dto.kernel.ApiResponseListThirdPartyResponse;
-import com.example.account.modules.shared.dto.kernel.ApiResponseThirdPartyResponse;
-import com.example.account.modules.shared.dto.kernel.ThirdPartyResponse;
+import com.example.account.modules.shared.dto.kernel.SalesCoreClientResponse;
 import com.example.account.modules.tiers.domain.model.Fournisseur;
 import com.example.account.modules.tiers.domain.model.enums.TypeClient;
 import com.example.account.modules.tiers.domain.port.output.FournisseurRepositoryPort;
@@ -14,16 +12,17 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Map;
 import java.util.UUID;
 
 @Service
 @Slf4j
 public class KernelFournisseurAdapter implements FournisseurRepositoryPort {
 
-    private final WebClient kernelWebClient;
+    private final WebClient salesCoreWebClient;
 
-    public KernelFournisseurAdapter(@Qualifier("kernelWebClient") WebClient kernelWebClient) {
-        this.kernelWebClient = kernelWebClient;
+    public KernelFournisseurAdapter(@Qualifier("salesCoreWebClient") WebClient salesCoreWebClient) {
+        this.salesCoreWebClient = salesCoreWebClient;
     }
 
     private Mono<UUID> getOrganizationId() {
@@ -38,13 +37,12 @@ public class KernelFournisseurAdapter implements FournisseurRepositoryPort {
 
     @Override
     public Mono<Fournisseur> findById(UUID id) {
-        return kernelWebClient
+        return salesCoreWebClient
                 .get()
-                .uri("/api/third-parties/{id}", id)
+                .uri("/api/fournisseurs/{id}", id)
                 .retrieve()
-                .bodyToMono(ApiResponseThirdPartyResponse.class)
-                .map(ApiResponseThirdPartyResponse::getData)
-                .map(this::mapThirdPartyToFournisseur);
+                .bodyToMono(SalesCoreClientResponse.class)
+                .map(this::mapToFournisseur);
     }
 
     @Override
@@ -89,16 +87,13 @@ public class KernelFournisseurAdapter implements FournisseurRepositoryPort {
     @Override
     public Flux<Fournisseur> findAllActiveFournisseurs() {
         return getOrganizationId().flatMapMany(orgId ->
-                kernelWebClient
+                salesCoreWebClient
                         .get()
-                        .uri(u -> u.path("/api/third-parties")
-                                .queryParam("organizationId", orgId)
-                                .queryParam("role", "SUPPLIER")
-                                .build())
+                        .uri("/api/fournisseurs")
+                        .header("X-Organization-Id", orgId.toString())
                         .retrieve()
-                        .bodyToMono(ApiResponseListThirdPartyResponse.class)
-                        .flatMapMany(resp -> Flux.fromIterable(resp.getData()))
-                        .map(this::mapThirdPartyToFournisseur)
+                        .bodyToFlux(SalesCoreClientResponse.class)
+                        .map(f -> mapToFournisseur(f, orgId))
         );
     }
 
@@ -122,21 +117,65 @@ public class KernelFournisseurAdapter implements FournisseurRepositoryPort {
         return findById(id).map(f -> true).onErrorReturn(false);
     }
 
-    private Fournisseur mapThirdPartyToFournisseur(ThirdPartyResponse tp) {
+    @Override
+    public Mono<Void> resendCredentials(UUID id, String email, String name) {
+        return getOrganizationId().flatMap(orgId ->
+                salesCoreWebClient
+                        .post()
+                        .uri("/api/fournisseurs/{id}/invite", id)
+                        .bodyValue(Map.of(
+                                "clientId", id.toString(),
+                                "organizationId", orgId.toString(),
+                                "email", email,
+                                "name", name
+                        ))
+                        .retrieve()
+                        .bodyToMono(Void.class)
+        );
+    }
+
+    @Override
+    public Mono<Void> ensurePortalAccess(UUID id, String email, String name) {
+        return getOrganizationId().flatMap(orgId ->
+                salesCoreWebClient
+                        .post()
+                        .uri("/api/fournisseurs/{id}/ensure-portal-access", id)
+                        .bodyValue(Map.of(
+                                "clientId", id.toString(),
+                                "organizationId", orgId.toString(),
+                                "email", email,
+                                "name", name
+                        ))
+                        .retrieve()
+                        .bodyToMono(Boolean.class)
+        ).then();
+    }
+
+    private Fournisseur mapToFournisseur(SalesCoreClientResponse c) {
+        return mapToFournisseur(c, null);
+    }
+
+    private Fournisseur mapToFournisseur(SalesCoreClientResponse c, UUID organizationId) {
         Fournisseur f = new Fournisseur();
-        f.setIdFournisseur(tp.getId());
-        f.setOrganizationId(tp.getOrganizationId() != null ? tp.getOrganizationId() : tp.getTenantId());
-        f.setUsername(tp.getDisplayName());
-        f.setRaisonSociale(tp.getName());
-        f.setEmail(null);
-        f.setTelephone(null);
-        f.setActif(tp.getActive() != null ? tp.getActive() : (tp.getEnabled() != null ? tp.getEnabled() : true));
-        f.setLimiteCredit(tp.getAuthorizedCreditLimit() != null ? tp.getAuthorizedCreditLimit() : 0.0);
-        f.setNumeroTva(tp.getTaxNumber());
-        f.setCodeFournisseur(tp.getCode() != null ? tp.getCode() : tp.getReferenceCode());
-        f.setSoldeCourant(tp.getOperationsBalance() != null ? tp.getOperationsBalance() : 0.0);
-        f.setCategorie(tp.getThirdPartyFamily());
-        f.setTypeFournisseur("ACTOR".equalsIgnoreCase(tp.getPartyType()) ? TypeClient.PARTICULIER : TypeClient.ENTREPRISE);
+        f.setIdFournisseur(c.getIdClient());
+        f.setOrganizationId(organizationId);
+        f.setUsername(c.getUsername());
+        f.setCategorie(c.getCategorie());
+        f.setSiteWeb(c.getSiteWeb());
+        f.setNTva(c.getNtva() != null ? c.getNtva() : false);
+        f.setAllowedSaleSizes(c.getAllowedSaleSizes());
+        f.setAdresse(c.getAdresse());
+        f.setTelephone(c.getTelephone());
+        f.setEmail(c.getEmail());
+        f.setRaisonSociale(c.getRaisonSociale());
+        f.setNumeroTva(c.getNumeroTva());
+        f.setCodeFournisseur(c.getCodeClient());
+        f.setLimiteCredit(c.getLimiteCredit() != null ? c.getLimiteCredit() : 0.0);
+        f.setSoldeCourant(c.getSoldeCourant() != null ? c.getSoldeCourant() : 0.0);
+        f.setActif(c.getActif() != null ? c.getActif() : true);
+        f.setTypeFournisseur("ADMINISTRATION".equalsIgnoreCase(c.getTypeClient()) ? TypeClient.ADMINISTRATION
+                : "ENTREPRISE".equalsIgnoreCase(c.getTypeClient()) ? TypeClient.ENTREPRISE
+                : TypeClient.PARTICULIER);
         return f;
     }
 }

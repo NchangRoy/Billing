@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Document partagé</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f6f8; }
+        .container { max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e5e5e5; }
+        .header { background: #1d4ed8; color: #ffffff; text-align: center; padding: 32px 20px; }
+        .header h1 { margin: 0; font-size: 22px; font-weight: 700; }
+        .content { padding: 28px; }
+        .content p { margin: 10px 0; }
+        .ref-box { background-color: #f9fafc; border-radius: 6px; padding: 16px 20px; margin: 20px 0; border-left: 4px solid #1d4ed8; }
+        .ref-box .label { font-weight: 700; }
+        .role-badge { display: inline-block; background: #eef2ff; color: #1d4ed8; font-weight: 700; text-transform: uppercase; font-size: 12px; letter-spacing: 0.05em; padding: 4px 10px; border-radius: 999px; margin-left: 6px; }
+        .cta-button { display: inline-block; background: #1d4ed8; color: white !important; padding: 14px 28px; text-decoration: none; border-radius: 4px; font-size: 15px; font-weight: 600; margin: 22px 0; }
+        .footer { background-color: #f4f6f8; padding: 20px; text-align: center; font-size: 13px; color: #777; border-top: 1px solid #e5e5e5; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>A document was shared with you</h1>
+    </div>
+    <div class="content">
+        <p>Hello <strong th:text="${recipientName}">there</strong>,</p>
+        <p>
+            <strong th:text="${sharedByName}">A colleague</strong> has invited you as
+            <span class="role-badge" th:text="${permissionLevel}">OWNER</span>
+            on the following document:
+        </p>
+        <div class="ref-box">
+            <span class="label" th:text="${docLabel}">Quotation QUO-2026-0001</span>
+        </div>
+        <p>Log in to your account to view it.</p>
+        <div style="text-align: center;">
+            <a href="#" class="cta-button" th:href="${loginUrl}">Open Billing</a>
+        </div>
+    </div>
+    <div class="footer">
+        <p>This is an automated email — please do not reply.</p>
+    </div>
+</div>
+</body>
+</html>

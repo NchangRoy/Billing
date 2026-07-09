@@ -387,3 +387,148 @@ databaseChangeLog:
             columns:
               - column:
                   name: agency_id
+
+  - changeSet:
+      id: 13-back-orders-link-client-and-delivery-note-not-supplier
+      author: dev
+      comments: >
+        A back order tracks a shortfall on a delivery to a CLIENT (via the
+        delivery note/sales order that couldn't be fully fulfilled), not a
+        shortfall from a supplier purchase order. Replaces the supplier/PO
+        fields with client + delivery note fields.
+      changes:
+        - dropIndex:
+            tableName: back_orders
+            indexName: idx_back_orders_bon_achat
+        - dropColumn:
+            tableName: back_orders
+            columns:
+              - column:
+                  name: id_bon_achat
+              - column:
+                  name: numero_bon_achat
+              - column:
+                  name: id_fournisseur
+              - column:
+                  name: nom_fournisseur
+        - addColumn:
+            tableName: back_orders
+            columns:
+              - column:
+                  name: id_client
+                  type: uuid
+              - column:
+                  name: nom_client
+                  type: varchar(255)
+              - column:
+                  name: adresse_client
+                  type: varchar(500)
+              - column:
+                  name: email_client
+                  type: varchar(255)
+              - column:
+                  name: telephone_client
+                  type: varchar(50)
+              - column:
+                  name: id_bon_livraison
+                  type: uuid
+              - column:
+                  name: numero_bon_livraison
+                  type: varchar(100)
+        - createIndex:
+            tableName: back_orders
+            indexName: idx_back_orders_client
+            columns:
+              - column:
+                  name: id_client
+        - createIndex:
+            tableName: back_orders
+            indexName: idx_back_orders_bon_livraison
+            columns:
+              - column:
+                  name: id_bon_livraison
+
+  - changeSet:
+      id: 14-create-quotation-proposals-table
+      author: dev
+      comments: Quotations drafted by clients themselves via the portal, reviewed by sellers
+      changes:
+        - createTable:
+            tableName: quotation_proposals
+            columns:
+              - column:
+                  name: id_proposal
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: numero_proposal
+                  type: varchar(100)
+              - column:
+                  name: organization_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: id_client
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: nom_client
+                  type: varchar(255)
+              - column:
+                  name: email_client
+                  type: varchar(255)
+              - column:
+                  name: date_creation
+                  type: timestamp
+              - column:
+                  name: date_validite
+                  type: timestamp
+              - column:
+                  name: statut
+                  type: varchar(50)
+                  defaultValue: BROUILLON
+              - column:
+                  name: commentary
+                  type: text
+              - column:
+                  name: lignes_proposal
+                  type: jsonb
+              - column:
+                  name: montant_ht
+                  type: numeric(15,2)
+              - column:
+                  name: montant_tva
+                  type: numeric(15,2)
+              - column:
+                  name: montant_ttc
+                  type: numeric(15,2)
+              - column:
+                  name: apply_vat
+                  type: boolean
+                  defaultValueBoolean: true
+              - column:
+                  name: devise
+                  type: varchar(20)
+                  defaultValue: XAF
+              - column:
+                  name: created_at
+                  type: timestamp
+              - column:
+                  name: updated_at
+                  type: timestamp
+        - createIndex:
+            tableName: quotation_proposals
+            indexName: idx_quotation_proposals_org
+            columns:
+              - column:
+                  name: organization_id
+        - createIndex:
+            tableName: quotation_proposals
+            indexName: idx_quotation_proposals_client
+            columns:
+              - column:
+                  name: id_client

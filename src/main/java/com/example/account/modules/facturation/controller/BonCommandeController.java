@@ -71,4 +71,10 @@ public class BonCommandeController {
     public Flux<BonCommandeResponse> getByAgencyId(@PathVariable UUID agencyId) {
         return bonCommandeService.getByAgencyId(agencyId);
     }
+
+    @GetMapping("/seller/{sellerId}")
+    @Operation(summary = "Récupérer les bons de commande créés par un vendeur")
+    public Flux<BonCommandeResponse> getBySellerId(@PathVariable UUID sellerId) {
+        return bonCommandeService.getBySellerId(sellerId);
+    }
 }

@@ -2,8 +2,10 @@ package com.example.account.modules.tiers.controller;
 
 import com.example.account.modules.tiers.domain.port.input.FournisseurUseCase;
 import com.example.account.modules.tiers.dto.FournisseurResponse;
+import com.example.account.modules.tiers.dto.InviteClientRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -42,5 +44,12 @@ public class FournisseurController {
     @Operation(summary = "Nombre de fournisseurs actifs")
     public Mono<ResponseEntity<Long>> countFournisseurs() {
         return fournisseurUseCase.countActiveFournisseurs().map(ResponseEntity::ok);
+    }
+
+    @PostMapping("/{id}/invite")
+    @Operation(summary = "(Ré)envoyer les identifiants du portail fournisseur")
+    public Mono<ResponseEntity<Void>> inviteFournisseur(@PathVariable UUID id, @Valid @RequestBody InviteClientRequest request) {
+        log.info("POST /api/tiers/fournisseurs/{}/invite", id);
+        return fournisseurUseCase.inviteFournisseur(id, request.getEmail(), request.getName()).thenReturn(ResponseEntity.ok().build());
     }
 }

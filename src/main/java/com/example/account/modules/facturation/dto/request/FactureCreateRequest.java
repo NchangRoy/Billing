@@ -1,5 +1,6 @@
 package com.example.account.modules.facturation.dto.request;
 
+import com.example.account.modules.facturation.model.enums.OriginType;
 import com.example.account.modules.facturation.model.enums.StatutFacture; // Updated to match TS 'etat'
 import com.example.account.modules.facturation.model.enums.TypePaiementFacture;
 import lombok.AllArgsConstructor;
@@ -83,4 +84,6 @@ public class FactureCreateRequest {
     private UUID organizationId;
     private UUID agencyId;
     private UUID createdBy;
+    private OriginType originType;
+    private UUID sessionId;
 }

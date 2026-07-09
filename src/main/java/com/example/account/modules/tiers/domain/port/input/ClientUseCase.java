@@ -20,4 +20,6 @@ public interface ClientUseCase {
     Mono<Void> deleteClient(UUID clientId);
     Mono<ClientResponse> updateSolde(UUID clientId, Double montant);
     Mono<Long> countActiveClients();
+    Mono<Void> inviteClient(UUID clientId, String email, String name);
+    Mono<Void> ensureClientPortalAccess(UUID clientId, String email, String name);
 }

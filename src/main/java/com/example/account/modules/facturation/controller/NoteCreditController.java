@@ -56,4 +56,9 @@ public class NoteCreditController {
     public Flux<NoteCreditResponse> getNotesCreditByAgencyId(@PathVariable UUID agencyId) {
         return noteCreditService.getNotesCreditByAgencyId(agencyId);
     }
+
+    @GetMapping("/seller/{sellerId}")
+    public Flux<NoteCreditResponse> getNotesCreditBySellerId(@PathVariable UUID sellerId) {
+        return noteCreditService.getNotesCreditBySellerId(sellerId);
+    }
 }

@@ -2,6 +2,7 @@ package com.example.account.modules.facturation.service.ExternalServices.entity.
 
 public enum SaleSizeType {
     DETAIL,
-    DEMI_GROS,
-    GROS
+    DEMIS_GROS,
+    GROS,
+    SUPER_GROS
 }

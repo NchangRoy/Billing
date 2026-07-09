@@ -15,6 +15,7 @@ public interface NoteCreditRepositoryPort {
     Mono<Boolean> existsById(UUID id);
     Flux<NoteCredit> findByOrganizationId(UUID organizationId);
     Flux<NoteCredit> findByAgencyId(UUID agencyId);
+    Flux<NoteCredit> findByCreatedBy(UUID createdBy);
     Mono<Void> deleteById(UUID id);
     Mono<NoteCredit> save(NoteCredit noteCredit);
     Mono<NoteCredit> insert(NoteCredit noteCredit);

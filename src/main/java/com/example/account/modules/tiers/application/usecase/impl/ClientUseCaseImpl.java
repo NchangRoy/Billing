@@ -161,4 +161,15 @@ public class ClientUseCaseImpl implements ClientUseCase {
     public Mono<Long> countActiveClients() {
         return clientRepositoryPort.countActiveClients();
     }
+
+    @Override
+    public Mono<Void> inviteClient(UUID clientId, String email, String name) {
+        log.info("Envoi des identifiants du portail au client: {}", clientId);
+        return clientRepositoryPort.resendCredentials(clientId, email, name);
+    }
+
+    @Override
+    public Mono<Void> ensureClientPortalAccess(UUID clientId, String email, String name) {
+        return clientRepositoryPort.ensurePortalAccess(clientId, email, name);
+    }
 }

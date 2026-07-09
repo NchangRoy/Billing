@@ -100,7 +100,7 @@
     <version>5.0.0</version>
 </dependency>
 
-        <!-- OpenAPI for WebFlux -->
+        <!-- OpenAPI for Spring WebFlux -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
@@ -144,10 +144,6 @@
     <artifactId>commons-pool2</artifactId>
 </dependency>
 
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-websocket</artifactId>
-</dependency>
         <!-- Thymeleaf Extras -->
         <dependency>
             <groupId>org.thymeleaf.extras</groupId>
@@ -175,7 +171,25 @@
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
-        
+
+        <!-- JWT verification for the client-portal shared-secret token (issued by sales-core) -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>0.12.6</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>0.12.6</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>0.12.6</version>
+            <scope>runtime</scope>
+        </dependency>
 
     </dependencies>
 

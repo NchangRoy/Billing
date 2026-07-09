@@ -14,4 +14,5 @@ public interface BonLivraisonRepository extends R2dbcRepository<BonLivraison, UU
     Flux<BonLivraison> findByIdClient(UUID idClient);
     Flux<BonLivraison> findByOrganizationId(UUID organizationId);
     Flux<BonLivraison> findByAgencyId(UUID agencyId);
+    Flux<BonLivraison> findByCreatedBy(UUID createdBy);
 }

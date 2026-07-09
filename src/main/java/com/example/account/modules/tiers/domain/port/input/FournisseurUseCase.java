@@ -21,4 +21,6 @@ public interface FournisseurUseCase {
     Mono<FournisseurResponse> desactiverFournisseur(UUID fournisseurId);
     Mono<FournisseurResponse> activerFournisseur(UUID fournisseurId);
     Mono<Long> countActiveFournisseurs();
+    Mono<Void> inviteFournisseur(UUID fournisseurId, String email, String name);
+    Mono<Void> ensureFournisseurPortalAccess(UUID fournisseurId, String email, String name);
 }

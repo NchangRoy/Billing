@@ -57,4 +57,9 @@ public class BondeReceptionController {
     public Flux<BondeReceptionResponse> getByAgencyId(@PathVariable UUID agencyId) {
         return bonReceptionService.getByAgencyId(agencyId);
     }
+
+    @GetMapping("/seller/{sellerId}")
+    public Flux<BondeReceptionResponse> getBySellerId(@PathVariable UUID sellerId) {
+        return bonReceptionService.getBySellerId(sellerId);
+    }
 }

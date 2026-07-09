@@ -2,8 +2,10 @@ package com.example.account.modules.tiers.controller;
 
 import com.example.account.modules.tiers.domain.port.input.ClientUseCase;
 import com.example.account.modules.tiers.dto.ClientResponse;
+import com.example.account.modules.tiers.dto.InviteClientRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -42,5 +44,12 @@ public class ClientController {
     @Operation(summary = "Nombre de clients actifs")
     public Mono<ResponseEntity<Long>> countClients() {
         return clientUseCase.countActiveClients().map(ResponseEntity::ok);
+    }
+
+    @PostMapping("/{id}/invite")
+    @Operation(summary = "(Ré)envoyer les identifiants du portail client")
+    public Mono<ResponseEntity<Void>> inviteClient(@PathVariable UUID id, @Valid @RequestBody InviteClientRequest request) {
+        log.info("POST /api/tiers/clients/{}/invite", id);
+        return clientUseCase.inviteClient(id, request.getEmail(), request.getName()).thenReturn(ResponseEntity.ok().build());
     }
 }

@@ -11,8 +11,9 @@ public interface BackOrderRepositoryPort {
     Flux<BackOrder> findAll();
     Flux<BackOrder> findByOrganizationId(UUID organizationId);
     Flux<BackOrder> findByAgencyId(UUID agencyId);
-    Flux<BackOrder> findByIdBonAchat(UUID idBonAchat);
-    Flux<BackOrder> findByIdFournisseur(UUID idFournisseur);
+    Flux<BackOrder> findByIdBonLivraison(UUID idBonLivraison);
+    Flux<BackOrder> findByIdClient(UUID idClient);
+    Flux<BackOrder> findByCreatedBy(UUID createdBy);
     Mono<BackOrder> insert(BackOrder backOrder);
     Mono<BackOrder> save(BackOrder backOrder);
     Mono<Void> deleteById(UUID id);

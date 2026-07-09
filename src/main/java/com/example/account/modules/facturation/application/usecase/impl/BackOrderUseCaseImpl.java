@@ -7,6 +7,10 @@ import com.example.account.modules.facturation.dto.request.BackOrderRequest;
 import com.example.account.modules.facturation.dto.response.BackOrderResponse;
 import com.example.account.modules.facturation.mapper.BackOrderMapper;
 import com.example.account.modules.facturation.model.enums.StatutBackOrder;
+import com.example.account.modules.facturation.dto.request.AssignDocPermissionRequest;
+import com.example.account.modules.facturation.model.enums.DocPermissionLevel;
+import com.example.account.modules.facturation.model.enums.DocType;
+import com.example.account.modules.facturation.service.DocPermissionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,6 +28,22 @@ public class BackOrderUseCaseImpl implements BackOrderUseCase {
 
     private final BackOrderRepositoryPort backOrderRepository;
     private final BackOrderMapper backOrderMapper;
+    private final DocPermissionService docPermissionService;
+
+    private <T> Mono<T> grantOwnerPermission(UUID sellerId, UUID docId, T response) {
+        if (sellerId == null || docId == null) return Mono.just(response);
+        AssignDocPermissionRequest request = new AssignDocPermissionRequest();
+        request.setSellerId(sellerId);
+        request.setDocId(docId);
+        request.setDocType(DocType.BACK_ORDER);
+        request.setPermission(DocPermissionLevel.OWNER);
+        return docPermissionService.grant(request)
+                .thenReturn(response)
+                .onErrorResume(e -> {
+                    log.error("Failed to grant owner doc-permission for back-order {}: {}", docId, e.getMessage());
+                    return Mono.just(response);
+                });
+    }
 
     @Override
     @Transactional
@@ -37,7 +57,10 @@ public class BackOrderUseCaseImpl implements BackOrderUseCase {
             entity.setStatut(StatutBackOrder.EN_ATTENTE);
         }
         return backOrderRepository.insert(entity)
-                .map(backOrderMapper::toResponse);
+                .flatMap(savedEntity -> grantOwnerPermission(
+                        savedEntity.getCreatedBy(),
+                        savedEntity.getIdBackOrder(),
+                        backOrderMapper.toResponse(savedEntity)));
     }
 
     @Override
@@ -113,7 +136,19 @@ public class BackOrderUseCaseImpl implements BackOrderUseCase {
 
     @Override
     @Transactional(readOnly = true)
-    public Flux<BackOrderResponse> getByIdBonAchat(UUID idBonAchat) {
-        return backOrderRepository.findByIdBonAchat(idBonAchat).map(backOrderMapper::toResponse);
+    public Flux<BackOrderResponse> getByIdBonLivraison(UUID idBonLivraison) {
+        return backOrderRepository.findByIdBonLivraison(idBonLivraison).map(backOrderMapper::toResponse);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Flux<BackOrderResponse> getBySellerId(UUID sellerId) {
+        return docPermissionService.findBySellerAndDocType(sellerId, DocType.BACK_ORDER)
+                .flatMap(permission -> backOrderRepository.findById(permission.getDocId())
+                        .map(entity -> {
+                            BackOrderResponse response = backOrderMapper.toResponse(entity);
+                            response.setDocPermission(docPermissionService.toResponse(permission));
+                            return response;
+                        }));
     }
 }

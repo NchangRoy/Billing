@@ -76,4 +76,5 @@ public class ProformaInvoiceResponse {
     private UUID organizationId;
     private UUID agencyId;
     private UUID createdBy;
+    private DocPermissionResponse docPermission;
 }

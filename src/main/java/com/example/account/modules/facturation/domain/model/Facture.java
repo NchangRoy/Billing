@@ -1,5 +1,6 @@
 package com.example.account.modules.facturation.domain.model;
 
+import com.example.account.modules.facturation.model.enums.OriginType;
 import com.example.account.modules.facturation.model.enums.StatutFacture;
 import com.example.account.modules.facturation.model.enums.TypePaiementFacture;
 import lombok.*;
@@ -62,6 +63,9 @@ public class Facture {
     private LocalDateTime updatedAt;
     private UUID organizationId;
     private UUID agencyId;
+    @Builder.Default
+    private OriginType originType = OriginType.SALES;
+    private UUID sessionId;
     @Builder.Default
     private Long version = 0L;
 }

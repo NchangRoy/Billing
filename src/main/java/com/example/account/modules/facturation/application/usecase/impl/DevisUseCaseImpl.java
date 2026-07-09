@@ -12,14 +12,22 @@ import com.example.account.modules.facturation.dto.response.ExternalResponses.Se
 import com.example.account.modules.facturation.mapper.DevisMapper;
 import com.example.account.modules.facturation.model.entity.Others.PortalAccessToken;
 import com.example.account.modules.facturation.model.enums.StatutDevis;
+import com.example.account.modules.facturation.dto.request.AssignDocPermissionRequest;
+import com.example.account.modules.facturation.model.enums.DocPermissionLevel;
+import com.example.account.modules.facturation.model.enums.DocType;
+import com.example.account.modules.facturation.service.DocPermissionService;
 import com.example.account.modules.facturation.service.ExternalServices.PortalAccessService;
 import com.example.account.modules.facturation.service.ExternalServices.PortalTokenService;
 import com.example.account.modules.facturation.service.ExternalServices.entity.PortalPermissions;
 import com.example.account.modules.facturation.service.ExternalServices.entity.enums.ResourceType;
 import com.example.account.modules.facturation.service.EmailService;
 import com.example.account.modules.facturation.service.BonCommandeService;
+import com.example.account.modules.facturation.model.enums.TypeNumerotation;
+import com.example.account.modules.settings.service.SettingService;
+import com.example.account.modules.tiers.domain.port.input.ClientUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +52,12 @@ public class DevisUseCaseImpl implements DevisUseCase {
     private final EmailService emailService;
     private final PortalTokenService portalTokenService;
     private final BonCommandeService bonCommandeService;
+    private final SettingService settingService;
+    private final ClientUseCase clientUseCase;
+    private final DocPermissionService docPermissionService;
+
+    @Value("${client-portal.frontend-url}")
+    private String portalFrontendUrl;
 
     @Transactional
     public Mono<DevisResponse> createDevis(DevisCreateRequest request) {
@@ -51,21 +65,44 @@ public class DevisUseCaseImpl implements DevisUseCase {
 
         // Wait, DevisMapper maps to the entity class in com.example.account.modules.facturation.model.entity.Devis
         // I need to use the Domain class instead.
-        // For now, let's assume DevisMapper maps to Domain. 
+        // For now, let's assume DevisMapper maps to Domain.
         // We will need to check DevisMapper later.
         Devis devis = devisMapper.toDomain(request);
         if (devis.getIdDevis() == null) {
             devis.setIdDevis(UUID.randomUUID());
         }
-        
+
         devis.setUpdatedAt(LocalDateTime.now());
 
-        return devisRepository.insert(devis)
-                .map(savedDevis -> {
+        Mono<Devis> withNumero = (devis.getNumeroDevis() == null || devis.getNumeroDevis().isBlank())
+                && devis.getOrganizationId() != null
+                ? settingService.generateNumber(devis.getOrganizationId(), TypeNumerotation.DEVIS,
+                        devis.getMontantTVA() != null && devis.getMontantTVA().signum() > 0)
+                        .map(numero -> { devis.setNumeroDevis(numero); return devis; })
+                : Mono.just(devis);
+
+        return withNumero
+                .flatMap(devisRepository::insert)
+                .flatMap(savedDevis -> {
                     DevisResponse response = devisMapper.toResponse(savedDevis);
                     devisEventProducer.publishDevisCreated(response);
                     log.info("Devis créé avec succès: {}", savedDevis.getNumeroDevis());
-                    return response;
+                    return grantOwnerPermission(savedDevis.getCreatedBy(), savedDevis.getIdDevis(), response);
+                });
+    }
+
+    private <T> Mono<T> grantOwnerPermission(UUID sellerId, UUID docId, T response) {
+        if (sellerId == null || docId == null) return Mono.just(response);
+        AssignDocPermissionRequest request = new AssignDocPermissionRequest();
+        request.setSellerId(sellerId);
+        request.setDocId(docId);
+        request.setDocType(DocType.DEVIS);
+        request.setPermission(DocPermissionLevel.OWNER);
+        return docPermissionService.grant(request)
+                .thenReturn(response)
+                .onErrorResume(e -> {
+                    log.error("Failed to grant owner doc-permission for devis {}: {}", docId, e.getMessage());
+                    return Mono.just(response);
                 });
     }
 
@@ -225,6 +262,33 @@ public Mono<Void> refuserDevis(UUID devisId) {
             .then(); // Discards the result and returns Mono<Void>
 }
 
+/**
+ * Marks the quotation ENVOYE, makes sure the client can log into the
+ * (login-based) client portal — inviting them only if they've never had
+ * access before, so repeated sends don't keep resetting their password —
+ * then emails them a "new document" notification linking to /portal/login.
+ * Deliberately separate from sendDevisAsEmail's older no-login token-link flow.
+ */
+@Transactional
+public Mono<Void> sendToPortal(UUID devisId) {
+    log.info("Envoi du devis {} vers le portail client", devisId);
+
+    return devisRepository.findById(devisId)
+            .switchIfEmpty(Mono.error(new IllegalArgumentException("Devis non trouvé: " + devisId)))
+            .flatMap(devis -> {
+                if (devis.getEmailClient() == null || devis.getEmailClient().isBlank()) {
+                    return Mono.error(new IllegalStateException("Le client n'a pas d'adresse email renseignée."));
+                }
+                devis.setStatut(StatutDevis.ENVOYE);
+                return devisRepository.save(devis);
+            })
+            .flatMap(devis -> clientUseCase.ensureClientPortalAccess(devis.getIdClient(), devis.getEmailClient(), devis.getNomClient())
+                    .then(emailService.sendPortalDocumentNotification(
+                            devis.getEmailClient(), devis.getNomClient(),
+                            "Devis", devis.getNumeroDevis(),
+                            portalFrontendUrl + "/portal/login")));
+}
+
     @Override
     public Flux<SellerAuthResponse> enrichDevis(UUID orgId) {
         return sellerService.getSellersByOrganization(orgId);
@@ -242,5 +306,18 @@ public Mono<Void> refuserDevis(UUID devisId) {
     public Flux<DevisResponse> getDevisByAgencyId(UUID agencyId) {
         log.info("Récupération des devis par agence: {}", agencyId);
         return devisRepository.findByAgencyId(agencyId).map(devisMapper::toResponse);
+    }
+
+    @Override
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    public Flux<DevisResponse> getDevisBySellerId(UUID sellerId) {
+        log.info("Récupération des devis accessibles par le vendeur: {}", sellerId);
+        return docPermissionService.findBySellerAndDocType(sellerId, DocType.DEVIS)
+                .flatMap(permission -> devisRepository.findById(permission.getDocId())
+                        .map(devis -> {
+                            DevisResponse response = devisMapper.toResponse(devis);
+                            response.setDocPermission(docPermissionService.toResponse(permission));
+                            return response;
+                        }));
     }
 }

@@ -17,4 +17,6 @@ public interface NoteCreditR2dbcRepository extends R2dbcRepository<NoteCreditPer
     Flux<NoteCreditPersistenceEntity> findByOrganizationId(UUID organizationId);
 
     Flux<NoteCreditPersistenceEntity> findByAgencyId(UUID agencyId);
+
+    Flux<NoteCreditPersistenceEntity> findByCreatedBy(UUID createdBy);
 }

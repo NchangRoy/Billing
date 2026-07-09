@@ -98,11 +98,9 @@ public class DevisJournalService {
             .organizationId(seller != null ? seller.getOrganizationId() : devis.getOrganizationId())
             .organizationName(seller != null ? seller.getOrganizationName() : null)
             .agencyId(seller != null ? seller.getAgencyId() : null)
-            .agencyName(seller != null ? seller.getAgencyName() : null)
+            .agencyName(seller != null ? seller.getAgency() : null)
             .salesPointId(seller != null ? seller.getSalesPointId() : null)
-            .salesPointName(seller!=null?seller.getSalesPointName():null)
-            // Note: Your DTO has salesPointName as UUID, check if that was a typo in your class definition
-            // If it's meant to be String, use seller.getSalesPointName()
+            .salesPointName(seller!=null?seller.getSalePoint():null)
             .build();
 }
 

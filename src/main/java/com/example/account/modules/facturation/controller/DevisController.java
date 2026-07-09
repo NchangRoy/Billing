@@ -125,6 +125,14 @@ public Mono<ResponseEntity<Void>> sendQuotationEmail(@RequestBody EmailRequest r
                 .thenReturn(ResponseEntity.ok().build());
     }
 
+    @PostMapping("/{devisId}/send-to-portal")
+    @Operation(summary = "Envoyer le devis au client via le portail (login requis)")
+    public Mono<ResponseEntity<Void>> sendToPortal(@PathVariable UUID devisId) {
+        log.info("Requête d'envoi du devis vers le portail: {}", devisId);
+        return devisService.sendToPortal(devisId)
+                .thenReturn(ResponseEntity.ok().build());
+    }
+
     @GetMapping("/organisation/{organizationId}")
     @Operation(summary = "Récupérer les devis par organisation")
     public Flux<DevisResponse> getDevisByOrganizationId(@PathVariable UUID organizationId) {
@@ -137,5 +145,12 @@ public Mono<ResponseEntity<Void>> sendQuotationEmail(@RequestBody EmailRequest r
     public Flux<DevisResponse> getDevisByAgencyId(@PathVariable UUID agencyId) {
         log.info("Requête de récupération des devis par agence: {}", agencyId);
         return devisService.getDevisByAgencyId(agencyId);
+    }
+
+    @GetMapping("/seller/{sellerId}")
+    @Operation(summary = "Récupérer les devis créés par un vendeur")
+    public Flux<DevisResponse> getDevisBySellerId(@PathVariable UUID sellerId) {
+        log.info("Requête de récupération des devis par vendeur: {}", sellerId);
+        return devisService.getDevisBySellerId(sellerId);
     }
 }

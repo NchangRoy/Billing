@@ -4,6 +4,7 @@ import com.example.account.modules.facturation.dto.request.FactureCreateRequest;
 import com.example.account.modules.facturation.dto.response.FactureResponse;
 import com.example.account.modules.facturation.model.enums.StatutFacture;
 import com.example.account.modules.facturation.domain.port.input.FactureUseCase;
+import com.example.account.modules.facturation.service.Journals.FactureJournalService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -28,6 +29,7 @@ import java.util.UUID;
 public class FactureController {
 
     private final FactureUseCase factureService;
+    private final FactureJournalService factureJournalService;
 
     @PostMapping
     @Operation(summary = "Créer une nouvelle facture")
@@ -165,6 +167,27 @@ public class FactureController {
     public Flux<FactureResponse> getFacturesByAgencyId(@PathVariable UUID agencyId) {
         log.info("Requête de récupération des factures par agence: {}", agencyId);
         return factureService.getFacturesByAgencyId(agencyId);
+    }
+
+    @GetMapping("/seller/{sellerId}")
+    @Operation(summary = "Récupérer les factures créées par un vendeur")
+    public Flux<FactureResponse> getFacturesBySellerId(@PathVariable UUID sellerId) {
+        log.info("Requête de récupération des factures par vendeur: {}", sellerId);
+        return factureService.getFacturesBySellerId(sellerId);
+    }
+
+    @GetMapping("/agence/{agencyId}/enriched")
+    @Operation(summary = "Récupérer les factures d'une agence, chacune avec sa session (POS/SALES) intégrée")
+    public Flux<FactureResponse> getFacturesByAgencyEnriched(@PathVariable UUID agencyId, @RequestParam UUID organizationId) {
+        log.info("Requête de récupération des factures enrichies par agence: {} (org: {})", agencyId, organizationId);
+        return factureJournalService.enrichFacturesByAgency(agencyId, organizationId);
+    }
+
+    @GetMapping("/organisation/{organizationId}/enriched")
+    @Operation(summary = "Récupérer toutes les factures d'une organisation, chacune avec sa session (POS/SALES) intégrée")
+    public Flux<FactureResponse> getFacturesByOrganizationEnriched(@PathVariable UUID organizationId) {
+        log.info("Requête de récupération des factures enrichies par organisation: {}", organizationId);
+        return factureJournalService.enrichFacturesByOrganization(organizationId);
     }
 
 }

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Document disponible</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f6f8; }
+        .container { max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e5e5e5; }
+        .header { background: #1d4ed8; color: #ffffff; text-align: center; padding: 32px 20px; }
+        .header h1 { margin: 0; font-size: 22px; font-weight: 700; }
+        .content { padding: 28px; }
+        .content p { margin: 10px 0; }
+        .ref-box { background-color: #f9fafc; border-radius: 6px; padding: 16px 20px; margin: 20px 0; border-left: 4px solid #1d4ed8; font-weight: 700; }
+        .cta-button { display: inline-block; background: #1d4ed8; color: white !important; padding: 14px 28px; text-decoration: none; border-radius: 4px; font-size: 15px; font-weight: 600; margin: 22px 0; }
+        .footer { background-color: #f4f6f8; padding: 20px; text-align: center; font-size: 13px; color: #777; border-top: 1px solid #e5e5e5; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Nouveau document disponible</h1>
+    </div>
+    <div class="content">
+        <p>Bonjour <strong th:text="${recipientName}">Client</strong>,</p>
+        <p>Un document vient d'être partagé avec vous :</p>
+        <div class="ref-box">
+            <span th:text="${documentType}">Devis</span> — <span th:text="${documentRef}">REF-0001</span>
+        </div>
+        <p>Connectez-vous à votre espace personnel pour le consulter, l'accepter ou le refuser.</p>
+        <div style="text-align: center;">
+            <a href="#" class="cta-button" th:href="${loginUrl}">Accéder à mon espace</a>
+        </div>
+        <p>Si vous n'êtes pas à l'origine de cette demande, contactez votre partenaire commercial.</p>
+    </div>
+    <div class="footer">
+        <p>Cet email a été généré automatiquement, merci de ne pas y répondre.</p>
+    </div>
+</div>
+</body>
+</html>

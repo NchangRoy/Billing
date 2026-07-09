@@ -57,4 +57,5 @@ public class NoteCreditResponse {
 
     private UUID organizationId;
     private UUID agencyId;
+    private DocPermissionResponse docPermission;
 }

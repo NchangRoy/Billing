@@ -8,6 +8,10 @@ import com.example.account.modules.facturation.dto.response.ProformaInvoiceRespo
 import com.example.account.modules.facturation.mapper.FactureProformaMapper;
 import com.example.account.modules.core.context.ReactiveOrganizationContext;
 import com.example.account.modules.facturation.model.enums.StatutProforma;
+import com.example.account.modules.facturation.dto.request.AssignDocPermissionRequest;
+import com.example.account.modules.facturation.model.enums.DocPermissionLevel;
+import com.example.account.modules.facturation.model.enums.DocType;
+import com.example.account.modules.facturation.service.DocPermissionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,6 +29,22 @@ public class FactureProformaUseCaseImpl implements FactureProformaUseCase {
 
     private final FactureProformaRepositoryPort proformaRepository;
     private final FactureProformaMapper proformaMapper;
+    private final DocPermissionService docPermissionService;
+
+    private <T> Mono<T> grantOwnerPermission(UUID sellerId, UUID docId, T response) {
+        if (sellerId == null || docId == null) return Mono.just(response);
+        AssignDocPermissionRequest request = new AssignDocPermissionRequest();
+        request.setSellerId(sellerId);
+        request.setDocId(docId);
+        request.setDocType(DocType.FACTURE_PROFORMA);
+        request.setPermission(DocPermissionLevel.OWNER);
+        return docPermissionService.grant(request)
+                .thenReturn(response)
+                .onErrorResume(e -> {
+                    log.error("Failed to grant owner doc-permission for proforma {}: {}", docId, e.getMessage());
+                    return Mono.just(response);
+                });
+    }
 
     @Override
     @Transactional
@@ -46,7 +66,10 @@ public class FactureProformaUseCaseImpl implements FactureProformaUseCase {
                     proforma.setOrganizationId(orgId);
                     return proformaRepository.insert(proforma);
                 })
-                .map(proformaMapper::toResponse);
+                .flatMap(savedProforma -> grantOwnerPermission(
+                        savedProforma.getCreatedBy(),
+                        savedProforma.getIdFactureProforma(),
+                        proformaMapper.toResponse(savedProforma)));
     }
 
     @Override
@@ -130,5 +153,18 @@ public class FactureProformaUseCaseImpl implements FactureProformaUseCase {
     public Flux<ProformaInvoiceResponse> getProformasByAgencyId(UUID agencyId) {
         log.info("Récupération des factures proforma par agence: {}", agencyId);
         return proformaRepository.findByAgencyId(agencyId).map(proformaMapper::toResponse);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Flux<ProformaInvoiceResponse> getProformasBySellerId(UUID sellerId) {
+        log.info("Récupération des factures proforma accessibles par le vendeur: {}", sellerId);
+        return docPermissionService.findBySellerAndDocType(sellerId, DocType.FACTURE_PROFORMA)
+                .flatMap(permission -> proformaRepository.findById(permission.getDocId())
+                        .map(proforma -> {
+                            ProformaInvoiceResponse response = proformaMapper.toResponse(proforma);
+                            response.setDocPermission(docPermissionService.toResponse(permission));
+                            return response;
+                        }));
     }
 }

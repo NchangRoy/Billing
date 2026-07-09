@@ -34,4 +34,5 @@ public class BondeReceptionResponse {
     private String agenceDeTransport;
     private UUID organizationId;
     private UUID agencyId;
+    private DocPermissionResponse docPermission;
 }

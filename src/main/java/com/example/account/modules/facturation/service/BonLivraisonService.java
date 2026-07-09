@@ -10,6 +10,9 @@ import com.example.account.modules.facturation.model.entity.BonLivraison;
 import com.example.account.modules.facturation.model.entity.LigneBonLivraison;
 import com.example.account.modules.facturation.model.enums.StatutBonLivraison;
 import com.example.account.modules.facturation.repository.BonLivraisonRepository;
+import com.example.account.modules.facturation.dto.request.AssignDocPermissionRequest;
+import com.example.account.modules.facturation.model.enums.DocPermissionLevel;
+import com.example.account.modules.facturation.model.enums.DocType;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,11 +36,27 @@ public class BonLivraisonService {
     private final BonLivraisonMapper bonLivraisonMapper;
     private final R2dbcEntityTemplate entityTemplate;
     private final ObjectMapper objectMapper;
+    private final DocPermissionService docPermissionService;
+
+    private <T> Mono<T> grantOwnerPermission(UUID sellerId, UUID docId, T response) {
+        if (sellerId == null || docId == null) return Mono.just(response);
+        AssignDocPermissionRequest request = new AssignDocPermissionRequest();
+        request.setSellerId(sellerId);
+        request.setDocId(docId);
+        request.setDocType(DocType.BON_LIVRAISON);
+        request.setPermission(DocPermissionLevel.OWNER);
+        return docPermissionService.grant(request)
+                .thenReturn(response)
+                .onErrorResume(e -> {
+                    log.error("Failed to grant owner doc-permission for bon livraison {}: {}", docId, e.getMessage());
+                    return Mono.just(response);
+                });
+    }
 
     @Transactional
     public Mono<BonLivraisonResponse> createBonLivraison(BonLivraisonRequest request) {
         log.info("Création d'un nouveau bon de livraison pour le client: {}", request.getIdClient());
-        
+
         BonLivraison bonLivraison = bonLivraisonMapper.toEntity(request);
         if (bonLivraison.getIdBonLivraison() == null) {
             bonLivraison.setIdBonLivraison(UUID.randomUUID());
@@ -47,9 +66,9 @@ public class BonLivraisonService {
         }
 
         return entityTemplate.insert(bonLivraison)
-                .map(saved -> {
+                .flatMap(saved -> {
                     deserializeJsonbLines(saved);
-                    return bonLivraisonMapper.toResponse(saved);
+                    return grantOwnerPermission(saved.getCreatedBy(), saved.getIdBonLivraison(), bonLivraisonMapper.toResponse(saved));
                 });
     }
 
@@ -177,5 +196,16 @@ public class BonLivraisonService {
     @Transactional(readOnly = true)
     public Flux<BonLivraisonResponse> getByAgencyId(UUID agencyId) {
         return bonLivraisonRepository.findByAgencyId(agencyId).map(bonLivraisonMapper::toResponse);
+    }
+
+    @Transactional(readOnly = true)
+    public Flux<BonLivraisonResponse> getBySellerId(UUID sellerId) {
+        return docPermissionService.findBySellerAndDocType(sellerId, DocType.BON_LIVRAISON)
+                .flatMap(permission -> bonLivraisonRepository.findById(permission.getDocId())
+                        .map(entity -> {
+                            BonLivraisonResponse response = bonLivraisonMapper.toResponse(entity);
+                            response.setDocPermission(docPermissionService.toResponse(permission));
+                            return response;
+                        }));
     }
 }

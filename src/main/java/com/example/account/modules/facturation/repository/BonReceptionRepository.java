@@ -14,4 +14,5 @@ public interface BonReceptionRepository extends R2dbcRepository<BondeReception, 
     Flux<BondeReception> findByIdFournisseur(UUID idFournisseur);
     Flux<BondeReception> findByOrganizationId(UUID organizationId);
     Flux<BondeReception> findByAgencyId(UUID agencyId);
+    Flux<BondeReception> findByCreatedBy(UUID createdBy);
 }

@@ -24,7 +24,9 @@ public interface DevisUseCase {
     Mono<Void> accepterDevis(UUID devisId);
     Mono<Void> refuserDevis(UUID devisId);
     Mono<Void> sendDevisAsEmail(EmailRequest emailRequest);
+    Mono<Void> sendToPortal(UUID devisId);
     Flux<SellerAuthResponse> enrichDevis(UUID orgId);
     Flux<DevisResponse> getDevisByOrganizationId(UUID organizationId);
     Flux<DevisResponse> getDevisByAgencyId(UUID agencyId);
+    Flux<DevisResponse> getDevisBySellerId(UUID sellerId);
 }

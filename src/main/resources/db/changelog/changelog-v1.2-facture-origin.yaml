@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1-add-origin-type-and-session-id-to-factures
+      author: dev
+      comments: >
+        Distinguishes invoices created at a POS terminal register (tied to a
+        cash-register session in sales-core's sessions table) from invoices
+        created through the regular back-office/web sales flow.
+      changes:
+        - addColumn:
+            tableName: factures
+            columns:
+              - column:
+                  name: origin_type
+                  type: varchar(10)
+                  defaultValue: SALES
+                  constraints:
+                    nullable: false
+              - column:
+                  name: session_id
+                  type: uuid
+                  constraints:
+                    nullable: true

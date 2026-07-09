@@ -42,13 +42,18 @@ public class BackOrderPersistenceAdapter implements BackOrderRepositoryPort {
     }
 
     @Override
-    public Flux<BackOrder> findByIdBonAchat(UUID idBonAchat) {
-        return repository.findByIdBonAchat(idBonAchat).map(mapper::toDomain);
+    public Flux<BackOrder> findByIdBonLivraison(UUID idBonLivraison) {
+        return repository.findByIdBonLivraison(idBonLivraison).map(mapper::toDomain);
     }
 
     @Override
-    public Flux<BackOrder> findByIdFournisseur(UUID idFournisseur) {
-        return repository.findByIdFournisseur(idFournisseur).map(mapper::toDomain);
+    public Flux<BackOrder> findByIdClient(UUID idClient) {
+        return repository.findByIdClient(idClient).map(mapper::toDomain);
+    }
+
+    @Override
+    public Flux<BackOrder> findByCreatedBy(UUID createdBy) {
+        return repository.findByCreatedBy(createdBy).map(mapper::toDomain);
     }
 
     @Override

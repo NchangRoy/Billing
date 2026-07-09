@@ -548,10 +548,13 @@ CREATE INDEX IF NOT EXISTS idx_user_org_perm_user_org ON user_organization_permi
 CREATE TABLE IF NOT EXISTS back_orders (
     id_back_order UUID PRIMARY KEY,
     numero_back_order VARCHAR(100),
-    id_bon_achat UUID,
-    numero_bon_achat VARCHAR(100),
-    id_fournisseur UUID,
-    nom_fournisseur VARCHAR(255),
+    id_client UUID,
+    nom_client VARCHAR(255),
+    adresse_client VARCHAR(500),
+    email_client VARCHAR(255),
+    telephone_client VARCHAR(50),
+    id_bon_livraison UUID,
+    numero_bon_livraison VARCHAR(100),
     lignes JSONB,
     date_creation TIMESTAMP,
     date_livraison_prevue TIMESTAMP,
@@ -567,4 +570,73 @@ CREATE TABLE IF NOT EXISTS back_orders (
 
 CREATE INDEX IF NOT EXISTS idx_back_orders_org ON back_orders(organization_id);
 CREATE INDEX IF NOT EXISTS idx_back_orders_agency ON back_orders(agency_id);
-CREATE INDEX IF NOT EXISTS idx_back_orders_bon_achat ON back_orders(id_bon_achat);
+CREATE INDEX IF NOT EXISTS idx_back_orders_client ON back_orders(id_client);
+CREATE INDEX IF NOT EXISTS idx_back_orders_bon_livraison ON back_orders(id_bon_livraison);
+
+-- Quotations drafted by clients themselves via the portal, reviewed by sellers
+CREATE TABLE IF NOT EXISTS quotation_proposals (
+    id_proposal UUID PRIMARY KEY,
+    numero_proposal VARCHAR(100),
+    organization_id UUID NOT NULL,
+    id_client UUID NOT NULL,
+    nom_client VARCHAR(255),
+    email_client VARCHAR(255),
+    date_creation TIMESTAMP,
+    date_validite TIMESTAMP,
+    statut VARCHAR(50) DEFAULT 'BROUILLON',
+    commentary TEXT,
+    lignes_proposal JSONB,
+    montant_ht NUMERIC(15,2),
+    montant_tva NUMERIC(15,2),
+    montant_ttc NUMERIC(15,2),
+    apply_vat BOOLEAN DEFAULT TRUE,
+    devise VARCHAR(20) DEFAULT 'XAF',
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_quotation_proposals_org ON quotation_proposals(organization_id);
+CREATE INDEX IF NOT EXISTS idx_quotation_proposals_client ON quotation_proposals(id_client);
+
+-- Which seller is the account manager for a given customer/producer
+CREATE TABLE IF NOT EXISTS customer_assignments (
+    id_assignment UUID PRIMARY KEY,
+    organization_id UUID NOT NULL,
+    client_id UUID NOT NULL,
+    seller_id UUID NOT NULL,
+    seller_name VARCHAR(255),
+    assigned_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_customer_assignments_client_org ON customer_assignments(client_id, organization_id);
+CREATE INDEX IF NOT EXISTS idx_customer_assignments_seller ON customer_assignments(seller_id, organization_id);
+
+CREATE TABLE IF NOT EXISTS producer_assignments (
+    id_assignment UUID PRIMARY KEY,
+    organization_id UUID NOT NULL,
+    fournisseur_id UUID NOT NULL,
+    seller_id UUID NOT NULL,
+    seller_name VARCHAR(255),
+    assigned_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_producer_assignments_fournisseur_org ON producer_assignments(fournisseur_id, organization_id);
+CREATE INDEX IF NOT EXISTS idx_producer_assignments_seller ON producer_assignments(seller_id, organization_id);
+
+-- Per-document ACL: which sellers hold which permission level (OWNER/EDITOR/VIEWER)
+-- on a given document. Seller IDs are unique across the whole system, so no
+-- organization_id is needed here.
+CREATE TABLE IF NOT EXISTS doc_permissions (
+    id_permission UUID PRIMARY KEY,
+    seller_id UUID NOT NULL,
+    doc_id UUID NOT NULL,
+    doc_type VARCHAR(50) NOT NULL,
+    permission VARCHAR(20) NOT NULL,
+    assigned_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_doc_permissions_seller_doc_type ON doc_permissions(seller_id, doc_id, doc_type);
+CREATE INDEX IF NOT EXISTS idx_doc_permissions_doc ON doc_permissions(doc_id, doc_type);

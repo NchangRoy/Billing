@@ -20,11 +20,14 @@ public class BackOrderResponse {
     private UUID idBackOrder;
     private String numeroBackOrder;
 
-    private UUID idBonAchat;
-    private String numeroBonAchat;
+    private UUID idClient;
+    private String nomClient;
+    private String adresseClient;
+    private String emailClient;
+    private String telephoneClient;
 
-    private UUID idFournisseur;
-    private String nomFournisseur;
+    private UUID idBonLivraison;
+    private String numeroBonLivraison;
 
     private List<LigneBackOrder> lignes;
 
@@ -40,4 +43,5 @@ public class BackOrderResponse {
     private UUID createdBy;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private DocPermissionResponse docPermission;
 }

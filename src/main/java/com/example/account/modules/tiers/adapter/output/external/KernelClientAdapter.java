@@ -1,9 +1,7 @@
 package com.example.account.modules.tiers.adapter.output.external;
 
 import com.example.account.modules.core.context.ReactiveOrganizationContext;
-import com.example.account.modules.shared.dto.kernel.ApiResponseListThirdPartyResponse;
-import com.example.account.modules.shared.dto.kernel.ApiResponseThirdPartyResponse;
-import com.example.account.modules.shared.dto.kernel.ThirdPartyResponse;
+import com.example.account.modules.shared.dto.kernel.SalesCoreClientResponse;
 import com.example.account.modules.tiers.domain.model.Client;
 import com.example.account.modules.tiers.domain.model.enums.TypeClient;
 import com.example.account.modules.tiers.domain.port.output.ClientRepositoryPort;
@@ -14,16 +12,17 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Map;
 import java.util.UUID;
 
 @Service
 @Slf4j
 public class KernelClientAdapter implements ClientRepositoryPort {
 
-    private final WebClient kernelWebClient;
+    private final WebClient salesCoreWebClient;
 
-    public KernelClientAdapter(@Qualifier("kernelWebClient") WebClient kernelWebClient) {
-        this.kernelWebClient = kernelWebClient;
+    public KernelClientAdapter(@Qualifier("salesCoreWebClient") WebClient salesCoreWebClient) {
+        this.salesCoreWebClient = salesCoreWebClient;
     }
 
     private Mono<UUID> getOrganizationId() {
@@ -38,13 +37,12 @@ public class KernelClientAdapter implements ClientRepositoryPort {
 
     @Override
     public Mono<Client> findById(UUID id) {
-        return kernelWebClient
+        return salesCoreWebClient
                 .get()
-                .uri("/api/third-parties/{id}", id)
+                .uri("/api/customers/{id}", id)
                 .retrieve()
-                .bodyToMono(ApiResponseThirdPartyResponse.class)
-                .map(ApiResponseThirdPartyResponse::getData)
-                .map(this::mapThirdPartyToClient);
+                .bodyToMono(SalesCoreClientResponse.class)
+                .map(this::mapToClient);
     }
 
     @Override
@@ -89,16 +87,13 @@ public class KernelClientAdapter implements ClientRepositoryPort {
     @Override
     public Flux<Client> findAllActiveClients() {
         return getOrganizationId().flatMapMany(orgId ->
-                kernelWebClient
+                salesCoreWebClient
                         .get()
-                        .uri(u -> u.path("/api/third-parties")
-                                .queryParam("organizationId", orgId)
-                                .queryParam("role", "CUSTOMER")
-                                .build())
+                        .uri("/api/customers")
+                        .header("X-Organization-Id", orgId.toString())
                         .retrieve()
-                        .bodyToMono(ApiResponseListThirdPartyResponse.class)
-                        .flatMapMany(resp -> Flux.fromIterable(resp.getData()))
-                        .map(this::mapThirdPartyToClient)
+                        .bodyToFlux(SalesCoreClientResponse.class)
+                        .map(c -> mapToClient(c, orgId))
         );
     }
 
@@ -127,21 +122,65 @@ public class KernelClientAdapter implements ClientRepositoryPort {
         return findAllActiveClients().count();
     }
 
-    private Client mapThirdPartyToClient(ThirdPartyResponse tp) {
+    @Override
+    public Mono<Void> resendCredentials(UUID id, String email, String name) {
+        return getOrganizationId().flatMap(orgId ->
+                salesCoreWebClient
+                        .post()
+                        .uri("/api/customers/{id}/invite", id)
+                        .bodyValue(Map.of(
+                                "clientId", id.toString(),
+                                "organizationId", orgId.toString(),
+                                "email", email,
+                                "name", name
+                        ))
+                        .retrieve()
+                        .bodyToMono(Void.class)
+        );
+    }
+
+    @Override
+    public Mono<Void> ensurePortalAccess(UUID id, String email, String name) {
+        return getOrganizationId().flatMap(orgId ->
+                salesCoreWebClient
+                        .post()
+                        .uri("/api/customers/{id}/ensure-portal-access", id)
+                        .bodyValue(Map.of(
+                                "clientId", id.toString(),
+                                "organizationId", orgId.toString(),
+                                "email", email,
+                                "name", name
+                        ))
+                        .retrieve()
+                        .bodyToMono(Boolean.class)
+        ).then();
+    }
+
+    private Client mapToClient(SalesCoreClientResponse c) {
+        return mapToClient(c, null);
+    }
+
+    private Client mapToClient(SalesCoreClientResponse c, UUID organizationId) {
         Client client = new Client();
-        client.setIdClient(tp.getId());
-        client.setOrganizationId(tp.getOrganizationId() != null ? tp.getOrganizationId() : tp.getTenantId());
-        client.setUsername(tp.getDisplayName());
-        client.setRaisonSociale(tp.getName());
-        client.setEmail(null);
-        client.setTelephone(null);
-        client.setActif(tp.getActive() != null ? tp.getActive() : (tp.getEnabled() != null ? tp.getEnabled() : true));
-        client.setLimiteCredit(tp.getAuthorizedCreditLimit() != null ? tp.getAuthorizedCreditLimit() : 0.0);
-        client.setNumeroTva(tp.getTaxNumber());
-        client.setCodeClient(tp.getCode() != null ? tp.getCode() : tp.getReferenceCode());
-        client.setSoldeCourant(tp.getOperationsBalance() != null ? tp.getOperationsBalance() : 0.0);
-        client.setCategorie(tp.getThirdPartyFamily());
-        client.setTypeClient("ACTOR".equalsIgnoreCase(tp.getPartyType()) ? TypeClient.PARTICULIER : TypeClient.ENTREPRISE);
+        client.setIdClient(c.getIdClient());
+        client.setOrganizationId(organizationId);
+        client.setUsername(c.getUsername());
+        client.setCategorie(c.getCategorie());
+        client.setSiteWeb(c.getSiteWeb());
+        client.setNTva(c.getNtva() != null ? c.getNtva() : false);
+        client.setAllowedSaleSizes(c.getAllowedSaleSizes());
+        client.setAdresse(c.getAdresse());
+        client.setTelephone(c.getTelephone());
+        client.setEmail(c.getEmail());
+        client.setTypeClient("ADMINISTRATION".equalsIgnoreCase(c.getTypeClient()) ? TypeClient.ADMINISTRATION
+                : "ENTREPRISE".equalsIgnoreCase(c.getTypeClient()) ? TypeClient.ENTREPRISE
+                : TypeClient.PARTICULIER);
+        client.setRaisonSociale(c.getRaisonSociale());
+        client.setNumeroTva(c.getNumeroTva());
+        client.setCodeClient(c.getCodeClient());
+        client.setLimiteCredit(c.getLimiteCredit() != null ? c.getLimiteCredit() : 0.0);
+        client.setSoldeCourant(c.getSoldeCourant() != null ? c.getSoldeCourant() : 0.0);
+        client.setActif(c.getActif() != null ? c.getActif() : true);
         return client;
     }
 }

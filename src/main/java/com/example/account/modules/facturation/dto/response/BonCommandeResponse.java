@@ -72,4 +72,5 @@ public class BonCommandeResponse {
     private LocalDateTime validatedAt;
     private UUID organizationId;
     private UUID agencyId;
+    private DocPermissionResponse docPermission;
 }

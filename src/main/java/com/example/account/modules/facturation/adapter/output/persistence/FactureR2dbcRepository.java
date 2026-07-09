@@ -75,4 +75,6 @@ public interface FactureR2dbcRepository extends R2dbcRepository<FacturePersisten
     Flux<FacturePersistenceEntity> findByOrganizationId(UUID organizationId);
 
     Flux<FacturePersistenceEntity> findByAgencyId(UUID agencyId);
+
+    Flux<FacturePersistenceEntity> findByCreatedBy(UUID createdBy);
 }

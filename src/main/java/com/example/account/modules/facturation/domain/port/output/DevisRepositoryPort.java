@@ -18,6 +18,7 @@ public interface DevisRepositoryPort {
     Flux<Devis> findByDateCreationBetween(LocalDate start, LocalDate end);
     Flux<Devis> findByOrganizationId(UUID organizationId);
     Flux<Devis> findByAgencyId(UUID agencyId);
+    Flux<Devis> findByCreatedBy(UUID createdBy);
     Mono<Devis> save(Devis devis);
     Mono<Devis> insert(Devis devis);
     Mono<Void> deleteById(UUID id);

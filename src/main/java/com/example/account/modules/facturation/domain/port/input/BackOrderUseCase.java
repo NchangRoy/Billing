@@ -17,5 +17,6 @@ public interface BackOrderUseCase {
     Mono<Void> deleteBackOrder(UUID id);
     Flux<BackOrderResponse> getByOrganizationId(UUID organizationId);
     Flux<BackOrderResponse> getByAgencyId(UUID agencyId);
-    Flux<BackOrderResponse> getByIdBonAchat(UUID idBonAchat);
+    Flux<BackOrderResponse> getByIdBonLivraison(UUID idBonLivraison);
+    Flux<BackOrderResponse> getBySellerId(UUID sellerId);
 }

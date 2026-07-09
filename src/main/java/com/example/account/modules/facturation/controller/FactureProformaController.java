@@ -84,4 +84,10 @@ public class FactureProformaController {
     public Flux<ProformaInvoiceResponse> getProformasByAgencyId(@PathVariable UUID agencyId) {
         return proformaService.getProformasByAgencyId(agencyId);
     }
+
+    @GetMapping("/seller/{sellerId}")
+    @Operation(summary = "Récupérer les factures proforma créées par un vendeur")
+    public Flux<ProformaInvoiceResponse> getProformasBySellerId(@PathVariable UUID sellerId) {
+        return proformaService.getProformasBySellerId(sellerId);
+    }
 }

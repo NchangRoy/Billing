@@ -11,10 +11,15 @@ import com.example.account.modules.facturation.dto.request.FactureCreateRequest;
 import com.example.account.modules.facturation.dto.response.FactureResponse;
 import com.example.account.modules.facturation.dto.response.ExternalResponses.SellerAuthResponse;
 import com.example.account.modules.facturation.mapper.FactureMapper;
+import com.example.account.modules.facturation.model.enums.OriginType;
 import com.example.account.modules.facturation.model.enums.StatutFacture;
 import com.example.account.modules.facturation.service.ExternalServices.ProductExternalService;
 import com.example.account.modules.facturation.service.PdfGeneratorService;
 import com.example.account.modules.facturation.service.EmailService;
+import com.example.account.modules.facturation.dto.request.AssignDocPermissionRequest;
+import com.example.account.modules.facturation.model.enums.DocPermissionLevel;
+import com.example.account.modules.facturation.model.enums.DocType;
+import com.example.account.modules.facturation.service.DocPermissionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -41,6 +46,22 @@ public class FactureUseCaseImpl implements FactureUseCase {
     private final AccountingServicePort accountingService;
     private final SellerServicePort sellerService;
     private final ProductExternalService productExternalService;
+    private final DocPermissionService docPermissionService;
+
+    private <T> Mono<T> grantOwnerPermission(UUID sellerId, UUID docId, T response) {
+        if (sellerId == null || docId == null) return Mono.just(response);
+        AssignDocPermissionRequest request = new AssignDocPermissionRequest();
+        request.setSellerId(sellerId);
+        request.setDocId(docId);
+        request.setDocType(DocType.FACTURE);
+        request.setPermission(DocPermissionLevel.OWNER);
+        return docPermissionService.grant(request)
+                .thenReturn(response)
+                .onErrorResume(e -> {
+                    log.error("Failed to grant owner doc-permission for facture {}: {}", docId, e.getMessage());
+                    return Mono.just(response);
+                });
+    }
 
     @Transactional
     public Mono<FactureResponse> createFacture(FactureCreateRequest request) {
@@ -49,6 +70,9 @@ public class FactureUseCaseImpl implements FactureUseCase {
         Facture facture = factureMapper.toEntity(request);
         if (facture.getIdFacture() == null) {
             facture.setIdFacture(UUID.randomUUID());
+        }
+        if (facture.getOriginType() == null) {
+            facture.setOriginType(OriginType.SALES);
         }
 
         // Compute totals from lines if null or zero
@@ -81,11 +105,11 @@ public class FactureUseCaseImpl implements FactureUseCase {
         productExternalService.releaseProductsForSeller(facture.getCreatedBy());
         //save facture
         return factureRepository.insert(facture)
-                .map(savedFacture -> {
+                .flatMap(savedFacture -> {
                     FactureResponse response = factureMapper.toResponse(savedFacture);
                     factureEventPort.publishFactureCreated(response);
                     log.info("Facture créée avec succès: {}", savedFacture.getNumeroFacture());
-                    return response;
+                    return grantOwnerPermission(savedFacture.getCreatedBy(), savedFacture.getIdFacture(), response);
                 });
     }
 
@@ -289,5 +313,18 @@ public class FactureUseCaseImpl implements FactureUseCase {
     public Flux<FactureResponse> getFacturesByAgencyId(UUID agencyId) {
         log.info("Récupération des factures par agence: {}", agencyId);
         return factureRepository.findByAgencyId(agencyId).map(factureMapper::toResponse);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Flux<FactureResponse> getFacturesBySellerId(UUID sellerId) {
+        log.info("Récupération des factures accessibles par le vendeur: {}", sellerId);
+        return docPermissionService.findBySellerAndDocType(sellerId, DocType.FACTURE)
+                .flatMap(permission -> factureRepository.findById(permission.getDocId())
+                        .map(facture -> {
+                            FactureResponse response = factureMapper.toResponse(facture);
+                            response.setDocPermission(docPermissionService.toResponse(permission));
+                            return response;
+                        }));
     }
 }
