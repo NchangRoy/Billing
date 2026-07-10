@@ -7,7 +7,9 @@ public enum StatutFacture {
     PARTIELLEMENT_PAYE("Partiellement payé"),
     EN_RETARD("En retard"),
     ANNULE("Annulé"),
-    EN_ATTENTE("en attente");
+    EN_ATTENTE("en attente"),
+    ACCOUNT_PENDING("En attente de comptabilisation"),
+    ACCOUNTED("Comptabilisé");
 
     private final String libelle;
 

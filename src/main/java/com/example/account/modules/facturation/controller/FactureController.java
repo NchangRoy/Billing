@@ -19,6 +19,7 @@ import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -67,6 +68,14 @@ public class FactureController {
                     log.error("Erreur lors de la comptabilisation: {}", e.getMessage());
                     return Mono.just(ResponseEntity.status(HttpStatus.BAD_REQUEST).build());
                 });
+    }
+
+    @PutMapping("/{factureId}/accounted")
+    @Operation(summary = "Marquer une facture comme comptabilisée (callback du backend comptable, via sales-core)")
+    public Mono<ResponseEntity<Void>> markFactureAccounted(@PathVariable UUID factureId) {
+        log.info("Marquage de la facture {} comme comptabilisée", factureId);
+        return factureService.markFactureAccounted(factureId)
+                .thenReturn(ResponseEntity.ok().<Void>build());
     }
 
     @GetMapping("/numero/{numeroFacture}")
@@ -190,4 +199,21 @@ public class FactureController {
         return factureJournalService.enrichFacturesByOrganization(organizationId);
     }
 
+    @GetMapping("/sales/{factureId}")
+    @Operation(summary = "Get client invoice formatted for accounting gateway")
+    public Mono<ResponseEntity<Map<String, Object>>> getAccountingSaleFacture(@PathVariable UUID factureId) {
+        log.info("Requesting accounting gateway format (sale) for invoice: {}", factureId);
+        return factureService.getAccountingSaleFacture(factureId)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/purchases/{factureId}")
+    @Operation(summary = "Get supplier invoice formatted for accounting gateway")
+    public Mono<ResponseEntity<Map<String, Object>>> getAccountingPurchaseFacture(@PathVariable UUID factureId) {
+        log.info("Requesting accounting gateway format (purchase) for invoice: {}", factureId);
+        return factureService.getAccountingPurchaseFacture(factureId)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
 }

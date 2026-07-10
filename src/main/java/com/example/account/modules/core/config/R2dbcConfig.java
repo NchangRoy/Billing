@@ -11,7 +11,6 @@ import com.example.account.modules.facturation.domain.model.LigneDevis;
 import com.example.account.modules.facturation.domain.model.LigneFacture;
 import com.example.account.modules.facturation.model.entity.Lines.LineBonCommande;
 import com.example.account.modules.facturation.model.entity.Lines.LineBonReception;
-import com.example.account.modules.facturation.model.entity.Lines.LineFactureFournisseur;
 import com.example.account.modules.facturation.service.ExternalServices.entity.JsonToSaleSizeConverter;
 import com.example.account.modules.facturation.service.ExternalServices.entity.JsonToPromotionConverter;
 import com.example.account.modules.facturation.service.ExternalServices.entity.ObjectListToJsonConverter;
@@ -115,7 +114,6 @@ protected List<Object> getCustomConverters() {
     converters.add(new GenericListWritingConverter());
 
     // 2. Specific Reading Converters (Conditional - match by generic element type)
-    converters.add(new GenericListReadingConverter(com.example.account.modules.facturation.model.entity.Lines.LineFactureFournisseur.class));
     converters.add(new GenericListReadingConverter(com.example.account.modules.facturation.domain.model.LigneFactureProforma.class));
     converters.add(new GenericListReadingConverter(com.example.account.modules.facturation.domain.model.LigneNoteCredit.class));
 

@@ -59,4 +59,22 @@ public class FactureFournisseurController {
     public Flux<FactureFournisseurResponse> getBySellerId(@PathVariable UUID sellerId) {
         return factureFournisseurService.getBySellerId(sellerId);
     }
+
+    @GetMapping("/account/{id}")
+    public Mono<ResponseEntity<Void>> accountFacture(@PathVariable UUID id) {
+        log.info("Comptabiliser la facture fournisseur: {}", id);
+        return factureFournisseurService.accountFacture(id)
+                .thenReturn(ResponseEntity.ok().<Void>build())
+                .onErrorResume(e -> {
+                    log.error("Erreur lors de la comptabilisation: {}", e.getMessage());
+                    return Mono.just(ResponseEntity.status(HttpStatus.BAD_REQUEST).build());
+                });
+    }
+
+    @PutMapping("/{id}/accounted")
+    public Mono<ResponseEntity<Void>> markAccounted(@PathVariable UUID id) {
+        log.info("Marquage de la facture fournisseur {} comme comptabilisée", id);
+        return factureFournisseurService.markAccounted(id)
+                .thenReturn(ResponseEntity.ok().<Void>build());
+    }
 }

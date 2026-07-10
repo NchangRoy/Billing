@@ -18,4 +18,5 @@ public interface DocPermissionRepository extends R2dbcRepository<DocPermission, 
     Flux<DocPermission> findByDocIdAndDocType(UUID docId, DocType docType);
     Mono<Void> deleteBySellerIdAndDocIdAndDocType(UUID sellerId, UUID docId, DocType docType);
     Mono<Void> deleteByDocIdAndDocTypeAndPermissionAndSellerIdNot(UUID docId, DocType docType, DocPermissionLevel permission, UUID sellerId);
+    Mono<Void> deleteByDocIdAndDocType(UUID docId, DocType docType);
 }

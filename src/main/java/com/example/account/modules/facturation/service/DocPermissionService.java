@@ -122,6 +122,12 @@ public class DocPermissionService {
         return repository.deleteBySellerIdAndDocIdAndDocType(sellerId, docId, docType);
     }
 
+    @Transactional
+    public Mono<Void> deleteByDocIdAndDocType(UUID docId, DocType docType) {
+        log.info("Deleting all permission records for document {} ({})", docId, docType);
+        return repository.deleteByDocIdAndDocType(docId, docType);
+    }
+
     public DocPermissionResponse toResponse(DocPermission p) {
         return DocPermissionResponse.builder()
                 .idPermission(p.getIdPermission())
