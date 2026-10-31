@@ -21,9 +21,10 @@ public class QuotationProposalController {
     private final QuotationProposalService service;
 
     @GetMapping
-    @Operation(summary = "Lister toutes les propositions de devis")
-    public Flux<QuotationProposalResponse> getAll() {
-        return service.getAll();
+    @Operation(summary = "Lister les propositions de devis visibles par ce vendeur",
+            description = "Scopé par rôle : un vendeur ne voit que ses propres clients assignés, un responsable d'agence voit ceux de toute son agence, un propriétaire voit tout.")
+    public Flux<QuotationProposalResponse> getAll(@RequestParam UUID organizationId, @RequestParam UUID sellerId) {
+        return service.getScopedForSeller(organizationId, sellerId);
     }
 
     @GetMapping("/{id}")

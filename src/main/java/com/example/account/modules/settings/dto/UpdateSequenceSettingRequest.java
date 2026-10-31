@@ -9,6 +9,9 @@ public class UpdateSequenceSettingRequest {
     private Boolean includeBranchCode;
     private String branchCode;
     private Boolean includeTva;
+    private Boolean includeCategory;
+    private Boolean includeUnit;
+    private Boolean includeFamily;
     private Boolean includeDate;
     private Boolean randomSeq4;
 }

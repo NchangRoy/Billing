@@ -1,12 +1,18 @@
 package com.example.account.modules.facturation.service;
 
+import com.example.account.modules.facturation.adapter.output.persistence.SellerPersistenceEntity;
 import com.example.account.modules.facturation.dto.request.QuotationProposalCreateRequest;
 import com.example.account.modules.facturation.dto.request.QuotationProposalLineRequest;
 import com.example.account.modules.facturation.dto.response.QuotationProposalResponse;
+import com.example.account.modules.facturation.model.entity.CustomerAssignment;
 import com.example.account.modules.facturation.model.entity.LigneQuotationProposal;
 import com.example.account.modules.facturation.model.entity.QuotationProposal;
+import com.example.account.modules.facturation.model.entity.SellerAgencyAssignment;
+import com.example.account.modules.facturation.model.enums.SellerRole;
 import com.example.account.modules.facturation.model.enums.StatutQuotationProposal;
+import com.example.account.modules.facturation.repository.CustomerAssignmentRepository;
 import com.example.account.modules.facturation.repository.QuotationProposalRepository;
+import com.example.account.modules.facturation.repository.SellerAgencyAssignmentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
@@ -33,6 +39,9 @@ public class QuotationProposalService {
 
     private final QuotationProposalRepository repository;
     private final R2dbcEntityTemplate entityTemplate;
+    private final com.example.account.modules.facturation.service.SellerLocalService sellerLocalService;
+    private final SellerAgencyAssignmentRepository sellerAgencyAssignmentRepository;
+    private final CustomerAssignmentRepository customerAssignmentRepository;
 
     @Transactional
     public Mono<QuotationProposalResponse> create(QuotationProposalCreateRequest request) {
@@ -64,11 +73,6 @@ public class QuotationProposalService {
     }
 
     @Transactional(readOnly = true)
-    public Flux<QuotationProposalResponse> getAll() {
-        return repository.findAll().map(this::toResponse);
-    }
-
-    @Transactional(readOnly = true)
     public Mono<QuotationProposalResponse> getById(UUID id) {
         return repository.findById(id)
                 .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Proposal not found: " + id)))
@@ -78,6 +82,55 @@ public class QuotationProposalService {
     @Transactional(readOnly = true)
     public Flux<QuotationProposalResponse> getByOrganizationId(UUID organizationId) {
         return repository.findByOrganizationId(organizationId).map(this::toResponse);
+    }
+
+    /**
+     * Scopes the proposal list to what the caller is actually allowed to see:
+     * a proposal has no sellerId of its own (see QuotationProposal), only an
+     * idClient — visibility is derived by joining through CustomerAssignment
+     * (which customer is whose) same as CustomerAssignmentService already does
+     * for the "my customers" views.
+     * <p>
+     * sellerId is caller-supplied (same trust model as Sessions' own sellerId
+     * filter elsewhere in this API — there's no caller identity in the Kernel
+     * access token itself to resolve this from, see AuthServiceAdapter), but
+     * the ROLE used to decide the scope is always looked up fresh from our own
+     * sellers table, never trusted from the request — a caller can't widen
+     * their own visibility by just claiming a different role.
+     */
+    @Transactional(readOnly = true)
+    public Flux<QuotationProposalResponse> getScopedForSeller(UUID organizationId, UUID sellerId) {
+        return sellerLocalService.findById(sellerId)
+                .filter(seller -> organizationId.equals(seller.getOrganizationId()))
+                .flatMapMany(seller -> scopedProposalsFor(seller, organizationId));
+    }
+
+    private Flux<QuotationProposalResponse> scopedProposalsFor(SellerPersistenceEntity seller, UUID organizationId) {
+        String role = seller.getRole();
+        if (SellerRole.OWNER.name().equals(role)) {
+            return getByOrganizationId(organizationId);
+        }
+        if (SellerRole.AGENCY_MANAGER.name().equals(role)) {
+            return sellerAgencyAssignmentRepository.findBySellerId(seller.getId())
+                    .flatMapMany(own -> sellerAgencyAssignmentRepository.findByAgencyId(own.getAgencyId()))
+                    .map(SellerAgencyAssignment::getSellerId)
+                    .collectList()
+                    .flatMapMany(sellerIds -> proposalsAssignedTo(sellerIds, organizationId));
+        }
+        // SELLER / POS_SELLER: only the customers assigned to this one seller.
+        return proposalsAssignedTo(List.of(seller.getId()), organizationId);
+    }
+
+    private Flux<QuotationProposalResponse> proposalsAssignedTo(List<UUID> sellerIds, UUID organizationId) {
+        if (sellerIds.isEmpty()) {
+            return Flux.empty();
+        }
+        return customerAssignmentRepository.findBySellerIdInAndOrganizationId(sellerIds, organizationId)
+                .map(CustomerAssignment::getClientId)
+                .collectList()
+                .flatMapMany(clientIds -> clientIds.isEmpty()
+                        ? Flux.empty()
+                        : repository.findByIdClientInAndOrganizationId(clientIds, organizationId).map(this::toResponse));
     }
 
     @Transactional(readOnly = true)

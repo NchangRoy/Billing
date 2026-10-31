@@ -14,7 +14,7 @@ public class SendSessionUpdatedEmailRequest {
     @NotBlank
     private String email;
 
-    private String username;
+    private String firstName;
     private String agency;
     private String sessionType;
     private String action;

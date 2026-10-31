@@ -3,15 +3,17 @@ package com.example.account.modules.facturation.dto.request;
 import lombok.Data;
 
 /**
- * Mirrors sales-core's per-seller UI permissions (POST/GET /api/sellers/{sellerId}/ui-permissions).
- * Distinct from Billing's own local UIPermissionsRequest (see UIPermissionsController /api/v1/ui-permissions),
- * which backs a separate local table and is not synced with sales-core.
+ * Per-seller UI permissions, stored locally in Billing's own {@code ui_permissions} table
+ * (see {@code SellerUIPermissionsLocalService}). Previously proxied to Kernel's sales-core
+ * ui-permissions endpoint, but Kernel's schema has no room for groups added after the fact
+ * (Quotation Proposals, Product Settings), so this is now authoritative end-to-end.
  */
 @Data
 public class SellerUIPermissionsRequest {
 
     private boolean sectionSalesManagement;
     private boolean salesQuotations;
+    private boolean salesQuotationProposals;
     private boolean salesProformaInvoice;
     private boolean salesSalesOrders;
     private boolean salesInvoices;
@@ -42,4 +44,9 @@ public class SellerUIPermissionsRequest {
 
     private boolean sectionSettings;
     private boolean settingsPreferences;
+
+    private boolean sectionProductSettings;
+    private boolean productSettingsUom;
+    private boolean productSettingsCategories;
+    private boolean productSettingsProducts;
 }

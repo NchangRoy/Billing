@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Collection;
 import java.util.UUID;
 
 @Repository
@@ -13,5 +14,6 @@ public interface CustomerAssignmentRepository extends R2dbcRepository<CustomerAs
     Mono<CustomerAssignment> findByClientIdAndOrganizationId(UUID clientId, UUID organizationId);
     Flux<CustomerAssignment> findByOrganizationId(UUID organizationId);
     Flux<CustomerAssignment> findBySellerIdAndOrganizationId(UUID sellerId, UUID organizationId);
+    Flux<CustomerAssignment> findBySellerIdInAndOrganizationId(Collection<UUID> sellerIds, UUID organizationId);
     Mono<Void> deleteByClientIdAndOrganizationId(UUID clientId, UUID organizationId);
 }

@@ -45,9 +45,9 @@ import java.util.UUID;
 public class AuthServiceAdapter implements AuthServicePort {
 
     private final WebClient kernelWebClient;
-    private final WebClient salesCoreWebClient;
     private final SellerAgencyAssignmentRepository sellerAgencyAssignmentRepository;
     private final KernelTenantDiscovery tenantDiscovery;
+    private final com.example.account.modules.facturation.service.SellerLocalService sellerLocalService;
 
     private static final ParameterizedTypeReference<KernelApiResponse<KernelLoginResponse>> KERNEL_LOGIN_TYPE =
             new ParameterizedTypeReference<>() {};
@@ -61,13 +61,13 @@ public class AuthServiceAdapter implements AuthServicePort {
             new ParameterizedTypeReference<>() {};
 
     public AuthServiceAdapter(@Qualifier("kernelWebClient") WebClient kernelWebClient,
-                               @Qualifier("salesCoreWebClient") WebClient salesCoreWebClient,
                                SellerAgencyAssignmentRepository sellerAgencyAssignmentRepository,
-                               KernelTenantDiscovery tenantDiscovery) {
+                               KernelTenantDiscovery tenantDiscovery,
+                               com.example.account.modules.facturation.service.SellerLocalService sellerLocalService) {
         this.kernelWebClient = kernelWebClient;
-        this.salesCoreWebClient = salesCoreWebClient;
         this.sellerAgencyAssignmentRepository = sellerAgencyAssignmentRepository;
         this.tenantDiscovery = tenantDiscovery;
+        this.sellerLocalService = sellerLocalService;
     }
 
     @Override
@@ -297,14 +297,30 @@ public class AuthServiceAdapter implements AuthServicePort {
     }
 
     private Mono<SellerListItemResponse> findLocalSeller(List<String> emails, UUID organizationId) {
-        return salesCoreWebClient
-                .get()
-                .uri(uriBuilder -> uriBuilder.path("/api/sellers/local").queryParam("organizationId", organizationId).build())
-                .retrieve()
-                .bodyToFlux(SellerListItemResponse.class)
-                .filter(s -> emails.stream().anyMatch(email -> email != null && email.equalsIgnoreCase(s.getEmail())))
+        return Flux.fromIterable(emails)
+                .filter(email -> email != null && !email.isBlank())
+                .concatMap(email -> sellerLocalService.findByEmail(organizationId, email))
                 .next()
+                .map(this::toSellerListItemResponse)
                 .onErrorResume(e -> Mono.empty());
+    }
+
+    private SellerListItemResponse toSellerListItemResponse(com.example.account.modules.facturation.adapter.output.persistence.SellerPersistenceEntity e) {
+        SellerListItemResponse r = new SellerListItemResponse();
+        r.setId(e.getId());
+        r.setEmail(e.getEmail());
+        r.setFirstName(e.getFirstName());
+        r.setLastName(e.getLastName());
+        r.setRole(e.getRole());
+        r.setSalePoint(e.getSalePoint());
+        r.setProfileImageUrl(e.getProfileImageUrl());
+        r.setPermissions(e.getPermissions() == null ? List.of() : java.util.Arrays.stream(e.getPermissions())
+                .map(com.example.account.modules.facturation.model.enums.SellerPermission::valueOf).toList());
+        r.setPermittedSaleSizes(e.getPermittedSaleSizes() == null ? List.of() : java.util.Arrays.stream(e.getPermittedSaleSizes())
+                .map(com.example.account.modules.facturation.model.enums.SaleSize::valueOf).toList());
+        r.setOrganizationId(e.getOrganizationId());
+        r.setSalesPointId(e.getSalesPointId());
+        return r;
     }
 
     private Mono<SellerAuthResponse> resolveOrganization(KernelLoginResponse kernelUser, List<KernelOrganizationResponse> orgs,
@@ -390,6 +406,13 @@ public class AuthServiceAdapter implements AuthServicePort {
     }
 
     private void applyLocalSellerFields(SellerAuthResponse response, SellerListItemResponse seller) {
+        // Overwrites Kernel's own raw account id (set earlier in
+        // mapKernelToSellerAuthResponse) with this local seller's real id now
+        // that a match was actually found — AuthUseCaseImpl.findExistingSeller
+        // relies on this id to avoid repeating a stricter single-email match
+        // that misses accounts whose Kernel login email differs from the
+        // email they were invited under.
+        response.setId(seller.getId());
         if (seller.getRole() != null) {
             try {
                 response.setRole(SellerRole.valueOf(seller.getRole()));

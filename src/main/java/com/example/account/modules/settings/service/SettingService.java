@@ -75,6 +75,9 @@ public class SettingService {
                     if (request.getIncludeBranchCode() != null) setting.setIncludeBranchCode(request.getIncludeBranchCode());
                     if (request.getBranchCode() != null) setting.setBranchCode(request.getBranchCode());
                     if (request.getIncludeTva() != null) setting.setIncludeTva(request.getIncludeTva());
+                    if (request.getIncludeCategory() != null) setting.setIncludeCategory(request.getIncludeCategory());
+                    if (request.getIncludeUnit() != null) setting.setIncludeUnit(request.getIncludeUnit());
+                    if (request.getIncludeFamily() != null) setting.setIncludeFamily(request.getIncludeFamily());
                     if (request.getIncludeDate() != null) setting.setIncludeDate(request.getIncludeDate());
                     if (request.getRandomSeq4() != null) setting.setRandomSeq4(request.getRandomSeq4());
                     setting.setUpdatedAt(LocalDateTime.now());
@@ -101,6 +104,43 @@ public class SettingService {
                             .build();
                     return settingRepository.save(defaults);
                 }));
+    }
+
+    // === Product numbering (single PRODUIT row, outside the DOCUMENT_TYPES list above) ===
+
+    public Mono<SettingResponse> getProductNumberingSettings(UUID organizationId) {
+        return getOrCreateSequenceSetting(organizationId, TypeNumerotation.PRODUIT).map(this::toResponse);
+    }
+
+    public Mono<SettingResponse> updateProductNumberingSettings(UUID organizationId, UpdateSequenceSettingRequest request) {
+        return updateSequenceSetting(organizationId, TypeNumerotation.PRODUIT, request);
+    }
+
+    /**
+     * Composes a product's globalCode: PROD-{category}-{family}-{tva}-{uom}-{random}, e.g.
+     * "PROD-PERIPH-FINISHED-NT-PCS-0080". The frontend computes the real one client-side
+     * (same convention as the other document numbers) — this is only used here to render
+     * the settings page's live preview. "PROD" is a fixed literal, not a toggle.
+     */
+    private String composeProductNumber(Setting setting, String categoryCode, String familyCode, String unitCode, boolean hasTva) {
+        StringBuilder sb = new StringBuilder();
+        appendSegment(sb, "PROD");
+        if (Boolean.TRUE.equals(setting.getIncludeCategory()) && categoryCode != null && !categoryCode.isBlank()) {
+            appendSegment(sb, categoryCode.toUpperCase());
+        }
+        if (Boolean.TRUE.equals(setting.getIncludeFamily()) && familyCode != null && !familyCode.isBlank()) {
+            appendSegment(sb, familyCode.toUpperCase());
+        }
+        if (Boolean.TRUE.equals(setting.getIncludeTva())) {
+            appendSegment(sb, hasTva ? "T" : "NT");
+        }
+        if (Boolean.TRUE.equals(setting.getIncludeUnit()) && unitCode != null && !unitCode.isBlank()) {
+            appendSegment(sb, unitCode.toUpperCase());
+        }
+        if (Boolean.TRUE.equals(setting.getRandomSeq4())) {
+            appendSegment(sb, String.format("%04d", ThreadLocalRandom.current().nextInt(0, 10000)));
+        }
+        return sb.toString();
     }
 
     // === Organization-wide settings (logo) ===
@@ -172,7 +212,14 @@ public class SettingService {
     }
 
     private SettingResponse toResponse(Setting s) {
-        String preview = s.getTypeNumerotation() != null ? composeNumber(s, s.getTypeNumerotation(), false) : null;
+        String preview;
+        if (s.getTypeNumerotation() == TypeNumerotation.PRODUIT) {
+            preview = composeProductNumber(s, "CAT", "FAM", "PCS", false);
+        } else if (s.getTypeNumerotation() != null) {
+            preview = composeNumber(s, s.getTypeNumerotation(), false);
+        } else {
+            preview = null;
+        }
         return SettingResponse.builder()
                 .id(s.getId())
                 .organizationId(s.getOrganizationId())
@@ -183,6 +230,9 @@ public class SettingService {
                 .includeBranchCode(s.getIncludeBranchCode())
                 .branchCode(s.getBranchCode())
                 .includeTva(s.getIncludeTva())
+                .includeCategory(s.getIncludeCategory())
+                .includeUnit(s.getIncludeUnit())
+                .includeFamily(s.getIncludeFamily())
                 .includeDate(s.getIncludeDate())
                 .randomSeq4(s.getRandomSeq4())
                 .preview(preview)

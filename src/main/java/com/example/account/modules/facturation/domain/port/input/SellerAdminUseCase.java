@@ -5,6 +5,7 @@ import com.example.account.modules.facturation.dto.request.CreateSellerRequest;
 import com.example.account.modules.facturation.dto.request.SellerUIPermissionsRequest;
 import com.example.account.modules.facturation.dto.request.UpdateSellerPermissionsRequest;
 import com.example.account.modules.facturation.dto.request.UpdateSellerPhotoRequest;
+import com.example.account.modules.facturation.dto.request.UpdateSellerRoleRequest;
 import com.example.account.modules.facturation.dto.response.ExternalResponses.AssignAgencyResponse;
 import com.example.account.modules.facturation.dto.response.ExternalResponses.CreateSellerResponse;
 import com.example.account.modules.facturation.dto.response.ExternalResponses.OrganizationEmployeeResponse;
@@ -29,5 +30,7 @@ public interface SellerAdminUseCase {
     Mono<SellerUIPermissionsResponse> setUIPermissions(UUID sellerId, SellerUIPermissionsRequest request);
     Mono<SellerListItemResponse> updatePermissions(UUID sellerId, UpdateSellerPermissionsRequest request);
     Mono<SellerListItemResponse> updatePhoto(UUID sellerId, UpdateSellerPhotoRequest request);
+    Mono<SellerListItemResponse> updateRole(UUID sellerId, UpdateSellerRoleRequest request);
+    Mono<SellerListItemResponse> regeneratePin(UUID sellerId);
     Mono<Void> deleteSeller(UUID sellerId);
 }

@@ -1756,3 +1756,23 @@ databaseChangeLog:
                   constraints:
                     nullable: false
 
+  - include:
+      file: changelog-v1.3-product-numbering.yaml
+      relativeToChangelogFile: true
+
+  - include:
+      file: changelog-v1.4-local-ui-permissions.yaml
+      relativeToChangelogFile: true
+
+  - include:
+      file: changelog-v1.5-subscriptions.yaml
+      relativeToChangelogFile: true
+
+  - include:
+      file: changelog-v1.6-local-sellers.yaml
+      relativeToChangelogFile: true
+
+  - include:
+      file: changelog-v1.7-local-sessions.yaml
+      relativeToChangelogFile: true
+

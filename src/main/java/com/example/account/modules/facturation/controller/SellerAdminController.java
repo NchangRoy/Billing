@@ -6,6 +6,7 @@ import com.example.account.modules.facturation.dto.request.CreateSellerRequest;
 import com.example.account.modules.facturation.dto.request.SellerUIPermissionsRequest;
 import com.example.account.modules.facturation.dto.request.UpdateSellerPermissionsRequest;
 import com.example.account.modules.facturation.dto.request.UpdateSellerPhotoRequest;
+import com.example.account.modules.facturation.dto.request.UpdateSellerRoleRequest;
 import com.example.account.modules.facturation.dto.response.ExternalResponses.AssignAgencyResponse;
 import com.example.account.modules.facturation.dto.response.ExternalResponses.CreateSellerResponse;
 import com.example.account.modules.facturation.dto.response.ExternalResponses.OrganizationEmployeeResponse;
@@ -111,6 +112,18 @@ public class SellerAdminController {
     @Operation(summary = "Update a seller's profile image")
     public Mono<SellerListItemResponse> updatePhoto(@PathVariable UUID sellerId, @Valid @RequestBody UpdateSellerPhotoRequest request) {
         return sellerAdminUseCase.updatePhoto(sellerId, request);
+    }
+
+    @PutMapping("/{sellerId}/role")
+    @Operation(summary = "Update a seller's role")
+    public Mono<SellerListItemResponse> updateRole(@PathVariable UUID sellerId, @Valid @RequestBody UpdateSellerRoleRequest request) {
+        return sellerAdminUseCase.updateRole(sellerId, request);
+    }
+
+    @PostMapping("/{sellerId}/pin/regenerate")
+    @Operation(summary = "Regenerate a seller's POS quick-login PIN")
+    public Mono<SellerListItemResponse> regeneratePin(@PathVariable UUID sellerId) {
+        return sellerAdminUseCase.regeneratePin(sellerId);
     }
 
     @DeleteMapping("/{sellerId}")

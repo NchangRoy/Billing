@@ -26,6 +26,10 @@ public class ProductResponse {
     private String categorie;
     private String reference;
     private String codeBarre;
+
+    /** The generated numbering code (category/unit/VAT/date/sequence) — Billing's own local
+     * field, distinct from "reference" (Kernel's globalCode, a unique technical key). */
+    private String productNumber;
     private String photo;
     private Boolean active;
 

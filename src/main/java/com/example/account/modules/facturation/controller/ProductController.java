@@ -1,8 +1,10 @@
 package com.example.account.modules.facturation.controller;
 
 import com.example.account.modules.facturation.domain.port.input.ProductUseCase;
+import com.example.account.modules.facturation.dto.request.CreateProductRequest;
 import com.example.account.modules.facturation.dto.request.UpdatePhotoRequest;
 import com.example.account.modules.facturation.dto.request.UpdateSaleSizesRequest;
+import com.example.account.modules.facturation.dto.response.ExternalResponses.ProductDefinitionResponse;
 import com.example.account.modules.facturation.dto.response.ExternalResponses.ProductResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,6 +26,19 @@ import java.util.UUID;
 public class ProductController {
 
     private final ProductUseCase productUseCase;
+
+    @PostMapping
+    @Operation(summary = "Create a new product in the organization's catalog")
+    public Mono<ProductResponse> createProduct(@Valid @RequestBody CreateProductRequest request) {
+        log.info("Request to create product: {}", request.getNomProduit());
+        return productUseCase.createProduct(request);
+    }
+
+    @GetMapping("/definitions")
+    @Operation(summary = "List the organization's catalog of defined products (no price/stock — for picking an existing one to provision as sellable)")
+    public Flux<ProductDefinitionResponse> getProductDefinitions() {
+        return productUseCase.getProductDefinitions();
+    }
 
     @GetMapping
     @Operation(summary = "Get all products")

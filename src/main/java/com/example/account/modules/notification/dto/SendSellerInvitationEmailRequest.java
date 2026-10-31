@@ -13,7 +13,7 @@ public class SendSellerInvitationEmailRequest {
     @NotBlank
     private String email;
 
-    private String username;
+    private String firstName;
     private String pin;
     private String agency;
     private String role;

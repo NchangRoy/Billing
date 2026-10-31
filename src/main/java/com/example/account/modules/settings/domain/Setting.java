@@ -57,6 +57,16 @@ public class Setting {
     @Column("include_tva")
     private Boolean includeTva;
 
+    /** PRODUIT numbering only — category/family/unit code segments, analogous to org/branch code above. */
+    @Column("include_category")
+    private Boolean includeCategory;
+
+    @Column("include_unit")
+    private Boolean includeUnit;
+
+    @Column("include_family")
+    private Boolean includeFamily;
+
     @Column("include_date")
     private Boolean includeDate;
 

@@ -129,17 +129,13 @@
 
     <!-- CONTENT -->
     <div class="content">
-        <p>Bonjour <strong th:text="${username}">vendeur</strong>,</p>
+        <p>Bonjour <strong th:text="${firstName}">vendeur</strong>,</p>
         <p>Un compte vendeur vient d'être créé pour vous sur <strong>KSM</strong>
             <span th:if="${agency}">au sein de l'agence <strong th:text="${agency}">Agence</strong></span>.
             Voici vos identifiants de connexion :</p>
 
         <div class="credentials-box">
             <h2>Identifiants de connexion</h2>
-            <div class="info-row">
-                <span class="label">Nom d'utilisateur :</span>
-                <span class="value" th:text="${username}">jdupont</span>
-            </div>
             <div class="info-row" th:if="${role}">
                 <span class="label">Rôle :</span>
                 <span class="value" th:text="${role}">SELLER</span>

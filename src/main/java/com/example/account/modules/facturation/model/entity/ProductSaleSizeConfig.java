@@ -51,6 +51,11 @@ public class ProductSaleSizeConfig implements Persistable<UUID> {
     @Column("photo")
     private String photo;
 
+    /** The generated numbering code (category/unit/VAT/date/sequence) — distinct from Kernel's
+     * globalCode ("reference"); this is the human-facing identifier shown on the products table. */
+    @Column("product_number")
+    private String productNumber;
+
     @Column("vat_applicable")
     @Builder.Default
     private boolean vatApplicable = true;

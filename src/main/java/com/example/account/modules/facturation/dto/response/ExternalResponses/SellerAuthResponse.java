@@ -90,6 +90,12 @@ public class SellerAuthResponse {
     private Boolean requiresOrganizationSelection;
     private List<KernelOrganizationResponse> availableOrganizations;
 
+    // Try Out only: set once the organization is resolved but no existing
+    // seller or subscription was found for it — organizationId/organizationName
+    // above are already populated, the frontend just needs to show a plan
+    // picker and resubmit LoginRequest.planType to complete provisioning.
+    private Boolean requiresPlanSelection;
+
     // Set when Kernel's discover-contexts finds this account in more than
     // one tenant that actually has organizations (a bare PLATFORM/no-org
     // context never counts). Every other field above is left null — the

@@ -27,7 +27,8 @@ public class SellerEmailService {
     public Mono<Void> sendInvitation(SendSellerInvitationEmailRequest request) {
         return Mono.fromCallable(() -> {
             Context context = new Context();
-            context.setVariable("username", request.getUsername());
+            context.setVariable("firstName", request.getFirstName());
+            context.setVariable("email", request.getEmail());
             context.setVariable("pin", request.getPin());
             context.setVariable("agency", request.getAgency());
             context.setVariable("role", request.getRole());
@@ -36,7 +37,6 @@ public class SellerEmailService {
         }).subscribeOn(Schedulers.boundedElastic())
           .flatMap(html -> emailSenderService.sendEmail(request.getOrganizationId(), request.getEmail(),
                   "Bienvenue sur KSM — vos identifiants de connexion", html))
-          .doOnSuccess(v -> log.info("Sent seller invitation email to {} for username {}", request.getEmail(),
-                  request.getUsername()));
+          .doOnSuccess(v -> log.info("Sent seller invitation email to {}", request.getEmail()));
     }
 }

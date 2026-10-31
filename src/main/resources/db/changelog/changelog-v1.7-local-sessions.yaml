@@ -1,0 +1,99 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1-create-sessions
+      author: billing
+      comments: >
+        POS/sales sessions move from sales-core (proxied via SessionServiceAdapter)
+        to a local table — sales-core validated sellerId against its own roster,
+        which doesn't know about sellers created through Billing's local-only
+        seller flow (changelog-v1.6-local-sellers) and rejected every session for
+        them with "Seller not found".
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: sessions
+      changes:
+        - createTable:
+            tableName: sessions
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: type
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sales_point_id
+                  type: uuid
+              - column:
+                  name: organization_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: agency_id
+                  type: uuid
+              - column:
+                  name: seller_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: opening_amount
+                  type: numeric(15,2)
+              - column:
+                  name: closing_amount
+                  type: numeric(15,2)
+              - column:
+                  name: start_time
+                  type: timestamp
+              - column:
+                  name: end_time
+                  type: timestamp
+              - column:
+                  name: login_time
+                  type: timestamp
+              - column:
+                  name: logout_time
+                  type: timestamp
+              - column:
+                  name: locked
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+              - column:
+                  name: updated_at
+                  type: timestamp
+        - createIndex:
+            tableName: sessions
+            indexName: idx_sessions_organization_id
+            columns:
+              - column:
+                  name: organization_id
+        - createIndex:
+            tableName: sessions
+            indexName: idx_sessions_seller_id
+            columns:
+              - column:
+                  name: seller_id
+        - createIndex:
+            tableName: sessions
+            indexName: idx_sessions_sales_point_id
+            columns:
+              - column:
+                  name: sales_point_id

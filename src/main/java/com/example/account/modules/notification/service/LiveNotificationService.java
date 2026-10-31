@@ -67,6 +67,10 @@ public class LiveNotificationService {
                 .flatMap(saved -> inviteTelegramContactsIfNeeded(saved).thenReturn(saved));
     }
 
+    public Flux<LiveNotification> findByOrganizationId(UUID organizationId) {
+        return liveNotificationRepository.findByOrganizationId(organizationId);
+    }
+
     public Mono<LiveNotification> addContact(UUID liveNotificationId, UUID contactId) {
         return findOrThrow(liveNotificationId).flatMap(ln -> {
             ln.setContactIds(withAdded(ln.getContactIds(), contactId));

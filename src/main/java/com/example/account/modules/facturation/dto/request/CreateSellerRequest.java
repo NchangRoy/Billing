@@ -11,9 +11,6 @@ import java.util.UUID;
 @Data
 public class CreateSellerRequest {
 
-    /** Optional for the invite flow — auto-derived from the email if left blank. */
-    private String username;
-
     @NotBlank
     @Email
     private String email;

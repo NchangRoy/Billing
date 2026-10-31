@@ -21,7 +21,7 @@ public class SessionEmailService {
     public Mono<Void> sendSessionCreated(SendSessionCreatedEmailRequest request) {
         return Mono.fromCallable(() -> {
             Context context = new Context();
-            context.setVariable("username", request.getUsername());
+            context.setVariable("firstName", request.getFirstName());
             context.setVariable("agency", request.getAgency());
             context.setVariable("sessionType", request.getSessionType());
             context.setVariable("status", request.getStatus());
@@ -37,7 +37,7 @@ public class SessionEmailService {
     public Mono<Void> sendSessionUpdated(SendSessionUpdatedEmailRequest request) {
         return Mono.fromCallable(() -> {
             Context context = new Context();
-            context.setVariable("username", request.getUsername());
+            context.setVariable("firstName", request.getFirstName());
             context.setVariable("agency", request.getAgency());
             context.setVariable("sessionType", request.getSessionType());
             context.setVariable("action", request.getAction());

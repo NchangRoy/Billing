@@ -9,7 +9,8 @@ import java.util.UUID;
 @NoArgsConstructor
 public class CreateSellerResponse {
     private UUID id;
-    private String username;
+    private String firstName;
+    private String lastName;
     private String role;
     /** Quick-login PIN for the POS terminal. */
     private String pin;

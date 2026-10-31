@@ -1,0 +1,79 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1-add-product-numbering-columns
+      author: dev
+      comments: >
+        Product numbering (settings row with type_numerotation = PRODUIT) composes
+        from category/unit instead of org/branch code — reuses include_tva,
+        include_date, and random_seq_4 as-is, but needs its own two segment toggles.
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - and:
+                - columnExists:
+                    tableName: settings
+                    columnName: include_category
+                - columnExists:
+                    tableName: settings
+                    columnName: include_unit
+      changes:
+        - addColumn:
+            tableName: settings
+            columns:
+              - column:
+                  name: include_category
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: include_unit
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 2-add-product-number-to-sale-size-configs
+      author: dev
+      comments: >
+        The generated numbering code (category/unit/VAT/date/sequence) is a distinct,
+        human-facing identifier from Kernel's globalCode (used as "reference", a unique
+        technical key) — stored locally like photo/VAT, displayed on the products table.
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - columnExists:
+                tableName: product_sale_size_configs
+                columnName: product_number
+      changes:
+        - addColumn:
+            tableName: product_sale_size_configs
+            columns:
+              - column:
+                  name: product_number
+                  type: text
+
+  - changeSet:
+      id: 3-add-include-family-to-settings
+      author: dev
+      comments: >
+        Final product numbering format: PROD-{category}-{family}-{tva}-{uom}-{random}.
+        Family (the product's articleKind/typeProduit) needs its own toggle, same as
+        category/unit above.
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - columnExists:
+                tableName: settings
+                columnName: include_family
+      changes:
+        - addColumn:
+            tableName: settings
+            columns:
+              - column:
+                  name: include_family
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false

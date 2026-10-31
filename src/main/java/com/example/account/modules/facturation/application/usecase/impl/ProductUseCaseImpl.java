@@ -1,7 +1,10 @@
 package com.example.account.modules.facturation.application.usecase.impl;
 
+import com.example.account.modules.core.context.ReactiveOrganizationContext;
 import com.example.account.modules.facturation.domain.port.input.ProductUseCase;
 import com.example.account.modules.facturation.domain.port.output.ProductServicePort;
+import com.example.account.modules.facturation.dto.request.CreateProductRequest;
+import com.example.account.modules.facturation.dto.response.ExternalResponses.ProductDefinitionResponse;
 import com.example.account.modules.facturation.dto.response.ExternalResponses.ProductResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +21,21 @@ import java.util.UUID;
 public class ProductUseCaseImpl implements ProductUseCase {
 
     private final ProductServicePort productServicePort;
+
+    @Override
+    public Mono<ProductResponse> createProduct(CreateProductRequest request) {
+        if (request.getVatApplicable() == null) {
+            request.setVatApplicable(true);
+        }
+        return ReactiveOrganizationContext.getOrganizationId()
+                .flatMap(organizationId -> productServicePort.createProduct(organizationId, request));
+    }
+
+    @Override
+    public Flux<ProductDefinitionResponse> getProductDefinitions() {
+        return ReactiveOrganizationContext.getOrganizationId()
+                .flatMapMany(productServicePort::fetchProductDefinitions);
+    }
 
     @Override
     public Flux<ProductResponse> getAllProducts() {

@@ -17,6 +17,7 @@ public class SellerUIPermissionsResponse {
 
     private boolean sectionSalesManagement;
     private boolean salesQuotations;
+    private boolean salesQuotationProposals;
     private boolean salesProformaInvoice;
     private boolean salesSalesOrders;
     private boolean salesInvoices;
@@ -47,6 +48,11 @@ public class SellerUIPermissionsResponse {
 
     private boolean sectionSettings;
     private boolean settingsPreferences;
+
+    private boolean sectionProductSettings;
+    private boolean productSettingsUom;
+    private boolean productSettingsCategories;
+    private boolean productSettingsProducts;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

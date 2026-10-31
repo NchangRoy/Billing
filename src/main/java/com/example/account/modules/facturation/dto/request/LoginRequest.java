@@ -22,4 +22,10 @@ public class LoginRequest {
     // the first call; the frontend resubmits it after the user picks a
     // tenant from SellerAuthResponse.availableTenants.
     private UUID tenantId;
+
+    // Try Out only: which plan to start the organization on, once
+    // ensureSellerProvisioned has found no existing seller or subscription
+    // for it and asked for one via SellerAuthResponse.requiresPlanSelection.
+    // Omitted on the first call.
+    private String planType;
 }

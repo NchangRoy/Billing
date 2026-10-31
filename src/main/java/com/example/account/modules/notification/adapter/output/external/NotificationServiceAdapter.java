@@ -64,6 +64,12 @@ public class NotificationServiceAdapter implements ContactServicePort, LiveNotif
     }
 
     @Override
+    public Flux<LiveNotificationResponse> listByOrganization(UUID organizationId) {
+        return liveNotificationService.findByOrganizationId(organizationId)
+                .map(this::mapToResponse);
+    }
+
+    @Override
     public Mono<LiveNotificationResponse> updateDelay(UUID id, long delayMinutes) {
         return liveNotificationService.updateDelay(id, delayMinutes)
                 .map(this::mapToResponse);

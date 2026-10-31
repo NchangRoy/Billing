@@ -1,0 +1,52 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1-relax-sellers-email-uniqueness-to-per-organization
+      author: dev
+      comments: >
+        Seller profile (role, permissions, agency, PIN) moves from Kernel's
+        sales-core to this table as the authoritative local store — Kernel
+        enforced email uniqueness globally across every org on the platform,
+        which caused real "already taken" collisions for people who are (or
+        were) a seller in more than one org. Per-organization is the correct
+        scope here. password_hash is unused — login identity is still
+        Kernel's email+password; this table only holds the profile layered
+        on top of that, matched by email.
+      preConditions:
+        - onFail: MARK_RAN
+        - indexExists:
+            tableName: sellers
+            indexName: sellers_email_key
+      changes:
+        - dropUniqueConstraint:
+            tableName: sellers
+            constraintName: sellers_email_key
+        - addUniqueConstraint:
+            tableName: sellers
+            columnNames: organization_id, email
+            constraintName: sellers_org_email_key
+        - dropNotNullConstraint:
+            tableName: sellers
+            columnName: password_hash
+            columnDataType: varchar(255)
+
+  - changeSet:
+      id: 2-drop-seller-username
+      author: dev
+      comments: >
+        Username was a Billing-invented sales-core profile handle, never the
+        actual login credential (that's always been the person's Kernel
+        email+password) — dropped entirely per explicit direction, not kept
+        as a local-only field. PIN login links to a seller purely by sellerId
+        (SellerAuthContext.sellerId), never by username, so this is safe.
+      preConditions:
+        - onFail: MARK_RAN
+        - columnExists:
+            tableName: sellers
+            columnName: username
+      changes:
+        - dropUniqueConstraint:
+            tableName: sellers
+            constraintName: sellers_username_key
+        - dropColumn:
+            tableName: sellers
+            columnName: username

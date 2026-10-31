@@ -61,7 +61,16 @@ public class ContactService {
         request.setEmail(contact.getEmail());
         request.setName(contact.getName());
         request.setTelegramDeepLink(deepLink);
-        return contactEmailService.sendInvitation(request);
+        // Best-effort: both callers (addContact, inviteToTelegramIfUnlinked) need the
+        // contact itself to persist/activate even if Kernel's notification-core is
+        // down or the caller's token has expired — losing the invite email is
+        // recoverable (the admin can be told to resend), silently losing the contact
+        // row they just added is not.
+        return contactEmailService.sendInvitation(request)
+                .onErrorResume(e -> {
+                    log.error("Failed to send Telegram invite email to {}: {}", contact.getEmail(), e.getMessage());
+                    return Mono.empty();
+                });
     }
 
     public Mono<Contact> linkChat(String linkToken, String chatId) {

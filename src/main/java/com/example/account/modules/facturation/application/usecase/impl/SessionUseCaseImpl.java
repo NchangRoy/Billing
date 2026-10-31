@@ -1,16 +1,18 @@
 package com.example.account.modules.facturation.application.usecase.impl;
 
+import com.example.account.modules.facturation.adapter.output.persistence.SellerPersistenceEntity;
 import com.example.account.modules.facturation.domain.port.input.SessionUseCase;
 import com.example.account.modules.facturation.domain.port.output.SessionServicePort;
-import com.example.account.modules.facturation.domain.port.output.SellerServicePort;
 import com.example.account.modules.facturation.dto.request.CloseSessionRequest;
 import com.example.account.modules.facturation.dto.request.CreateSessionRequest;
 import com.example.account.modules.facturation.dto.request.UpdateSessionRequest;
-import com.example.account.modules.facturation.dto.response.ExternalResponses.SellerListItemResponse;
 import com.example.account.modules.facturation.dto.response.SessionResponse;
 import com.example.account.modules.notification.dto.SendSessionCreatedEmailRequest;
 import com.example.account.modules.notification.dto.SendSessionUpdatedEmailRequest;
 import com.example.account.modules.notification.service.SessionEmailService;
+import com.example.account.modules.facturation.model.enums.SellerRole;
+import com.example.account.modules.facturation.repository.SellerAgencyAssignmentRepository;
+import com.example.account.modules.facturation.service.SellerLocalService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,7 +30,8 @@ public class SessionUseCaseImpl implements SessionUseCase {
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     private final SessionServicePort sessionServicePort;
-    private final SellerServicePort sellerServicePort;
+    private final SellerLocalService sellerLocalService;
+    private final SellerAgencyAssignmentRepository sellerAgencyAssignmentRepository;
     private final SessionEmailService sessionEmailService;
 
     @Override
@@ -43,9 +46,7 @@ public class SessionUseCaseImpl implements SessionUseCase {
 
     /** Best-effort: a failed notification email must never fail session creation. */
     private Mono<SessionResponse> notifySessionCreated(SessionResponse session) {
-        return sellerServicePort.listSellers(session.getOrganizationId())
-                .filter(seller -> session.getSellerId().equals(seller.getId()))
-                .next()
+        return sellerLocalService.findById(session.getSellerId())
                 .flatMap(seller -> sessionEmailService.sendSessionCreated(toEmailRequest(seller, session)))
                 .onErrorResume(e -> {
                     log.error("Failed to send session-created email for session {}: {}", session.getId(), e.getMessage());
@@ -56,9 +57,7 @@ public class SessionUseCaseImpl implements SessionUseCase {
 
     /** Best-effort: a failed notification email must never fail the status change itself. */
     private Mono<SessionResponse> notifySessionUpdated(SessionResponse session, String action) {
-        return sellerServicePort.listSellers(session.getOrganizationId())
-                .filter(seller -> session.getSellerId().equals(seller.getId()))
-                .next()
+        return sellerLocalService.findById(session.getSellerId())
                 .flatMap(seller -> sessionEmailService.sendSessionUpdated(toUpdateEmailRequest(seller, session, action)))
                 .onErrorResume(e -> {
                     log.error("Failed to send session-updated email for session {}: {}", session.getId(), e.getMessage());
@@ -67,12 +66,11 @@ public class SessionUseCaseImpl implements SessionUseCase {
                 .thenReturn(session);
     }
 
-    private SendSessionUpdatedEmailRequest toUpdateEmailRequest(SellerListItemResponse seller, SessionResponse session, String action) {
+    private SendSessionUpdatedEmailRequest toUpdateEmailRequest(SellerPersistenceEntity seller, SessionResponse session, String action) {
         SendSessionUpdatedEmailRequest request = new SendSessionUpdatedEmailRequest();
         request.setOrganizationId(seller.getOrganizationId());
         request.setEmail(seller.getEmail());
-        request.setUsername(seller.getUsername());
-        request.setAgency(seller.getAgency());
+        request.setFirstName(seller.getFirstName());
         request.setSessionType(session.getType() != null ? session.getType().name() : null);
         request.setAction(action);
         request.setStatus(session.getStatus() != null ? session.getStatus().name() : null);
@@ -81,12 +79,11 @@ public class SessionUseCaseImpl implements SessionUseCase {
         return request;
     }
 
-    private SendSessionCreatedEmailRequest toEmailRequest(SellerListItemResponse seller, SessionResponse session) {
+    private SendSessionCreatedEmailRequest toEmailRequest(SellerPersistenceEntity seller, SessionResponse session) {
         SendSessionCreatedEmailRequest request = new SendSessionCreatedEmailRequest();
         request.setOrganizationId(seller.getOrganizationId());
         request.setEmail(seller.getEmail());
-        request.setUsername(seller.getUsername());
-        request.setAgency(seller.getAgency());
+        request.setFirstName(seller.getFirstName());
         request.setSessionType(session.getType() != null ? session.getType().name() : null);
         request.setStatus(session.getStatus() != null ? session.getStatus().name() : null);
         request.setStartTime(session.getStartTime() != null ? session.getStartTime().format(DATE_FORMAT) : null);
@@ -132,6 +129,34 @@ public class SessionUseCaseImpl implements SessionUseCase {
     @Override
     public Flux<SessionResponse> findAll(UUID salesPointId, UUID sellerId, UUID organizationId, UUID agencyId) {
         return sessionServicePort.findAll(salesPointId, sellerId, organizationId, agencyId);
+    }
+
+    /**
+     * Scopes the org's Sessions page to what the caller is actually allowed
+     * to see: an owner sees every session in the org, an agency manager only
+     * those under their own agency, anyone else only their own. callerSellerId
+     * is caller-supplied (same trust model as the sellerId filter on findAll
+     * above — there's no caller identity in the Kernel access token itself to
+     * resolve this from, see AuthServiceAdapter), but the ROLE used to decide
+     * the scope is always looked up fresh from our own sellers table, never
+     * trusted from the request.
+     */
+    @Override
+    public Flux<SessionResponse> findAllScopedForCaller(UUID organizationId, UUID callerSellerId) {
+        return sellerLocalService.findById(callerSellerId)
+                .filter(seller -> organizationId.equals(seller.getOrganizationId()))
+                .flatMapMany(seller -> {
+                    String role = seller.getRole();
+                    if (SellerRole.OWNER.name().equals(role)) {
+                        return sessionServicePort.findAll(null, null, organizationId, null);
+                    }
+                    if (SellerRole.AGENCY_MANAGER.name().equals(role)) {
+                        return sellerAgencyAssignmentRepository.findBySellerId(callerSellerId)
+                                .flatMapMany(own -> sessionServicePort.findAll(null, null, organizationId, own.getAgencyId()));
+                    }
+                    // SELLER / POS_SELLER: only their own sessions.
+                    return sessionServicePort.findAll(null, callerSellerId, organizationId, null);
+                });
     }
 
     @Override

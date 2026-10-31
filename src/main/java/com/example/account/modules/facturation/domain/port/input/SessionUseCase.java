@@ -20,6 +20,7 @@ public interface SessionUseCase {
     Mono<SessionResponse> reopen(UUID id);
     Mono<SessionResponse> findById(UUID id);
     Flux<SessionResponse> findAll(UUID salesPointId, UUID sellerId, UUID organizationId, UUID agencyId);
+    Flux<SessionResponse> findAllScopedForCaller(UUID organizationId, UUID callerSellerId);
     Mono<SessionResponse> update(UUID id, UpdateSessionRequest request);
     Mono<Void> delete(UUID id);
 }

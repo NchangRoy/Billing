@@ -1,0 +1,71 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1-add-quotation-proposals-and-product-settings-permissions
+      author: dev
+      comments: >
+        Quotation Proposals and Product Settings (UOM/Categories/Products) have no
+        equivalent flag in Kernel's own UIPermissionsRequest/Response schema, which is
+        why UI permissions are moving fully local to Billing (see changeSet below) —
+        these are the two new permission groups that prompted the move.
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - columnExists:
+                tableName: ui_permissions
+                columnName: sales_quotation_proposals
+      changes:
+        - addColumn:
+            tableName: ui_permissions
+            columns:
+              - column:
+                  name: sales_quotation_proposals
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: section_product_settings
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: product_settings_uom
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: product_settings_categories
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: product_settings_products
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 2-enforce-one-permissions-row-per-seller
+      author: dev
+      comments: >
+        ui_permissions becomes the authoritative, Billing-local store for per-seller
+        UI permissions (previously synced with Kernel's sales-core, which doesn't
+        support the two groups above). Clears leftover zero-UUID test rows from
+        earlier local-only experiments before enforcing one row per seller.
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - indexExists:
+                tableName: ui_permissions
+                indexName: ui_permissions_seller_id_key
+      changes:
+        - sql:
+            sql: DELETE FROM ui_permissions WHERE seller_id = '00000000-0000-0000-0000-000000000000'
+        - addUniqueConstraint:
+            tableName: ui_permissions
+            columnNames: seller_id
+            constraintName: ui_permissions_seller_id_key

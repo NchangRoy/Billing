@@ -51,4 +51,18 @@ public class SettingController {
             @Valid @RequestBody UpdateSequenceSettingRequest request) {
         return settingService.updateSequenceSetting(organizationId, typeNumerotation, request);
     }
+
+    @GetMapping("/organization/{organizationId}/product-numbering")
+    @Operation(summary = "Get product numbering configuration (category/unit/VAT segments)")
+    public Mono<SettingResponse> getProductNumberingSettings(@PathVariable UUID organizationId) {
+        return settingService.getProductNumberingSettings(organizationId);
+    }
+
+    @PutMapping("/organization/{organizationId}/product-numbering")
+    @Operation(summary = "Update product numbering configuration")
+    public Mono<SettingResponse> updateProductNumberingSettings(
+            @PathVariable UUID organizationId,
+            @Valid @RequestBody UpdateSequenceSettingRequest request) {
+        return settingService.updateProductNumberingSettings(organizationId, request);
+    }
 }

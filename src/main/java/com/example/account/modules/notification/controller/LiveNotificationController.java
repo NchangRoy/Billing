@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.GetMapping;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
@@ -36,6 +38,12 @@ public class LiveNotificationController {
     @Operation(summary = "Create a notification for the caller's organization: contacts + flush delay")
     public Mono<LiveNotificationResponse> create(@Valid @RequestBody CreateLiveNotificationRequest request) {
         return liveNotificationUseCase.create(request);
+    }
+
+    @GetMapping
+    @Operation(summary = "List notification rules (one per channel, typically) for the caller's organization")
+    public Flux<LiveNotificationResponse> list() {
+        return liveNotificationUseCase.listForOrganization();
     }
 
     @PutMapping("/{id}/delay")

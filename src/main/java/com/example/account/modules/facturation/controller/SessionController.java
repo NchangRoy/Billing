@@ -92,6 +92,13 @@ public class SessionController {
         return sessionUseCase.findAll(salesPointId, sellerId, organizationId, agencyId);
     }
 
+    @GetMapping("/scoped")
+    @Operation(summary = "List sessions visible to this caller",
+            description = "Scopé par rôle : un propriétaire voit tout, un responsable d'agence voit son agence, les autres ne voient que leurs propres sessions.")
+    public Flux<SessionResponse> getAllScoped(@RequestParam UUID organizationId, @RequestParam UUID sellerId) {
+        return sessionUseCase.findAllScopedForCaller(organizationId, sellerId);
+    }
+
     @PutMapping("/{id}")
     @Operation(summary = "Update a session")
     public Mono<SessionResponse> update(@PathVariable UUID id, @RequestBody UpdateSessionRequest request) {
