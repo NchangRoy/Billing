@@ -160,7 +160,11 @@ public class LiveNotificationService {
         return !Instant.now().isBefore(dueAt);
     }
 
-    /** No Kernel/sales-core call here at all — everything needed is already in the snapshot. */
+    /**
+     * No Kernel/sales-core call here at all — everything needed, including the
+     * org name, is already in the snapshot (resolved at enqueue time, when a
+     * caller token exists — see FactureUseCaseImpl.enqueueLiveNotification).
+     */
     private Mono<Void> flushOne(LiveNotification ln) {
         List<UUID> contactIds = java.util.Arrays.asList(ln.getContactIds());
         boolean isTelegram = ln.getChannel() == NotificationChannel.TELEGRAM;
@@ -170,7 +174,13 @@ public class LiveNotificationService {
                 .collectList()
                 .flatMap(recipients -> {
                     if (recipients.isEmpty()) {
-                        return clearQueue(ln);
+                        // Don't clearQueue here: that would stamp lastSentAt and wipe the
+                        // pending invoices as if they'd been delivered. Leave them queued
+                        // so the next tick retries once a contact is actually resolvable
+                        // (e.g. a dangling/removed contactId, or nobody linked yet).
+                        log.warn("Live notification {} ({} channel) has {} pending invoice(s) but no resolvable recipients (contactIds={}) — leaving queued, not clearing.",
+                                ln.getId(), ln.getChannel(), ln.getPendingInvoices().size(), contactIds);
+                        return Mono.empty();
                     }
                     NotificationPort port = isTelegram ? telegramNotificationPort : emailNotificationPort;
                     return port.send(buildMessage(ln.getPendingInvoices()), recipients)
@@ -195,17 +205,24 @@ public class LiveNotificationService {
     }
 
     private String buildMessage(List<PendingInvoiceSummary> invoices) {
+        String orgName = invoices.stream()
+                .map(PendingInvoiceSummary::getOrganizationName)
+                .filter(n -> n != null && !n.isBlank())
+                .findFirst()
+                .orElse(null);
         StringBuilder sb = new StringBuilder();
-        sb.append("📋 ").append(invoices.size())
-                .append(invoices.size() == 1 ? " new invoice" : " new invoices").append("\n");
-        for (PendingInvoiceSummary invoice : invoices) {
-            sb.append("• ")
-                    .append(invoice.getNumeroFacture() != null ? invoice.getNumeroFacture() : invoice.getId())
-                    .append(" — ")
+        if (orgName != null) {
+            sb.append("🏢 ").append(orgName).append("\n\n");
+        }
+        for (int i = 0; i < invoices.size(); i++) {
+            PendingInvoiceSummary invoice = invoices.get(i);
+            sb.append(invoice.getNumeroFacture() != null ? invoice.getNumeroFacture() : invoice.getId()).append("\n")
                     .append(invoice.getMontant())
-                    .append(invoice.getDevise() != null ? " " + invoice.getDevise() : "")
-                    .append(invoice.getNomClient() != null ? " — " + invoice.getNomClient() : "")
-                    .append("\n");
+                    .append(invoice.getDevise() != null ? " " + invoice.getDevise() : "").append("\n")
+                    .append(invoice.getNomClient() != null ? invoice.getNomClient() : "—").append("\n");
+            if (i < invoices.size() - 1) {
+                sb.append("\n");
+            }
         }
         return sb.toString().trim();
     }

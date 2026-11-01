@@ -10,6 +10,7 @@ import com.example.account.modules.facturation.model.entity.BonAchat;
 import com.example.account.modules.facturation.model.enums.StatutBonAchat;
 import com.example.account.modules.facturation.repository.BonAchatRepository;
 import com.example.account.modules.tiers.domain.port.input.FournisseurUseCase;
+import com.example.account.modules.tiers.domain.port.input.ThirdPartyContactUseCase;
 import com.example.account.modules.facturation.dto.request.AssignDocPermissionRequest;
 import com.example.account.modules.facturation.model.enums.DocPermissionLevel;
 import com.example.account.modules.facturation.model.enums.DocType;
@@ -32,6 +33,7 @@ public class BonAchatService {
     private final BonAchatMapper bonAchatMapper;
     private final R2dbcEntityTemplate entityTemplate;
     private final FournisseurUseCase fournisseurUseCase;
+    private final ThirdPartyContactUseCase thirdPartyContactUseCase;
     private final EmailService emailService;
     private final DocPermissionService docPermissionService;
 
@@ -68,7 +70,8 @@ public class BonAchatService {
             bonAchat.setIdBonAchat(UUID.randomUUID());
         }
 
-        return entityTemplate.insert(bonAchat)
+        return withActorId(bonAchat)
+                .flatMap(entityTemplate::insert)
                 .flatMap(savedBonAchat -> {
                     log.debug("Bon d'achat sauvegardé avec succès: {}", savedBonAchat.getIdBonAchat());
                     return grantOwnerPermission(
@@ -76,6 +79,24 @@ public class BonAchatService {
                             savedBonAchat.getIdBonAchat(),
                             bonAchatMapper.toResponse(savedBonAchat));
                 });
+    }
+
+    /**
+     * Stamps the fournisseur's Kernel actor id onto the bon d'achat at
+     * creation time — see DevisUseCaseImpl.withActorId for the full
+     * reasoning (client portal "my purchase orders" list).
+     */
+    private Mono<BonAchat> withActorId(BonAchat bonAchat) {
+        if (bonAchat.getIdFournisseur() == null) {
+            return Mono.just(bonAchat);
+        }
+        return thirdPartyContactUseCase.resolveActorId(bonAchat.getIdFournisseur())
+                .doOnNext(bonAchat::setActorId)
+                .onErrorResume(e -> {
+                    log.warn("Could not resolve actor id for fournisseur {} (continuing without it): {}", bonAchat.getIdFournisseur(), e.getMessage());
+                    return Mono.empty();
+                })
+                .thenReturn(bonAchat);
     }
 
     /**
@@ -185,7 +206,7 @@ public class BonAchatService {
      * correct ordering).
      */
     @Transactional
-    public Mono<Void> sendToPortal(UUID id) {
+    public Mono<Void> sendToPortal(UUID id, com.example.account.modules.facturation.dto.request.ShareDocumentRequest request) {
         log.info("Envoi du bon d'achat {} vers le portail fournisseur", id);
 
         return bonAchatRepository.findById(id)
@@ -195,11 +216,19 @@ public class BonAchatService {
                         log.info("Bon d'achat {} déjà envoyé (statut: {}), envoi ignoré", id, bonAchat.getStatut());
                         return Mono.empty();
                     }
-                    if (bonAchat.getSupplierEmail() == null || bonAchat.getSupplierEmail().isBlank()) {
+                    // Lets the "Send to Contact" picker target any address-book
+                    // contact instead of the bon d'achat's own stored
+                    // supplierEmail — falls back to that stored email when no
+                    // contact was picked.
+                    String targetEmail = (request != null && request.getContactEmail() != null && !request.getContactEmail().isBlank())
+                            ? request.getContactEmail() : bonAchat.getSupplierEmail();
+                    String targetName = (request != null && request.getContactName() != null && !request.getContactName().isBlank())
+                            ? request.getContactName() : bonAchat.getNomFournisseur();
+                    if (targetEmail == null || targetEmail.isBlank()) {
                         return Mono.error(new IllegalStateException("Le fournisseur n'a pas d'adresse email renseignée."));
                     }
                     return fournisseurUseCase.ensureFournisseurPortalAccess(
-                                    bonAchat.getIdFournisseur(), bonAchat.getSupplierEmail(), bonAchat.getNomFournisseur())
+                                    bonAchat.getIdFournisseur(), targetEmail, targetName)
                             // Kernel's ensure-portal-access endpoint isn't deployed yet (404) — this
                             // is a bootstrap-only nicety anyway (grants login to brand-new fournisseurs),
                             // so a failure here shouldn't block the actual notification email.
@@ -208,7 +237,7 @@ public class BonAchatService {
                                 return Mono.empty();
                             })
                             .then(emailService.sendPortalDocumentNotification(
-                                    bonAchat.getSupplierEmail(), bonAchat.getNomFournisseur(),
+                                    targetEmail, targetName,
                                     "Bon de commande", bonAchat.getNumeroBonAchat(),
                                     portalFrontendUrl + "/portal/login"))
                             .then(Mono.defer(() -> {

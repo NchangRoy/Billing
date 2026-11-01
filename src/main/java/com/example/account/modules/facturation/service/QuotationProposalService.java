@@ -13,6 +13,7 @@ import com.example.account.modules.facturation.model.enums.StatutQuotationPropos
 import com.example.account.modules.facturation.repository.CustomerAssignmentRepository;
 import com.example.account.modules.facturation.repository.QuotationProposalRepository;
 import com.example.account.modules.facturation.repository.SellerAgencyAssignmentRepository;
+import com.example.account.modules.tiers.domain.port.input.ThirdPartyContactUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
@@ -42,6 +43,13 @@ public class QuotationProposalService {
     private final com.example.account.modules.facturation.service.SellerLocalService sellerLocalService;
     private final SellerAgencyAssignmentRepository sellerAgencyAssignmentRepository;
     private final CustomerAssignmentRepository customerAssignmentRepository;
+    private final ThirdPartyContactUseCase thirdPartyContactUseCase;
+
+    // Same reasoning as KernelClientAdapter.ENRICHMENT_CONCURRENCY — capping
+    // how many actorId resolutions fire against Kernel at once per scoping
+    // request, so a seller/agency with many assigned clients doesn't burst
+    // kernel-core with simultaneous connections.
+    private static final int ACTOR_RESOLUTION_CONCURRENCY = 3;
 
     @Transactional
     public Mono<QuotationProposalResponse> create(QuotationProposalCreateRequest request) {
@@ -69,7 +77,27 @@ public class QuotationProposalService {
                 .updatedAt(now)
                 .build();
 
-        return entityTemplate.insert(proposal).map(this::toResponse);
+        return withActorId(proposal)
+                .flatMap(entityTemplate::insert)
+                .map(this::toResponse);
+    }
+
+    /**
+     * Stamps the client's Kernel actor id onto the proposal at creation time
+     * so seller-assignment scoping can join on it instead of idClient — see
+     * DevisUseCaseImpl.withActorId for the full reasoning.
+     */
+    private Mono<QuotationProposal> withActorId(QuotationProposal proposal) {
+        if (proposal.getIdClient() == null) {
+            return Mono.just(proposal);
+        }
+        return thirdPartyContactUseCase.resolveActorId(proposal.getIdClient())
+                .doOnNext(proposal::setActorId)
+                .onErrorResume(e -> {
+                    log.warn("Could not resolve actor id for client {} (continuing without it): {}", proposal.getIdClient(), e.getMessage());
+                    return Mono.empty();
+                })
+                .thenReturn(proposal);
     }
 
     @Transactional(readOnly = true)
@@ -127,10 +155,16 @@ public class QuotationProposalService {
         }
         return customerAssignmentRepository.findBySellerIdInAndOrganizationId(sellerIds, organizationId)
                 .map(CustomerAssignment::getClientId)
+                .distinct()
+                .flatMap(clientId -> thirdPartyContactUseCase.resolveActorId(clientId)
+                        .onErrorResume(e -> {
+                            log.warn("Could not resolve actor id for client {} (skipping): {}", clientId, e.getMessage());
+                            return Mono.empty();
+                        }), ACTOR_RESOLUTION_CONCURRENCY)
                 .collectList()
-                .flatMapMany(clientIds -> clientIds.isEmpty()
+                .flatMapMany(actorIds -> actorIds.isEmpty()
                         ? Flux.empty()
-                        : repository.findByIdClientInAndOrganizationId(clientIds, organizationId).map(this::toResponse));
+                        : repository.findByActorIdInAndOrganizationId(actorIds, organizationId).map(this::toResponse));
     }
 
     @Transactional(readOnly = true)

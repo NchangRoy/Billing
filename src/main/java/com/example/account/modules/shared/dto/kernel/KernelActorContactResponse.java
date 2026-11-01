@@ -12,6 +12,8 @@ import java.util.UUID;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class KernelActorContactResponse {
     private UUID id;
+    private String firstName;
+    private String lastName;
     private String email;
     private String secondaryEmail;
     private String phoneNumber;

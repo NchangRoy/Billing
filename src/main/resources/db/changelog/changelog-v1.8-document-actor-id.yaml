@@ -1,0 +1,201 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1-add-actor-id-to-devis
+      author: dev
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - columnExists:
+                tableName: devis
+                columnName: actor_id
+      comments: >
+        The Kernel actor id of the client's partyRef (resolved via
+        GET /api/customers/{idClient} -> partyId at creation time), stored
+        directly on the document so the client portal can list "my
+        quotations" with one indexed query instead of brute-force scanning
+        every organization in the tenant to re-derive which client ids
+        belong to the logged-in actor on every request.
+      changes:
+        - addColumn:
+            tableName: devis
+            columns:
+              - column:
+                  name: actor_id
+                  type: uuid
+                  constraints:
+                    nullable: true
+        - createIndex:
+            indexName: idx_devis_actor_id
+            tableName: devis
+            columns:
+              - column:
+                  name: actor_id
+
+  - changeSet:
+      id: 2-add-actor-id-to-factures-proforma
+      author: dev
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - columnExists:
+                tableName: factures_proforma
+                columnName: actor_id
+      changes:
+        - addColumn:
+            tableName: factures_proforma
+            columns:
+              - column:
+                  name: actor_id
+                  type: uuid
+                  constraints:
+                    nullable: true
+        - createIndex:
+            indexName: idx_factures_proforma_actor_id
+            tableName: factures_proforma
+            columns:
+              - column:
+                  name: actor_id
+
+  - changeSet:
+      id: 3-add-actor-id-to-bons-achat
+      author: dev
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - columnExists:
+                tableName: bons_achat
+                columnName: actor_id
+      comments: >
+        Fournisseur side — resolved via GET /api/fournisseurs/{idFournisseur}
+        (falling back to the generic /api/third-parties/{id}) -> partyId.
+      changes:
+        - addColumn:
+            tableName: bons_achat
+            columns:
+              - column:
+                  name: actor_id
+                  type: uuid
+                  constraints:
+                    nullable: true
+        - createIndex:
+            indexName: idx_bons_achat_actor_id
+            tableName: bons_achat
+            columns:
+              - column:
+                  name: actor_id
+
+  - changeSet:
+      id: 4-create-facture-actor-index
+      author: dev
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: facture_actor_index
+      comments: >
+        Facture (client invoice) and FactureFournisseur (supplier invoice)
+        are NOT local tables — FactureServiceAdapter/FactureFournisseurServiceAdapter
+        delegate all CRUD to a real /api/factures(-fournisseur) REST API
+        hosted on kernel-core.yowyob.com's own sales-core module, which
+        Billing doesn't own the schema of. This small local table is a
+        Billing-side index only: factureId -> the client/fournisseur actor
+        id, populated at creation time, so the client portal can find "my
+        invoices" without a cross-service join. One shared table for both
+        document types since factureId is a UUID regardless of which one it
+        came from (and the old local factures/factures_fournisseur tables —
+        dead schema predating the sales-core delegation — are being dropped
+        of their stale rows separately, not reused here).
+      changes:
+        - createTable:
+            tableName: facture_actor_index
+            columns:
+              - column:
+                  name: facture_id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: actor_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+        - createIndex:
+            indexName: idx_facture_actor_index_actor_id
+            tableName: facture_actor_index
+            columns:
+              - column:
+                  name: actor_id
+
+  - changeSet:
+      id: 5-delete-existing-documents-predating-actor-id
+      author: dev
+      comments: >
+        Existing test/dev documents predate actor_id and were agreed to be
+        thrown away rather than backfilled (no production client-portal
+        traffic to preserve at this point).
+      changes:
+        - sql:
+            sql: >
+              DELETE FROM paiements;
+              DELETE FROM devis;
+              DELETE FROM factures_proforma;
+              DELETE FROM bons_achat;
+
+  - changeSet:
+      id: 6-add-actor-id-to-quotation-proposals
+      author: dev
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - columnExists:
+                tableName: quotation_proposals
+                columnName: actor_id
+      comments: >
+        Lets seller-assignment scoping (QuotationProposalService.
+        scopedProposalsFor) join on the client's Kernel actor id instead of
+        idClient — resolved once at creation time, same as the other
+        document types. Existing proposals are simply left with a null
+        actor_id (not backfilled/deleted) — they won't surface in seller-
+        scoped actor-id queries until re-created, but nothing is lost.
+      changes:
+        - addColumn:
+            tableName: quotation_proposals
+            columns:
+              - column:
+                  name: actor_id
+                  type: uuid
+                  constraints:
+                    nullable: true
+        - createIndex:
+            indexName: idx_quotation_proposals_actor_id
+            tableName: quotation_proposals
+            columns:
+              - column:
+                  name: actor_id
+
+  - changeSet:
+      id: 7-contacts-chat-id-not-unique
+      author: dev
+      preConditions:
+        - onFail: MARK_RAN
+        - indexExists:
+            tableName: contacts
+            indexName: idx_contacts_chat_id
+      comments: >
+        Same Telegram account (chatId) must be linkable to one contact per
+        org — a person can be a notification contact for several
+        organizations at once, and ContactService now reuses an already-known
+        chatId across orgs instead of making them re-click a Telegram deep
+        link that won't fire a second /start. The old unique index made that
+        impossible (one chatId could only ever back a single contact row).
+      changes:
+        - dropIndex:
+            tableName: contacts
+            indexName: idx_contacts_chat_id
+        - createIndex:
+            indexName: idx_contacts_chat_id
+            tableName: contacts
+            columns:
+              - column:
+                  name: chat_id

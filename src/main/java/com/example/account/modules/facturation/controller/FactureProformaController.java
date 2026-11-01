@@ -90,4 +90,12 @@ public class FactureProformaController {
     public Flux<ProformaInvoiceResponse> getProformasBySellerId(@PathVariable UUID sellerId) {
         return proformaService.getProformasBySellerId(sellerId);
     }
+
+    @PostMapping("/{id}/send-to-portal")
+    @Operation(summary = "Envoyer la facture proforma au client (ou à un contact choisi) via le portail (login requis)")
+    public Mono<ResponseEntity<Void>> sendToPortal(@PathVariable UUID id,
+                                                     @RequestBody(required = false) com.example.account.modules.facturation.dto.request.ShareDocumentRequest request) {
+        return proformaService.sendToPortal(id, request)
+                .thenReturn(ResponseEntity.ok().build());
+    }
 }

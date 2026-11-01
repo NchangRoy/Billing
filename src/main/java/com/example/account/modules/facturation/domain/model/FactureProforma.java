@@ -61,4 +61,5 @@ public class FactureProforma {
     private UUID organizationId;
     private UUID agencyId;
     private UUID createdBy;
+    private UUID actorId;
 }

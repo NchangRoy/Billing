@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 import com.example.account.modules.facturation.dto.request.ExternalRequest.EmailRequest;
+import com.example.account.modules.facturation.dto.request.ShareDocumentRequest;
 
 public interface DevisUseCase {
     Mono<DevisResponse> createDevis(DevisCreateRequest request);
@@ -24,7 +25,7 @@ public interface DevisUseCase {
     Mono<Void> accepterDevis(UUID devisId);
     Mono<Void> refuserDevis(UUID devisId);
     Mono<Void> sendDevisAsEmail(EmailRequest emailRequest);
-    Mono<Void> sendToPortal(UUID devisId);
+    Mono<Void> sendToPortal(UUID devisId, ShareDocumentRequest request);
     Flux<SellerAuthResponse> enrichDevis(UUID orgId);
     Flux<DevisResponse> getDevisByOrganizationId(UUID organizationId);
     Flux<DevisResponse> getDevisByAgencyId(UUID agencyId);

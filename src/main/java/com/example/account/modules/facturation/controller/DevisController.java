@@ -121,10 +121,11 @@ public Mono<Void> sendQuotationEmail(@RequestBody EmailRequest request) {
     }
 
     @PostMapping("/{devisId}/send-to-portal")
-    @Operation(summary = "Envoyer le devis au client via le portail (login requis)")
-    public Mono<ResponseEntity<Void>> sendToPortal(@PathVariable UUID devisId) {
+    @Operation(summary = "Envoyer le devis au client (ou à un contact choisi) via le portail (login requis)")
+    public Mono<ResponseEntity<Void>> sendToPortal(@PathVariable UUID devisId,
+                                                     @RequestBody(required = false) com.example.account.modules.facturation.dto.request.ShareDocumentRequest request) {
         log.info("Requête d'envoi du devis vers le portail: {}", devisId);
-        return devisService.sendToPortal(devisId)
+        return devisService.sendToPortal(devisId, request)
                 .thenReturn(ResponseEntity.ok().build());
     }
 

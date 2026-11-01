@@ -1776,3 +1776,7 @@ databaseChangeLog:
       file: changelog-v1.7-local-sessions.yaml
       relativeToChangelogFile: true
 
+  - include:
+      file: changelog-v1.8-document-actor-id.yaml
+      relativeToChangelogFile: true
+

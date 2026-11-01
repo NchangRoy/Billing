@@ -19,6 +19,7 @@ import com.example.account.modules.facturation.model.enums.StatutFactureFourniss
 import com.example.account.modules.facturation.domain.port.output.AccountingServicePort;
 import com.example.account.modules.facturation.domain.port.output.FactureFournisseurServicePort;
 import com.example.account.modules.tiers.domain.port.input.FournisseurUseCase;
+import com.example.account.modules.tiers.domain.port.input.ThirdPartyContactUseCase;
 
 /**
  * FactureFournisseur is now persisted in sales-core; this service is a thin
@@ -35,6 +36,8 @@ public class FactureFournisseurService {
     private final DocPermissionService docPermissionService;
     private final AccountingServicePort accountingServicePort;
     private final FournisseurUseCase fournisseurUseCase;
+    private final ThirdPartyContactUseCase thirdPartyContactUseCase;
+    private final FactureActorIndexService factureActorIndexService;
     private final EmailService emailService;
 
     @Value("${client-portal.frontend-url}")
@@ -72,7 +75,26 @@ public class FactureFournisseurService {
     public Mono<FactureFournisseurResponse> createFacture(FactureFournisseurCreateRequest dto) {
         log.info("Création d'une nouvelle facture fournisseur");
         return factureFournisseurServicePort.createFacture(dto)
-                .flatMap(saved -> grantOwnerPermission(saved.getCreatedBy(), saved.getIdFactureFournisseur(), saved));
+                .flatMap(saved -> recordActorIndex(saved)
+                        .then(grantOwnerPermission(saved.getCreatedBy(), saved.getIdFactureFournisseur(), saved)));
+    }
+
+    /**
+     * FactureFournisseur isn't a local table (see FactureActorIndexEntity) —
+     * this populates Billing's own small factureId->actorId index so the
+     * client portal can find "my supplier invoices" without a cross-service
+     * join.
+     */
+    private Mono<Void> recordActorIndex(FactureFournisseurResponse saved) {
+        if (saved.getIdFactureFournisseur() == null || saved.getIdFournisseur() == null) {
+            return Mono.empty();
+        }
+        return thirdPartyContactUseCase.resolveActorId(saved.getIdFournisseur())
+                .flatMap(actorId -> factureActorIndexService.record(saved.getIdFactureFournisseur(), actorId))
+                .onErrorResume(e -> {
+                    log.warn("Could not resolve actor id for fournisseur {} (continuing without it): {}", saved.getIdFournisseur(), e.getMessage());
+                    return Mono.empty();
+                });
     }
 
     @Transactional(readOnly = true)
@@ -130,7 +152,7 @@ public class FactureFournisseurService {
      * out, so a failure here never leaves the invoice falsely marked sent.
      */
     @Transactional
-    public Mono<Void> sendToPortal(UUID id) {
+    public Mono<Void> sendToPortal(UUID id, com.example.account.modules.facturation.dto.request.ShareDocumentRequest request) {
         log.info("Envoi de la facture fournisseur {} vers le portail fournisseur", id);
         return factureFournisseurServicePort.findById(id)
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("Facture fournisseur non trouvée: " + id)))
@@ -139,11 +161,19 @@ public class FactureFournisseurService {
                         log.info("Facture fournisseur {} déjà envoyée (statut: {}), envoi ignoré", id, facture.getStatut());
                         return Mono.empty();
                     }
-                    if (facture.getEmailFournisseur() == null || facture.getEmailFournisseur().isBlank()) {
+                    // Lets the "Send to Contact" picker target any address-book
+                    // contact instead of the facture's own stored
+                    // emailFournisseur — falls back to that stored email when
+                    // no contact was picked.
+                    String targetEmail = (request != null && request.getContactEmail() != null && !request.getContactEmail().isBlank())
+                            ? request.getContactEmail() : facture.getEmailFournisseur();
+                    String targetName = (request != null && request.getContactName() != null && !request.getContactName().isBlank())
+                            ? request.getContactName() : facture.getNomFournisseur();
+                    if (targetEmail == null || targetEmail.isBlank()) {
                         return Mono.error(new IllegalStateException("Le fournisseur n'a pas d'adresse email renseignée."));
                     }
                     return fournisseurUseCase.ensureFournisseurPortalAccess(
-                                    facture.getIdFournisseur(), facture.getEmailFournisseur(), facture.getNomFournisseur())
+                                    facture.getIdFournisseur(), targetEmail, targetName)
                             // Kernel's ensure-portal-access endpoint isn't deployed yet (404) — this
                             // is a bootstrap-only nicety anyway (grants login to brand-new fournisseurs),
                             // so a failure here shouldn't block the actual notification email.
@@ -152,7 +182,7 @@ public class FactureFournisseurService {
                                 return Mono.empty();
                             })
                             .then(emailService.sendPortalDocumentNotification(
-                                    facture.getEmailFournisseur(), facture.getNomFournisseur(),
+                                    targetEmail, targetName,
                                     "Facture fournisseur", facture.getNumeroFacture(),
                                     portalFrontendUrl + "/portal/login"))
                             .then(Mono.defer(() -> factureFournisseurServicePort.updateFacture(id, toSentUpdateRequest(facture))));

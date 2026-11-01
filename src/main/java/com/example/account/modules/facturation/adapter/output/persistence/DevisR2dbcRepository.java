@@ -29,4 +29,6 @@ public interface DevisR2dbcRepository extends R2dbcRepository<DevisPersistenceEn
     Flux<DevisPersistenceEntity> findByAgencyId(UUID agencyId);
 
     Flux<DevisPersistenceEntity> findByCreatedBy(UUID createdBy);
+
+    Flux<DevisPersistenceEntity> findByActorId(UUID actorId);
 }

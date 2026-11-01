@@ -22,19 +22,25 @@ import com.example.account.modules.paymentgateway.domain.port.output.PaymentGate
 import com.example.account.modules.paymentgateway.dto.enums.PaymentMethodType;
 import com.example.account.modules.paymentgateway.dto.enums.PaymentProvider;
 import com.example.account.modules.paymentgateway.dto.request.PaymentOrderInitiateRequest;
+import com.example.account.modules.shared.dto.kernel.KernelApiResponse;
+import com.example.account.modules.shared.dto.kernel.KernelOrganizationResponse;
 import com.example.account.modules.tiers.domain.port.input.ClientUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -52,8 +58,12 @@ public class FactureUseCaseImpl implements FactureUseCase {
     private final ProductExternalService productExternalService;
     private final DocPermissionService docPermissionService;
     private final ClientUseCase clientUseCase;
+    private final com.example.account.modules.tiers.domain.port.input.ThirdPartyContactUseCase thirdPartyContactUseCase;
+    private final com.example.account.modules.facturation.service.FactureActorIndexService factureActorIndexService;
     private final LiveNotificationUseCase liveNotificationUseCase;
     private final PaymentGatewayPort paymentGatewayPort;
+    @Qualifier("kernelWebClient")
+    private final WebClient kernelWebClient;
 
     @Value("${client-portal.frontend-url}")
     private String portalFrontendUrl;
@@ -87,8 +97,32 @@ public class FactureUseCaseImpl implements FactureUseCase {
                         if (savedFacture.getIdFacture() != null) docId = UUID.fromString(savedFacture.getIdFacture());
                     } catch (IllegalArgumentException ignored) {}
                     final UUID factureId = docId;
-                    return enqueueLiveNotification(savedFacture, factureId)
+                    return recordActorIndex(savedFacture, factureId)
+                            .then(enqueueLiveNotification(savedFacture, factureId))
                             .then(grantOwnerPermission(savedFacture.getCreatedBy(), factureId, savedFacture));
+                });
+    }
+
+    /**
+     * Facture isn't a local table (see FactureActorIndexEntity) — this
+     * populates Billing's own small factureId->actorId index so the client
+     * portal can find "my invoices" without a cross-service join.
+     */
+    private Mono<Void> recordActorIndex(FactureResponse savedFacture, UUID factureId) {
+        if (factureId == null || savedFacture.getIdClient() == null) {
+            return Mono.empty();
+        }
+        UUID idClient;
+        try {
+            idClient = UUID.fromString(savedFacture.getIdClient());
+        } catch (IllegalArgumentException e) {
+            return Mono.empty();
+        }
+        return thirdPartyContactUseCase.resolveActorId(idClient)
+                .flatMap(actorId -> factureActorIndexService.record(factureId, actorId))
+                .onErrorResume(e -> {
+                    log.warn("Could not resolve actor id for client {} (continuing without it): {}", idClient, e.getMessage());
+                    return Mono.empty();
                 });
     }
 
@@ -102,18 +136,47 @@ public class FactureUseCaseImpl implements FactureUseCase {
     private Mono<Void> enqueueLiveNotification(FactureResponse savedFacture, UUID factureId) {
         UUID organizationId = savedFacture.getOrganizationId();
         if (organizationId == null || factureId == null) return Mono.empty();
-        PendingInvoiceSummary invoice = PendingInvoiceSummary.builder()
-                .id(factureId)
-                .numeroFacture(savedFacture.getNumeroFacture())
-                .montant(savedFacture.getMontantTTC() != null ? savedFacture.getMontantTTC() : savedFacture.getMontantTotal())
-                .devise(savedFacture.getDevise())
-                .nomClient(savedFacture.getNomClient())
-                .build();
-        return liveNotificationUseCase.enqueueInvoice(organizationId, invoice)
+        return resolveOrganizationName(organizationId)
+                .defaultIfEmpty("")
+                .flatMap(orgName -> {
+                    PendingInvoiceSummary invoice = PendingInvoiceSummary.builder()
+                            .id(factureId)
+                            .numeroFacture(savedFacture.getNumeroFacture())
+                            .montant(savedFacture.getMontantTTC() != null ? savedFacture.getMontantTTC() : savedFacture.getMontantTotal())
+                            .devise(savedFacture.getDevise())
+                            .nomClient(savedFacture.getNomClient())
+                            .organizationName(orgName.isBlank() ? null : orgName)
+                            .build();
+                    return liveNotificationUseCase.enqueueInvoice(organizationId, invoice);
+                })
                 .onErrorResume(e -> {
                     log.warn("Failed to enqueue live notification for facture {}: {}", factureId, e.getMessage());
                     return Mono.empty();
                 });
+    }
+
+    private static final ParameterizedTypeReference<KernelApiResponse<List<KernelOrganizationResponse>>> KERNEL_ORG_LIST_TYPE =
+            new ParameterizedTypeReference<>() {};
+
+    /**
+     * Resolved here (within the real authenticated request creating the
+     * invoice) rather than at flush time — the live-notification scheduler
+     * tick has no caller token, so a Kernel call there would always fail. See
+     * PendingInvoiceSummary: the whole point of snapshotting is to capture
+     * whatever needs a token now, while one exists.
+     */
+    private Mono<String> resolveOrganizationName(UUID organizationId) {
+        return kernelWebClient.get()
+                .uri("/api/organizations")
+                .retrieve()
+                .bodyToMono(KERNEL_ORG_LIST_TYPE)
+                .mapNotNull(KernelApiResponse::getData)
+                .flatMapMany(Flux::fromIterable)
+                .filter(org -> organizationId.equals(org.getId()))
+                .next()
+                .map(org -> org.getDisplayName() != null ? org.getDisplayName()
+                        : org.getShortName() != null ? org.getShortName() : org.getLegalName())
+                .onErrorResume(e -> Mono.empty());
     }
 
     @Override
@@ -304,7 +367,7 @@ public class FactureUseCaseImpl implements FactureUseCase {
      */
     @Override
     @Transactional
-    public Mono<Void> sendToPortal(UUID factureId) {
+    public Mono<Void> sendToPortal(UUID factureId, com.example.account.modules.facturation.dto.request.ShareDocumentRequest request) {
         log.info("Envoi de la facture {} vers le portail client", factureId);
         return factureServicePort.findById(factureId)
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("Facture non trouvée: " + factureId)))
@@ -313,11 +376,18 @@ public class FactureUseCaseImpl implements FactureUseCase {
                         log.info("Facture {} déjà envoyée (état: {}), envoi ignoré", factureId, facture.getEtat());
                         return Mono.empty();
                     }
-                    if (facture.getEmailClient() == null || facture.getEmailClient().isBlank()) {
+                    // Lets the "Send to Contact" picker target any address-book
+                    // contact instead of the facture's own stored emailClient —
+                    // falls back to that stored email when no contact was picked.
+                    String targetEmail = (request != null && request.getContactEmail() != null && !request.getContactEmail().isBlank())
+                            ? request.getContactEmail() : facture.getEmailClient();
+                    String targetName = (request != null && request.getContactName() != null && !request.getContactName().isBlank())
+                            ? request.getContactName() : facture.getNomClient();
+                    if (targetEmail == null || targetEmail.isBlank()) {
                         return Mono.error(new IllegalStateException("Le client n'a pas d'adresse email renseignée."));
                     }
                     return maybeInitiatePaymentRequest(facture)
-                            .then(clientUseCase.ensureClientPortalAccess(parseUuid(facture.getIdClient()), facture.getEmailClient(), facture.getNomClient())
+                            .then(clientUseCase.ensureClientPortalAccess(parseUuid(facture.getIdClient()), targetEmail, targetName)
                                     // Kernel's ensure-portal-access endpoint isn't deployed yet (404) — this
                                     // is a bootstrap-only nicety anyway (grants login to brand-new clients),
                                     // so a failure here shouldn't block the actual notification email.
@@ -326,7 +396,7 @@ public class FactureUseCaseImpl implements FactureUseCase {
                                         return Mono.empty();
                                     }))
                             .then(emailService.sendPortalDocumentNotification(
-                                    facture.getEmailClient(), facture.getNomClient(),
+                                    targetEmail, targetName,
                                     "Facture", facture.getNumeroFacture(),
                                     portalFrontendUrl + "/portal/login"))
                             .then(Mono.defer(() -> factureServicePort.updateFacture(factureId, toSentUpdateRequest(facture))));

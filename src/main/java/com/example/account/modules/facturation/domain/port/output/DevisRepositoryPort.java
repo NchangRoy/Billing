@@ -19,6 +19,7 @@ public interface DevisRepositoryPort {
     Flux<Devis> findByOrganizationId(UUID organizationId);
     Flux<Devis> findByAgencyId(UUID agencyId);
     Flux<Devis> findByCreatedBy(UUID createdBy);
+    Flux<Devis> findByActorId(UUID actorId);
     Mono<Devis> save(Devis devis);
     Mono<Devis> insert(Devis devis);
     Mono<Void> deleteById(UUID id);

@@ -11,7 +11,11 @@ public interface ContactRepository extends ReactiveCrudRepository<Contact, UUID>
 
     Mono<Contact> findByLinkToken(String linkToken);
 
-    Mono<Contact> findByChatId(String chatId);
+    Flux<Contact> findByChatId(String chatId);
 
     Flux<Contact> findByOrganizationId(UUID organizationId);
+
+    Mono<Contact> findByOrganizationIdAndEmail(UUID organizationId, String email);
+
+    Flux<Contact> findByEmailAndChatIdIsNotNull(String email);
 }

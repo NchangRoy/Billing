@@ -90,9 +90,10 @@ public class BonAchatController {
     }
 
     @PostMapping("/{id}/send-to-portal")
-    @Operation(summary = "Envoyer le bon d'achat au fournisseur via le portail (login requis)")
-    public Mono<ResponseEntity<Void>> sendToPortal(@PathVariable UUID id) {
-        return bonAchatService.sendToPortal(id)
+    @Operation(summary = "Envoyer le bon d'achat au fournisseur (ou à un contact choisi) via le portail (login requis)")
+    public Mono<ResponseEntity<Void>> sendToPortal(@PathVariable UUID id,
+                                                     @RequestBody(required = false) com.example.account.modules.facturation.dto.request.ShareDocumentRequest request) {
+        return bonAchatService.sendToPortal(id, request)
                 .thenReturn(ResponseEntity.ok().build());
     }
 }

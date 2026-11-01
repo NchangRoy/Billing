@@ -194,6 +194,15 @@ public class ProductServiceAdapter implements ProductServicePort {
      * than per-product, since this backs the organization-wide list endpoint.
      */
     private Flux<ProductResponse> mergeLocalConfigs(List<ProductResponse> products) {
+        // Spring Data R2DBC NPEs internally (QueryMapper.convertValue) when
+        // an IN-clause's collection parameter is empty — findByProductIdIn([])
+        // crashes before it ever gets to "no results", instead of just
+        // returning none. An empty catalog (or an org with products but zero
+        // locally-configured ones — same empty-list shape) hits this every
+        // time, so it's a real, reachable case to guard, not hypothetical.
+        if (products.isEmpty()) {
+            return Flux.empty();
+        }
         List<UUID> productIds = products.stream().map(ProductResponse::getIdProduit).toList();
         return saleSizeConfigRepository.findByProductIdIn(productIds)
                 .collectMap(ProductSaleSizeConfig::getProductId, c -> c)

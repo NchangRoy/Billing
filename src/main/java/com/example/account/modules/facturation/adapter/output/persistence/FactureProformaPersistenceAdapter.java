@@ -80,4 +80,9 @@ public class FactureProformaPersistenceAdapter implements FactureProformaReposit
     public Flux<FactureProforma> findByCreatedBy(UUID createdBy) {
         return repository.findByCreatedBy(createdBy).map(mapper::toDomain);
     }
+
+    @Override
+    public Flux<FactureProforma> findByActorId(UUID actorId) {
+        return repository.findByActorId(actorId).map(mapper::toDomain);
+    }
 }

@@ -1,6 +1,7 @@
 package com.example.account.modules.facturation.domain.port.input;
 
 import com.example.account.modules.facturation.dto.request.ProformaInvoiceRequest;
+import com.example.account.modules.facturation.dto.request.ShareDocumentRequest;
 import com.example.account.modules.facturation.dto.response.ProformaInvoiceResponse;
 import com.example.account.modules.facturation.model.enums.StatutProforma;
 import reactor.core.publisher.Flux;
@@ -19,4 +20,5 @@ public interface FactureProformaUseCase {
     Flux<ProformaInvoiceResponse> getProformasByOrganizationId(UUID organizationId);
     Flux<ProformaInvoiceResponse> getProformasByAgencyId(UUID agencyId);
     Flux<ProformaInvoiceResponse> getProformasBySellerId(UUID sellerId);
+    Mono<Void> sendToPortal(UUID id, ShareDocumentRequest request);
 }

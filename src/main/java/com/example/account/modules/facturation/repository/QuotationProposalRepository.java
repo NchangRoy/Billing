@@ -13,4 +13,5 @@ public interface QuotationProposalRepository extends R2dbcRepository<QuotationPr
     Flux<QuotationProposal> findByOrganizationId(UUID organizationId);
     Flux<QuotationProposal> findByIdClientAndOrganizationId(UUID idClient, UUID organizationId);
     Flux<QuotationProposal> findByIdClientInAndOrganizationId(Collection<UUID> idClients, UUID organizationId);
+    Flux<QuotationProposal> findByActorIdInAndOrganizationId(Collection<UUID> actorIds, UUID organizationId);
 }

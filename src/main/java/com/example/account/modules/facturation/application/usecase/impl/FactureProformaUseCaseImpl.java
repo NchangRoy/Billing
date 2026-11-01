@@ -12,8 +12,12 @@ import com.example.account.modules.facturation.dto.request.AssignDocPermissionRe
 import com.example.account.modules.facturation.model.enums.DocPermissionLevel;
 import com.example.account.modules.facturation.model.enums.DocType;
 import com.example.account.modules.facturation.service.DocPermissionService;
+import com.example.account.modules.facturation.service.EmailService;
+import com.example.account.modules.tiers.domain.port.input.ClientUseCase;
+import com.example.account.modules.tiers.domain.port.input.ThirdPartyContactUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
@@ -30,6 +34,29 @@ public class FactureProformaUseCaseImpl implements FactureProformaUseCase {
     private final FactureProformaRepositoryPort proformaRepository;
     private final FactureProformaMapper proformaMapper;
     private final DocPermissionService docPermissionService;
+    private final EmailService emailService;
+    private final ClientUseCase clientUseCase;
+    private final ThirdPartyContactUseCase thirdPartyContactUseCase;
+
+    @Value("${client-portal.frontend-url}")
+    private String portalFrontendUrl;
+
+    /**
+     * Stamps the client's Kernel actor id onto the proforma at creation time
+     * — see DevisUseCaseImpl.withActorId for the full reasoning.
+     */
+    private Mono<FactureProforma> withActorId(FactureProforma proforma) {
+        if (proforma.getIdClient() == null) {
+            return Mono.just(proforma);
+        }
+        return thirdPartyContactUseCase.resolveActorId(proforma.getIdClient())
+                .doOnNext(proforma::setActorId)
+                .onErrorResume(e -> {
+                    log.warn("Could not resolve actor id for client {} (continuing without it): {}", proforma.getIdClient(), e.getMessage());
+                    return Mono.empty();
+                })
+                .thenReturn(proforma);
+    }
 
     private <T> Mono<T> grantOwnerPermission(UUID sellerId, UUID docId, T response) {
         if (sellerId == null || docId == null) return Mono.just(response);
@@ -64,8 +91,9 @@ public class FactureProformaUseCaseImpl implements FactureProformaUseCase {
         return ReactiveOrganizationContext.getOrganizationId()
                 .flatMap(orgId -> {
                     proforma.setOrganizationId(orgId);
-                    return proformaRepository.insert(proforma);
+                    return withActorId(proforma);
                 })
+                .flatMap(proformaRepository::insert)
                 .flatMap(savedProforma -> grantOwnerPermission(
                         savedProforma.getCreatedBy(),
                         savedProforma.getIdFactureProforma(),
@@ -166,5 +194,51 @@ public class FactureProformaUseCaseImpl implements FactureProformaUseCase {
                             response.setDocPermission(docPermissionService.toResponse(permission));
                             return response;
                         }));
+    }
+
+    /**
+     * Marks the proforma ENVOYE, bootstraps the client's (login-based) portal
+     * access only if they've never had it, then emails a "new document"
+     * notification — same pattern as DevisUseCaseImpl.sendToPortal. Only
+     * fires from BROUILLON: calling this again on an already-sent proforma is
+     * a no-op. The "Send to Contact" picker can target any address-book
+     * contact instead of the proforma's own stored emailClient — falls back
+     * to that stored email when no contact was picked. Status is only
+     * persisted once the email has actually gone out, so a failed send never
+     * leaves the proforma falsely marked as sent.
+     */
+    @Override
+    @Transactional
+    public Mono<Void> sendToPortal(UUID id, com.example.account.modules.facturation.dto.request.ShareDocumentRequest request) {
+        log.info("Envoi de la facture proforma {} vers le portail client", id);
+        return proformaRepository.findById(id)
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("Facture proforma non trouvée: " + id)))
+                .flatMap(proforma -> {
+                    if (proforma.getStatut() != StatutProforma.BROUILLON) {
+                        log.info("Facture proforma {} déjà envoyée (statut: {}), envoi ignoré", id, proforma.getStatut());
+                        return Mono.empty();
+                    }
+                    String targetEmail = (request != null && request.getContactEmail() != null && !request.getContactEmail().isBlank())
+                            ? request.getContactEmail() : proforma.getEmailClient();
+                    String targetName = (request != null && request.getContactName() != null && !request.getContactName().isBlank())
+                            ? request.getContactName() : proforma.getNomClient();
+                    if (targetEmail == null || targetEmail.isBlank()) {
+                        return Mono.error(new IllegalStateException("Le client n'a pas d'adresse email renseignée."));
+                    }
+                    return clientUseCase.ensureClientPortalAccess(proforma.getIdClient(), targetEmail, targetName)
+                            .onErrorResume(e -> {
+                                log.warn("ensureClientPortalAccess failed for facture proforma {} (continuing anyway): {}", id, e.getMessage());
+                                return Mono.empty();
+                            })
+                            .then(emailService.sendPortalDocumentNotification(
+                                    targetEmail, targetName,
+                                    "Facture Proforma", proforma.getNumeroProformaInvoice(),
+                                    portalFrontendUrl + "/portal/login"))
+                            .then(Mono.defer(() -> {
+                                proforma.setStatut(StatutProforma.ENVOYE);
+                                return proformaRepository.save(proforma);
+                            }));
+                })
+                .then();
     }
 }

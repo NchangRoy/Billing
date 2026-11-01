@@ -119,4 +119,7 @@ public class BonAchat  {
     @LastModifiedDate
     @Column("updated_at")
     private LocalDateTime updatedAt;
+
+    @Column("actor_id")
+    private UUID actorId;
 }

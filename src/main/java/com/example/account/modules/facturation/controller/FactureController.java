@@ -139,10 +139,11 @@ public class FactureController {
     }
 
     @PostMapping("/{factureId}/send-to-portal")
-    @Operation(summary = "Envoyer la facture au client via le portail (login requis)")
-    public Mono<ResponseEntity<Void>> sendToPortal(@PathVariable UUID factureId) {
+    @Operation(summary = "Envoyer la facture au client (ou à un contact choisi) via le portail (login requis)")
+    public Mono<ResponseEntity<Void>> sendToPortal(@PathVariable UUID factureId,
+                                                     @RequestBody(required = false) com.example.account.modules.facturation.dto.request.ShareDocumentRequest request) {
         log.info("Requête d'envoi de la facture vers le portail: {}", factureId);
-        return factureService.sendToPortal(factureId)
+        return factureService.sendToPortal(factureId, request)
                 .thenReturn(ResponseEntity.ok().build());
     }
 

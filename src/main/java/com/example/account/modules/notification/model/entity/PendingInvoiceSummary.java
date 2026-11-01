@@ -24,4 +24,5 @@ public class PendingInvoiceSummary {
     private BigDecimal montant;
     private String devise;
     private String nomClient;
+    private String organizationName;
 }

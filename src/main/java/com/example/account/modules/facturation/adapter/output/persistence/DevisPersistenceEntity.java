@@ -161,6 +161,9 @@ public class DevisPersistenceEntity  {
     @Column("agency_id")
     private UUID agencyId;
 
+    @Column("actor_id")
+    private UUID actorId;
+
     @Version
     @Column("version")
     @Builder.Default

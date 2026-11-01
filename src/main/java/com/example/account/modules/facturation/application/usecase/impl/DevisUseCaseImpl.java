@@ -25,6 +25,7 @@ import com.example.account.modules.facturation.service.BonCommandeService;
 import com.example.account.modules.facturation.model.enums.TypeNumerotation;
 import com.example.account.modules.settings.service.SettingService;
 import com.example.account.modules.tiers.domain.port.input.ClientUseCase;
+import com.example.account.modules.tiers.domain.port.input.ThirdPartyContactUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,6 +55,7 @@ public class DevisUseCaseImpl implements DevisUseCase {
     private final BonCommandeService bonCommandeService;
     private final SettingService settingService;
     private final ClientUseCase clientUseCase;
+    private final ThirdPartyContactUseCase thirdPartyContactUseCase;
     private final DocPermissionService docPermissionService;
 
     @Value("${client-portal.frontend-url}")
@@ -82,6 +84,7 @@ public class DevisUseCaseImpl implements DevisUseCase {
                 : Mono.just(devis);
 
         return withNumero
+                .flatMap(this::withActorId)
                 .flatMap(devisRepository::insert)
                 .flatMap(savedDevis -> {
                     DevisResponse response = devisMapper.toResponse(savedDevis);
@@ -89,6 +92,27 @@ public class DevisUseCaseImpl implements DevisUseCase {
                     log.info("Devis créé avec succès: {}", savedDevis.getNumeroDevis());
                     return grantOwnerPermission(savedDevis.getCreatedBy(), savedDevis.getIdDevis(), response);
                 });
+    }
+
+    /**
+     * Stamps the client's Kernel actor id onto the devis at creation time so
+     * the client portal can list "my quotations" with one indexed query
+     * instead of brute-force scanning every org in the tenant on every
+     * request (see PortalIdentityResolver). Best-effort: a resolution
+     * failure shouldn't block quotation creation — the client just won't
+     * see it in their portal until it's fixed.
+     */
+    private Mono<Devis> withActorId(Devis devis) {
+        if (devis.getIdClient() == null) {
+            return Mono.just(devis);
+        }
+        return thirdPartyContactUseCase.resolveActorId(devis.getIdClient())
+                .doOnNext(devis::setActorId)
+                .onErrorResume(e -> {
+                    log.warn("Could not resolve actor id for client {} (continuing without it): {}", devis.getIdClient(), e.getMessage());
+                    return Mono.empty();
+                })
+                .thenReturn(devis);
     }
 
     private <T> Mono<T> grantOwnerPermission(UUID sellerId, UUID docId, T response) {
@@ -271,7 +295,7 @@ public Mono<Void> refuserDevis(UUID devisId) {
  * a failed send never leaves the quotation falsely marked as sent.
  */
 @Transactional
-public Mono<Void> sendToPortal(UUID devisId) {
+public Mono<Void> sendToPortal(UUID devisId, com.example.account.modules.facturation.dto.request.ShareDocumentRequest request) {
     log.info("Envoi du devis {} vers le portail client", devisId);
 
     return devisRepository.findById(devisId)
@@ -281,10 +305,17 @@ public Mono<Void> sendToPortal(UUID devisId) {
                     log.info("Devis {} déjà envoyé (statut: {}), envoi ignoré", devisId, devis.getStatut());
                     return Mono.empty();
                 }
-                if (devis.getEmailClient() == null || devis.getEmailClient().isBlank()) {
+                // Lets the "Send to Contact" picker target any address-book
+                // contact instead of the devis's own stored emailClient —
+                // falls back to that stored email when no contact was picked.
+                String targetEmail = (request != null && request.getContactEmail() != null && !request.getContactEmail().isBlank())
+                        ? request.getContactEmail() : devis.getEmailClient();
+                String targetName = (request != null && request.getContactName() != null && !request.getContactName().isBlank())
+                        ? request.getContactName() : devis.getNomClient();
+                if (targetEmail == null || targetEmail.isBlank()) {
                     return Mono.error(new IllegalStateException("Le client n'a pas d'adresse email renseignée."));
                 }
-                return clientUseCase.ensureClientPortalAccess(devis.getIdClient(), devis.getEmailClient(), devis.getNomClient())
+                return clientUseCase.ensureClientPortalAccess(devis.getIdClient(), targetEmail, targetName)
                         // Kernel's ensure-portal-access endpoint isn't deployed yet (404) — this
                         // is a bootstrap-only nicety anyway (grants login to brand-new clients),
                         // so a failure here shouldn't block the actual notification email.
@@ -293,7 +324,7 @@ public Mono<Void> sendToPortal(UUID devisId) {
                             return Mono.empty();
                         })
                         .then(emailService.sendPortalDocumentNotification(
-                                devis.getEmailClient(), devis.getNomClient(),
+                                targetEmail, targetName,
                                 "Devis", devis.getNumeroDevis(),
                                 portalFrontendUrl + "/portal/login"))
                         .then(Mono.defer(() -> {

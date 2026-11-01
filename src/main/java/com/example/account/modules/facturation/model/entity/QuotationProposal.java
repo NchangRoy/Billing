@@ -38,6 +38,9 @@ public class QuotationProposal {
     @Column("id_client")
     private UUID idClient;
 
+    @Column("actor_id")
+    private UUID actorId;
+
     @Column("nom_client")
     private String nomClient;
 

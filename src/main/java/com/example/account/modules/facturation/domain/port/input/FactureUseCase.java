@@ -1,6 +1,7 @@
 package com.example.account.modules.facturation.domain.port.input;
 
 import com.example.account.modules.facturation.dto.request.FactureCreateRequest;
+import com.example.account.modules.facturation.dto.request.ShareDocumentRequest;
 import com.example.account.modules.facturation.dto.response.FactureResponse;
 import com.example.account.modules.facturation.dto.response.ExternalResponses.SellerAuthResponse;
 import com.example.account.modules.facturation.model.enums.StatutFacture;
@@ -37,5 +38,5 @@ public interface FactureUseCase {
     Flux<FactureResponse> getFacturesByOrganizationId(UUID organizationId);
     Flux<FactureResponse> getFacturesByAgencyId(UUID agencyId);
     Flux<FactureResponse> getFacturesBySellerId(UUID sellerId);
-    Mono<Void> sendToPortal(UUID factureId);
+    Mono<Void> sendToPortal(UUID factureId, ShareDocumentRequest request);
 }
